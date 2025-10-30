@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, inject } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { StoryDTO } from '../../../core/models/story.model';
@@ -15,18 +15,19 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './my-story-dialog.component.html',
   styleUrls: ['./my-story-dialog.component.css']
 })
-export class MyStoryDialogComponent implements OnInit {
+export class MyStoryDialogComponent implements OnInit, OnDestroy {
   private dialogRef = inject(MatDialogRef<MyStoryDialogComponent>);
   private storyService = inject(StoryService);
   private userService = inject(UserService);
 
   stories: StoryDTO[] = [];
-  currentStoryIndex = 0;
+  currentStoryIndex: number = 0;
   currentStory: StoryDTO | null = null;
   likes: UserDTO[] = [];
   views: UserDTO[] = [];
-  progress = 0;
+  currentStoryProgress: number = 0;
   progressInterval: any;
+  private viewedStories = new Set<number>(); // To track viewed stories
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: { stories: StoryDTO[] }) {
     this.stories = data.stories || [];
@@ -36,7 +37,16 @@ export class MyStoryDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.startStoryPlayback();
+  }
+
+  ngOnDestroy(): void {
+    clearInterval(this.progressInterval);
+  }
+
+  startStoryPlayback(): void {
     this.loadStoryMetrics();
+    this.markStoryAsViewed();
     this.startProgress();
   }
 
@@ -50,6 +60,14 @@ export class MyStoryDialogComponent implements OnInit {
     this.storyService.getStoryViews(this.currentStory.id).subscribe(response => {
       this.views = response.data || [];
     });
+  }
+
+  markStoryAsViewed(): void {
+    if (this.currentStory && !this.viewedStories.has(this.currentStory.id)) {
+      this.storyService.viewStory(this.currentStory.id).subscribe(() => {
+        this.viewedStories.add(this.currentStory!.id);
+      });
+    }
   }
 
   /** Safely check if URL is an image */
@@ -68,8 +86,10 @@ export class MyStoryDialogComponent implements OnInit {
     if (this.currentStoryIndex < this.stories.length - 1) {
       this.currentStoryIndex++;
       this.currentStory = this.stories[this.currentStoryIndex];
-      this.loadStoryMetrics();
       this.resetProgress();
+      this.startStoryPlayback();
+    } else {
+      this.close(); // Close dialog if no more stories
     }
   }
 
@@ -77,29 +97,28 @@ export class MyStoryDialogComponent implements OnInit {
     if (this.currentStoryIndex > 0) {
       this.currentStoryIndex--;
       this.currentStory = this.stories[this.currentStoryIndex];
-      this.loadStoryMetrics();
       this.resetProgress();
+      this.startStoryPlayback();
     }
   }
 
   /** Auto progress animation bar */
   startProgress(): void {
-    this.progress = 0;
-    console.log('Starting progress for story:', this.currentStory?.id);
+    this.currentStoryProgress = 0;
+    clearInterval(this.progressInterval); // Clear any existing interval
     this.progressInterval = setInterval(() => {
-      if (this.progress >= 100) {
+      if (this.currentStoryProgress >= 100) {
         clearInterval(this.progressInterval);
         this.nextStory();
       } else {
-        this.progress += 1;
-        console.log('Progress:', this.progress);
+        this.currentStoryProgress += 1;
       }
     }, 100); // story auto advances every ~10 seconds
   }
 
   resetProgress(): void {
     clearInterval(this.progressInterval);
-    this.startProgress();
+    this.currentStoryProgress = 0;
   }
 
   close(): void {

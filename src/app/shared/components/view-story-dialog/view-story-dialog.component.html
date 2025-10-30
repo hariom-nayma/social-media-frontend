@@ -1,23 +1,54 @@
-<div class="story-dialog-container">
+<div class="story-dialog">
   <div class="story-header">
-    <div class="user-info">
-      <img [src]="story.profileImageUrl || 'https://i.pravatar.cc/150?u=' + story.username" alt="Profile Picture" class="profile-pic">
-      <span>{{ story.username }}</span>
+    <div class="progress-bars-wrapper">
+      <ng-container *ngFor="let story of stories; let i = index">
+        <div class="progress-bar-container">
+          <div
+            class="progress-bar"
+            [style.width.%]="
+              i < currentIndex
+                ? 100
+                : i === currentIndex
+                ? currentStoryProgress
+                : 0
+            "
+          ></div>
+        </div>
+      </ng-container>
     </div>
-    <button mat-icon-button (click)="close()">
-      <mat-icon>close</mat-icon>
-    </button>
+
+    <div class="user-info">
+      <img [src]="currentStory?.profileImageUrl" alt="User">
+      <span>{{ currentStory?.username }}</span>
+    </div>
+    <button class="close-btn" (click)="close()">×</button>
   </div>
 
   <div class="story-content">
-    <img *ngIf="story.contentUrl && (story.contentUrl.toLowerCase().endsWith('.jpeg') || story.contentUrl.toLowerCase().endsWith('.jpg') || story.contentUrl.toLowerCase().endsWith('.gif') || story.contentUrl.toLowerCase().endsWith('.png'))" [src]="story.contentUrl" alt="Story Image">
-    <video *ngIf="story.contentUrl && (story.contentUrl.toLowerCase().endsWith('.mp4') || story.contentUrl.toLowerCase().endsWith('.webm') || story.contentUrl.toLowerCase().endsWith('.ogg'))" [src]="story.contentUrl" controls></video>
-    <p *ngIf="story.caption">{{ story.caption }}</p>
+    <img *ngIf="isImage(currentStory?.contentUrl)" [src]="currentStory?.contentUrl" alt="Story Image">
+    <video *ngIf="isVideo(currentStory?.contentUrl)" [src]="currentStory?.contentUrl" autoplay muted></video>
+
+    <button
+      mat-icon-button
+      class="nav prev"
+      (click)="prevStory()"
+      [disabled]="currentIndex === 0"
+    >
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      class="nav next"
+      (click)="nextStory()"
+      [disabled]="currentIndex === stories.length - 1"
+    >
+      <mat-icon>chevron_right</mat-icon>
+    </button>
   </div>
 
   <div class="story-actions">
     <button mat-icon-button (click)="likeStory()">
-      <mat-icon>{{ story.likedByme ? 'favorite' : 'favorite_border' }}</mat-icon>
+      <mat-icon>{{ currentStory?.likedByme ? 'favorite' : 'favorite_border' }}</mat-icon>
     </button>
   </div>
 </div>

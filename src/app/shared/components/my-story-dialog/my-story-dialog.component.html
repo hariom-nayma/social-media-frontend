@@ -1,8 +1,21 @@
-<div class="story-dialog-container">
+<div class="my-story-dialog-container">
   <!-- Header -->
   <div class="story-header">
-    <div class="progress-bar-container">
-      <div class="progress-bar" [style.width.%]="progress"></div>
+    <div class="progress-bars-wrapper">
+      <ng-container *ngFor="let story of stories; let i = index">
+        <div class="progress-bar-container">
+          <div
+            class="progress-bar"
+            [style.width.%]="
+              i < currentStoryIndex
+                ? 100
+                : i === currentStoryIndex
+                ? currentStoryProgress
+                : 0
+            "
+          ></div>
+        </div>
+      </ng-container>
     </div>
 
     <div class="user-info" *ngIf="currentStory">

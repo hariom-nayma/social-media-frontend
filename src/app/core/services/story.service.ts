@@ -37,6 +37,6 @@ export class StoryService {
     return this.http.post<ApiResponse<void>>(`${this.apiUrl}/${storyId}/view`, {});
   }
   getMyStories(): Observable<ApiResponse<StoryDTO[]>> {
-    return this.http.get<ApiResponse<StoryDTO[]>>(`${this.apiUrl}/me`);
+    return this.http.get<ApiResponse<StoryDTO[]>>(`${this.apiUrl}/myStories`);
   }
 }

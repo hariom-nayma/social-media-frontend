@@ -28,13 +28,23 @@
   background: #fff;
 }
 
-.progress-bar-container {
+.progress-bars-wrapper {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+.progress-bar-container {
+  flex-grow: 1;
   height: 3px;
   background: rgba(0, 0, 0, 0.2);
+  border-radius: 1.5px;
+  overflow: hidden;
 }
 
 .progress-bar {
