@@ -1,0 +1,16 @@
+mat-dialog-content {
+  padding: 20px;
+}
+
+mat-form-field {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+input[type="file"] {
+  margin-bottom: 20px;
+}
+
+mat-dialog-actions {
+  padding: 0 20px 20px;
+}

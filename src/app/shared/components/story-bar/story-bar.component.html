@@ -1,10 +1,20 @@
 <div class="story-bar-container">
   <div class="story-bar">
-    <div class="story" *ngFor="let story of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]">
+    <!-- Current User's Story -->
+    <div class="story add-story" (click)="openCreateStoryDialog()">
       <div class="story-avatar">
-        <img src="https://i.pravatar.cc/150?img={{story}}" alt="Avatar">
+        <img [src]="currentUser?.profileImageUrl || 'https://i.pravatar.cc/150?u=' + currentUser?.username" alt="Avatar">
+        <div class="add-icon">+</div>
       </div>
-      <div class="story-username">user{{story}}</div>
+      <div class="story-username">Your Story</div>
+    </div>
+
+    <!-- Other Users' Stories -->
+    <div class="story" *ngFor="let story of stories" (click)="viewStory(story)">
+      <div class="story-avatar">
+        <img [src]="story.profileImageUrl || 'https://i.pravatar.cc/150?u=' + story.username" alt="Avatar">
+      </div>
+      <div class="story-username">{{story.username}}</div>
     </div>
   </div>
 </div>
