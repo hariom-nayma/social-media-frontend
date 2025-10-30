@@ -11,7 +11,7 @@
 
     <!-- Other Users' Stories -->
     <div class="story" *ngFor="let story of stories" (click)="viewStory(story)">
-      <div class="story-avatar">
+      <div class="story-avatar" [class.viewed-story]="story.viewedByMe">
         <img [src]="story.profileImageUrl || 'https://i.pravatar.cc/150?u=' + story.username" alt="Avatar">
       </div>
       <div class="story-username">{{story.username}}</div>

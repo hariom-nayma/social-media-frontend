@@ -85,12 +85,14 @@ export class MyStoryDialogComponent implements OnInit {
   /** Auto progress animation bar */
   startProgress(): void {
     this.progress = 0;
+    console.log('Starting progress for story:', this.currentStory?.id);
     this.progressInterval = setInterval(() => {
       if (this.progress >= 100) {
         clearInterval(this.progressInterval);
         this.nextStory();
       } else {
         this.progress += 1;
+        console.log('Progress:', this.progress);
       }
     }, 100); // story auto advances every ~10 seconds
   }

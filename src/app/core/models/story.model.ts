@@ -9,4 +9,5 @@ export interface StoryDTO {
   lastName: string;
   profileImageUrl: string;
   likedByme: boolean;
+  viewedByMe: boolean;
 }

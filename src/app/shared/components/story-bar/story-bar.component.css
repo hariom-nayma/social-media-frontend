@@ -36,6 +36,10 @@
   transition: transform 0.2s ease-in-out;
 }
 
+.story-avatar.viewed-story {
+  background: #ccc;
+}
+
 .story:hover .story-avatar {
   transform: scale(1.05);
 }
@@ -45,6 +49,10 @@
   height: 62px;
   border-radius: 50%;
   border: 2px solid #fff;
+}
+
+.story-avatar.viewed-story img {
+  filter: grayscale(100%);
 }
 
 .story-username {
