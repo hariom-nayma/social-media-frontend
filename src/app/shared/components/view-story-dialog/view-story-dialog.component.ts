@@ -22,50 +22,27 @@ export class ViewStoryDialogComponent implements OnInit {
 
   story: StoryDTO;
   currentUser: UserDTO | null = null;
-  isMyStory: boolean = false;
-  likes: UserDTO[] = [];
-  views: UserDTO[] = [];
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: { story: StoryDTO }) {
     this.story = data.story;
+    console.log('Story data in dialog:', this.story);
   }
 
   ngOnInit(): void {
     this.userService.myMiniProfile().subscribe(response => {
       if (response.data) {
         this.currentUser = response.data;
-        this.isMyStory = this.currentUser.userId === this.story.userId;
-        if (this.isMyStory) {
-          this.getStoryMetrics();
-        }
+        console.log('Current user in dialog:', this.currentUser);
       }
     });
 
     // Mark story as viewed
-    if (!this.isMyStory) { // Only view other people's stories
-      this.storyService.viewStory(this.story.id).subscribe();
-    }
-  }
-
-  getStoryMetrics(): void {
-    this.storyService.getStoryLikes(this.story.id).subscribe(response => {
-      if (response.data) {
-        this.likes = response.data;
-      }
-    });
-    this.storyService.getStoryViews(this.story.id).subscribe(response => {
-      if (response.data) {
-        this.views = response.data;
-      }
-    });
+    this.storyService.viewStory(this.story.id).subscribe();
   }
 
   likeStory(): void {
     this.storyService.likeStory(this.story.id).subscribe(() => {
       this.story.likedByme = !this.story.likedByme; // Optimistically toggle
-      if (this.isMyStory) {
-        this.getStoryMetrics(); // Re-fetch metrics to update like count if it's my story
-      }
     });
   }
 

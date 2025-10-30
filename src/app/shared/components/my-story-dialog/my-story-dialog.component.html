@@ -1,0 +1,101 @@
+<div class="story-dialog-container">
+  <!-- Header -->
+  <div class="story-header">
+    <div class="progress-bar-container">
+      <div class="progress-bar" [style.width.%]="progress"></div>
+    </div>
+
+    <div class="user-info" *ngIf="currentStory">
+      <img
+        [src]="
+          currentStory?.profileImageUrl ||
+          'https://i.pravatar.cc/150?u=' + currentStory?.username
+        "
+        alt="Profile"
+        class="profile-pic"
+      />
+      <span class="username">{{ currentStory?.username }}</span>
+    </div>
+
+    <button mat-icon-button (click)="close()" class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Story Content -->
+  <div class="story-content" *ngIf="currentStory">
+    <img
+      *ngIf="currentStory?.contentUrl && isImage(currentStory?.contentUrl)"
+      [src]="currentStory?.contentUrl"
+      alt="Story"
+      class="story-media fade-in"
+    />
+
+    <video
+      *ngIf="currentStory?.contentUrl && isVideo(currentStory?.contentUrl)"
+      [src]="currentStory?.contentUrl"
+      autoplay
+      muted
+      controls
+      class="story-media fade-in"
+    ></video>
+
+    <button
+      mat-icon-button
+      class="nav prev"
+      (click)="prevStory()"
+      [disabled]="currentStoryIndex === 0"
+    >
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+    <button
+      mat-icon-button
+      class="nav next"
+      (click)="nextStory()"
+      [disabled]="currentStoryIndex === stories.length - 1"
+    >
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+
+  <!-- Caption -->
+  <div class="story-caption" *ngIf="currentStory?.caption">
+    {{ currentStory?.caption }}
+  </div>
+
+  <!-- Metrics -->
+  <div class="story-metrics" *ngIf="currentStory">
+    <div class="metric">
+      <mat-icon color="warn">favorite</mat-icon>
+      <span>{{ likes.length }} Likes</span>
+    </div>
+    <div class="metric">
+      <mat-icon color="primary">visibility</mat-icon>
+      <span>{{ views.length }} Views</span>
+    </div>
+
+    <div class="metrics-list">
+      <div class="likes-list" *ngIf="likes.length > 0">
+        <h4>Liked by:</h4>
+        <div *ngFor="let user of likes" class="user-item">
+          <img
+            [src]="user.profileImageUrl || 'https://i.pravatar.cc/150?u=' + user.username"
+            alt="Profile"
+          />
+          <span>{{ user.username }}</span>
+        </div>
+      </div>
+
+      <div class="views-list" *ngIf="views.length > 0">
+        <h4>Viewed by:</h4>
+        <div *ngFor="let user of views" class="user-item">
+          <img
+            [src]="user.profileImageUrl || 'https://i.pravatar.cc/150?u=' + user.username"
+            alt="Profile"
+          />
+          <span>{{ user.username }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

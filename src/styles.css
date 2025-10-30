@@ -16,3 +16,8 @@ body {
     margin-bottom: 60px; /* Height of the bottom navbar */
   }
 }
+
+.my-story-dialog-panel.mat-mdc-dialog-container {
+  background: transparent;
+  box-shadow: none;
+}

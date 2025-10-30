@@ -15,11 +15,14 @@
   align-items: center;
   padding: 10px 15px;
   border-bottom: 1px solid #eee;
+  background-color: #f8f8f8;
 }
 
 .user-info {
   display: flex;
   align-items: center;
+  color: #333;
+  font-weight: bold;
 }
 
 .user-info .profile-pic {
@@ -27,6 +30,7 @@
   height: 32px;
   border-radius: 50%;
   margin-right: 10px;
+  object-fit: cover;
 }
 
 .story-content {
@@ -37,6 +41,7 @@
   align-items: center;
   padding: 20px;
   background-color: #000;
+  position: relative; /* For potential future overlays */
 }
 
 .story-content img,
@@ -61,17 +66,48 @@
 
 .story-metrics {
   display: flex;
-  justify-content: space-around;
+  flex-direction: column;
   padding: 10px;
   border-top: 1px solid #eee;
+  background-color: #f8f8f8;
 }
 
 .metric {
   display: flex;
   align-items: center;
   color: #555;
+  margin-bottom: 5px;
 }
 
 .metric mat-icon {
   margin-right: 5px;
+}
+
+.metrics-list {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  max-height: 150px; /* Limit height for scrollability */
+  overflow-y: auto;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+}
+
+.metrics-list h4 {
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.user-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.user-list-pic {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: 8px;
+  object-fit: cover;
 }

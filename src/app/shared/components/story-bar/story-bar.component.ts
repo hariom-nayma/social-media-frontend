@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { CreateStoryModalComponent } from '../create-story-modal/create-story-modal.component';
 import { UserService } from '../../../core/services/user.service';
 import { ViewStoryDialogComponent } from '../view-story-dialog/view-story-dialog.component';
+import { MyStoryDialogComponent } from '../my-story-dialog/my-story-dialog.component';
 
 @Component({
   selector: 'app-story-bar',
@@ -89,10 +90,14 @@ export class StoryBarComponent implements OnInit {
 
   handleMyStoryClick(): void {
     if (this.hasMyStories) {
-      // Open my first story in the dialog
-      this.viewStory(this.myStories[0]);
+      this.dialog.open(MyStoryDialogComponent, {
+        data: { stories: this.myStories },
+        width: '420px',
+        height: '700px',
+        maxWidth: '90vw',
+        panelClass: 'my-story-dialog-panel'
+      });
     } else {
-      // Open create story dialog
       this.openCreateStoryDialog();
     }
   }

@@ -1,0 +1,177 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+* {
+  font-family: 'Poppins', sans-serif;
+}
+
+.story-dialog-container {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  color: #000;
+  width: 420px;
+  height: 700px;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  margin: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+}
+
+/* Header */
+.story-header {
+  position: relative;
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+}
+
+.progress-bar-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.progress-bar {
+  height: 100%;
+  background: #000;
+  transition: width 0.1s linear;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-pic {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ff4f8b;
+}
+
+.username {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.close-btn {
+  color: #000;
+}
+
+.mat-icon {
+  color: #000; /* Ensure icons are black */
+  display: inline-flex; /* Ensure icons are displayed */
+  vertical-align: middle; /* Align icons vertically */
+  font-family: 'Material Icons'; /* Explicitly set Material Icons font */
+}
+
+/* Story content */
+.story-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background-color: #fff;
+}
+
+.story-media {
+  max-width: 100%;
+  max-height: 85%;
+  border-radius: 12px;
+  object-fit: contain;
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(1.05);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #000;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+}
+
+.nav.prev {
+  left: 8px;
+}
+
+.nav.next {
+  right: 8px;
+}
+
+/* Caption */
+.story-caption {
+  text-align: center;
+  padding: 10px;
+  font-size: 0.95rem;
+  color: #333;
+  border-top: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+/* Metrics section */
+.story-metrics {
+  padding: 10px;
+  background: #fff;
+  border-top: 1px solid rgba(0, 0, 0, 0.15);
+  overflow-y: auto;
+  max-height: 200px;
+}
+
+.metric {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  margin-bottom: 6px;
+}
+
+.metric mat-icon {
+  font-size: 18px;
+}
+
+.metrics-list {
+  margin-top: 10px;
+}
+
+.metrics-list h4 {
+  margin: 5px 0;
+  font-size: 0.85rem;
+  color: #333;
+}
+
+.user-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.user-item img {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+}

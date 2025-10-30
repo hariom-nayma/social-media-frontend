@@ -15,20 +15,9 @@
     <p *ngIf="story.caption">{{ story.caption }}</p>
   </div>
 
-  <div class="story-actions" *ngIf="!isMyStory">
+  <div class="story-actions">
     <button mat-icon-button (click)="likeStory()">
       <mat-icon>{{ story.likedByme ? 'favorite' : 'favorite_border' }}</mat-icon>
     </button>
-  </div>
-
-  <div class="story-metrics" *ngIf="isMyStory">
-    <div class="metric">
-      <mat-icon>favorite</mat-icon>
-      <span>{{ likes.length }} Likes</span>
-    </div>
-    <div class="metric">
-      <mat-icon>visibility</mat-icon>
-      <span>{{ views.length }} Views</span>
-    </div>
   </div>
 </div>
