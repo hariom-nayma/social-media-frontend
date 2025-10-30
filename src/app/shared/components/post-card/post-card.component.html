@@ -1,21 +1,56 @@
-<div class="post-card">
+<div class="post-card glass fade-in">
+  <!-- Post Header -->
   <div class="post-header">
-    <div class="post-avatar">
-      <img [src]="post.profileImage" alt="Avatar">
+    <div class="post-user">
+      <img
+        [src]="post.profileImage || 'https://i.pravatar.cc/150?u=' + post.username"
+        alt="User Avatar"
+        class="avatar"
+      />
+      <div class="user-info">
+        <span class="username">{{ post.username }}</span>
+        <span class="time">{{ post.createdAt | date: 'shortTime' }}</span>
+      </div>
     </div>
-    <div class="post-username">{{ post.username }}</div>
-  </div>
-  <img [src]="post.mediaUrl" alt="Post Image" class="post-image">
-  <div class="post-actions">
-    <button title="like" (click)="onLike($event)">
-      <i class="{{ post.likedByCurrentUser ? 'fas fa-heart liked' : 'far fa-heart'}}"></i>
+    <button title="options" class="options-btn">
+      <i class="fa fa-ellipsis-h"></i>
     </button>
-    <button title="comment" (click)="onComment($event)"><i class="far fa-comment"></i></button>
-    <button title="share" (click)="onShare($event)"><i class="far fa-paper-plane"></i></button>
   </div>
-  <div class="post-likes">{{ post.likeCount }} likes</div>
-  <div class="post-caption">
-    <strong>{{ post.username }}</strong> {{ post.content }}
+
+  <!-- Post Image -->
+  <div class="post-image-container">
+    <img [src]="post.mediaUrl" alt="Post Image" class="post-image" />
+    <div class="like-animation" *ngIf="post.likedByCurrentUser"></div>
   </div>
-  <div class="post-comments">View all {{ post.commentsCount }} comments</div>
+
+  <!-- Post Actions -->
+  <div class="post-actions">
+    <div class="left-actions">
+      <button title="like" (click)="onLike($event)">
+        <i
+          [class]="post.likedByCurrentUser ? 'fas fa-heart liked' : 'far fa-heart'"
+        ></i>
+      </button>
+      <button title="comment" (click)="onComment($event)">
+        <i class="far fa-comment"></i>
+      </button>
+      <button title="share" (click)="onShare($event)">
+        <i class="far fa-paper-plane"></i>
+      </button>
+    </div>
+    <button title="save" class="save-btn">
+      <i class="far fa-bookmark"></i>
+    </button>
+  </div>
+
+  <!-- Post Details -->
+  <div class="post-info">
+    <div class="post-likes">{{ post.likeCount }} likes</div>
+    <div class="post-caption">
+      <strong>{{ post.username }}</strong> {{ post.content }}
+    </div>
+    <div class="post-comments">
+      View all {{ post.commentsCount }} comments
+    </div>
+  </div>
 </div>
