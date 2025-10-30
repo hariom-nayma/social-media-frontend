@@ -1,0 +1,67 @@
+<h2 mat-dialog-title class="dialog-title">Edit Profile</h2>
+
+<mat-dialog-content [formGroup]="updateProfileForm" class="dialog-content">
+  <!-- Profile Picture -->
+  <div class="profile-picture-container">
+    <div class="profile-picture-wrapper">
+      <img
+        [src]="data.user.profileImageUrl || 'https://i.pravatar.cc/150?u=' + data.user.id"
+        alt="Profile Picture"
+        class="profile-picture"
+      />
+      <button
+        mat-icon-button
+        class="edit-icon"
+        (click)="fileInput.click()"
+        aria-label="Edit profile picture"
+      >
+        <mat-icon>camera_alt</mat-icon>
+      </button>
+      <input type="file" (change)="onFileSelected($event)" #fileInput hidden />
+    </div>
+
+    <button
+      mat-flat-button
+      color="primary"
+      (click)="onUpload()"
+      [disabled]="!selectedFile"
+      class="upload-btn"
+    >
+      <mat-icon>upload</mat-icon>
+      Upload
+    </button>
+  </div>
+
+  <!-- Form Fields -->
+  <mat-form-field appearance="outline" class="form-field">
+    <mat-label>First Name</mat-label>
+    <input matInput formControlName="firstName" placeholder="Enter first name" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="form-field">
+    <mat-label>Last Name</mat-label>
+    <input matInput formControlName="lastName" placeholder="Enter last name" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="form-field">
+    <mat-label>Bio</mat-label>
+    <textarea
+      matInput
+      formControlName="bio"
+      placeholder="Write something about yourself..."
+      rows="3"
+    ></textarea>
+  </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-stroked-button color="warn" (click)="onCancel()">Cancel</button>
+  <button
+    mat-flat-button
+    color="primary"
+    (click)="onSave()"
+    [disabled]="!updateProfileForm.valid"
+  >
+    Save Changes
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,32 @@
+<nav class="navbar">
+  <div class="navbar-container">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/">
+        <img src="/assets/instagram-logo.png" alt="Logo">
+      </a>
+    </div>
+    <div class="navbar-search">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Search">
+    </div>
+    <div class="navbar-menu">
+      <a class="navbar-item" href="/home">
+        <i class="fas fa-home"></i>
+      </a>
+      <a class="navbar-item" href="/direct">
+        <i class="fab fa-facebook-messenger"></i>
+      </a>
+      <a class="navbar-item" (click)="openCreatePostModal()">
+        <i class="far fa-plus-square"></i>
+      </a>
+      <a class="navbar-item" href="/explore">
+        <i class="far fa-compass"></i>
+      </a>
+      <a class="navbar-item" href="/profile">
+        <i class="far fa-user-circle"></i>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<app-create-post-modal *ngIf="showCreatePostModal" (closeModal)="closeCreatePostModal()"></app-create-post-modal>

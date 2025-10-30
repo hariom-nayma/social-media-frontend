@@ -1,0 +1,34 @@
+<div class="login-sessions-container">
+  <h3>Active Login Sessions</h3>
+
+  <div *ngIf="sessions.length === 0" class="no-sessions">
+    <p>No active login sessions found.</p>
+  </div>
+
+  <div *ngIf="sessions.length > 0" class="sessions-list">
+    <mat-card *ngFor="let session of sessions" class="session-card">
+      <mat-card-header>
+        <mat-card-title>{{ session.deviceType }} - {{ session.browser }} on {{ session.os }}</mat-card-title>
+        <mat-card-subtitle>IP: {{ session.ipAddress }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Location: {{ session.location }}</p>
+        <p>Login Time: {{ session.loginTime | date:'medium' }}</p>
+        <p>Last Active: {{ session.lastActive | date:'medium' }}</p>
+        <p *ngIf="session.id === currentSessionId" class="current-session-indicator">This is your current session</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="warn" (click)="terminateSession(session.id)" [disabled]="session.id === currentSessionId">
+          Terminate
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <div class="terminate-all-button">
+    <button mat-raised-button color="primary" (click)="terminateAllOtherSessions()" [disabled]="sessions.length <= 1">
+      Terminate All Other Sessions
+    </button>
+  </div>
+</div>
+

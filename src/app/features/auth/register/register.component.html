@@ -1,0 +1,74 @@
+<div class="register-container">
+  <div class="register-card" [class.loading]="loading">
+    <svg aria-label="Instagram" fill="currentColor" height="40" viewBox="32 4 113 32" width="120">
+      <title>Instagram</title>
+      <path
+        d="M37.82 4.11c-2.32.97-4.86 3.7-5.66 7.13..."
+        fill="currentColor"
+        fill-rule="evenodd"
+      ></path>
+    </svg>
+
+    <h2 class="tagline">Sign up to see photos and videos from your friends.</h2>
+
+    <!-- Loader Bar -->
+    <div class="progress-bar" *ngIf="loading">
+      <div class="progress"></div>
+    </div>
+
+    <!-- Register Form -->
+    <form *ngIf="!otpSent" [formGroup]="registerForm" (ngSubmit)="register()" novalidate>
+      <div class="form-group" *ngFor="let field of ['email','firstName','lastName','username','password']">
+        <input
+          [type]="field === 'password' ? 'password' : 'text'"
+          [placeholder]="field | titlecase"
+          [formControlName]="field"
+          [ngClass]="{
+            invalid: submitted && registerForm.get(field)?.invalid
+          }"
+        />
+        <!-- Field-specific messages -->
+        <div class="error-messages" *ngIf="submitted && registerForm.get(field)?.invalid">
+          <div *ngIf="registerForm.get(field)?.errors?.['required']">
+            {{ field | titlecase }} is required.
+          </div>
+          <div *ngIf="field === 'username' && registerForm.get('username')?.errors?.['minlength']">
+            Username must be at least 3 characters.
+          </div>
+          <div *ngIf="field === 'username' && registerForm.get('username')?.errors?.['pattern']">
+            Only letters, numbers and underscores allowed.
+          </div>
+        </div>
+      </div>
+
+      <!-- Username Availability -->
+      <div class="username-status" *ngIf="registerForm.controls.username.value && !registerForm.controls.username.errors?.['minlength']">
+        <ng-container *ngIf="registerForm.controls.username.pending">
+          <div class="loader"></div>
+          <span class="checking">Checking availability...</span>
+        </ng-container>
+        <ng-container *ngIf="registerForm.controls.username.valid && !registerForm.controls.username.errors?.['notAvailable']">
+          <span class="available">✅ Username available!</span>
+        </ng-container>
+        <ng-container *ngIf="registerForm.controls.username.errors?.['notAvailable']">
+          <span class="taken">❌ Username already taken</span>
+        </ng-container>
+      </div>
+
+      <button type="submit" [disabled]="loading">Sign Up</button>
+    </form>
+
+    <!-- OTP Form -->
+    <form *ngIf="otpSent" [formGroup]="otpForm" (ngSubmit)="verifyOtp()">
+      <p class="otp-text">An OTP has been sent to your email.</p>
+      <input type="text" placeholder="Enter OTP" formControlName="otp" />
+      <button type="submit" [disabled]="loading">Verify OTP</button>
+    </form>
+
+    <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+    <div class="login-link">
+      Have an account? <a routerLink="/auth/login">Log in</a>
+    </div>
+  </div>
+</div>

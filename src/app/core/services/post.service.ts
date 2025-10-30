@@ -1,0 +1,42 @@
+// src/app/core/services/post.service.ts
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
+
+import { ApiResponse } from '../models/api-response.model';
+import { FeedPostResponseDTO, PostDTO } from '../models/post.model';
+import { CommentDTO, CreateCommentRequest } from '../models/comment.model';
+
+@Injectable({ providedIn: 'root' })
+export class PostService {
+  private base = `${environment.apiUrl}/posts`;
+  constructor(private http: HttpClient) {}
+
+  getFeed(): Observable<ApiResponse<PostDTO[]>> { return this.http.get<ApiResponse<PostDTO[]>>(`${this.base}/feed`); }
+
+  createPost(form: FormData) {
+    return this.http.post(`${this.base}`, form);
+  }
+
+  toggleLike(postId: string) {
+    return this.http.post(`${this.base}/${postId}/like`, {});
+  }
+
+  getPostById(postId: string): Observable<ApiResponse<FeedPostResponseDTO>> {
+    return this.http.get<ApiResponse<FeedPostResponseDTO>>(`${this.base}/${postId}`);
+  }
+
+  getCommentsByPost(postId: string, userId: string, page: number = 0, size: number = 10): Observable<ApiResponse<CommentDTO[]>> {
+    return this.http.get<ApiResponse<CommentDTO[]>>(`${this.base}/${postId}/comments?userId=${userId}&page=${page}&size=${size}`);
+  }
+
+  addComment(postId: string, text: string, parentCommentId?: string): Observable<ApiResponse<CommentDTO>> {
+    const req: CreateCommentRequest = { text, parentCommentId };
+    return this.http.post<ApiResponse<CommentDTO>>(`${this.base}/${postId}/comment`, req);
+  }
+
+  toggleCommentLike(commentId: string): Observable<ApiResponse<string>> {
+    return this.http.post<ApiResponse<string>>(`${this.base}/comment/${commentId}/like`, {});
+  }
+}

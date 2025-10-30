@@ -1,0 +1,95 @@
+<div class="profile-container" *ngIf="userProfile">
+  <!-- Profile Header -->
+  <div class="profile-header">
+    <div class="profile-avatar">
+      <img
+        [src]="userProfile.profileImageUrl || 'https://i.pravatar.cc/150?u=' + userProfile.id"
+        alt="Profile Picture"
+      />
+    </div>
+
+    <div class="profile-info">
+      <div class="profile-info-header">
+        <div class="profile-username">@{{ userProfile.username }}</div>
+
+        <div class="profile-actions">
+          <button
+            *ngIf="isOwnProfile"
+            (click)="openUpdateProfileDialog()"
+            class="btn edit-btn"
+          >
+            Edit Profile
+          </button>
+
+          <ng-container *ngIf="!isOwnProfile && userProfile">
+            <button
+              class="btn follow-btn"
+              (click)="toggleFollow()"
+              *ngIf="!userProfile.private"
+            >
+              {{ userProfile.isFollowing ? 'Unfollow' : 'Follow' }}
+            </button>
+
+            <button
+              class="btn follow-btn"
+              (click)="toggleFollow()"
+              *ngIf="userProfile.private && !userProfile.isRequested"
+            >
+              Send Request
+            </button>
+
+            <button
+              class="btn requested-btn"
+              disabled
+              *ngIf="userProfile.private && userProfile.isRequested"
+            >
+              Request Sent
+            </button>
+          </ng-container>
+        </div>
+      </div>
+
+      <div class="profile-stats">
+        <div>
+          <strong>{{ userProfile.posts?.length || 0 }}</strong> posts
+        </div>
+        <div (click)="openFollowersDialog()">
+          <strong>{{ userProfile.followersCount || 0 }}</strong> followers
+        </div>
+        <div (click)="openFollowingDialog()">
+          <strong>{{ userProfile.followingCount || 0 }}</strong> following
+        </div>
+      </div>
+
+      <div class="profile-name">
+        {{ userProfile.firstName }} {{ userProfile.lastName }}
+      </div>
+      <div class="profile-bio">{{ userProfile.bio }}</div>
+    </div>
+  </div>
+
+  <!-- Profile Posts Grid -->
+  <div class="profile-posts-grid" *ngIf="userProfile.posts?.length">
+    <div class="post-thumbnail" *ngFor="let post of userProfile.posts" (click)="openPostDetailsDialog(post.id)">
+      <div class="post-img-wrapper">
+        <img
+          [src]="post.mediaUrl || 'https://via.placeholder.com/300'"
+          alt="Post Image"
+          class="post-img"
+        />
+      </div>
+      <div class="post-overlay">
+        <div class="post-overlay-item">
+          <i class="fas fa-heart"></i> {{ post.likeCount }}
+        </div>
+        <div class="post-overlay-item">
+          <i class="fas fa-comment"></i> {{ post.commentsCount }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!userProfile.posts?.length" class="no-posts">
+    <p>No posts yet</p>
+  </div>
+</div>

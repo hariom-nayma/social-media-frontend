@@ -1,0 +1,14 @@
+<div class="settings-dialog-container">
+  <h2 mat-dialog-title>Settings</h2>
+  <mat-dialog-content class="settings-content">
+    <div class="settings-sidebar">
+      <button (click)="selectPage('account')" [class.active]="activePage === 'account'">Account</button>
+      <button (click)="selectPage('security')" [class.active]="activePage === 'security'">Security</button>
+    </div>
+    <div class="settings-main-content">
+      <app-account-settings *ngIf="activePage === 'account'"></app-account-settings>
+      <app-security-settings *ngIf="activePage === 'security'"></app-security-settings>
+    </div>
+  </mat-dialog-content>
+</div>
+

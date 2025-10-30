@@ -1,0 +1,99 @@
+<div class="register-container">
+  <div class="register-card" [class.loading]="loading">
+
+    <!-- Logo -->
+    <h1 class="logo">Social App</h1>
+
+    <!-- Step Progress Bar -->
+    <div class="step-progress">
+      <div class="step" [class.active]="step >= 1"><span>1</span></div>
+      <div class="connector" [class.active]="step>1"></div>
+      <div class="step" [class.active]="step >= 2"><span>2</span></div>
+      <div class="connector" [class.active]="step>2"></div>
+      <div class="step" [class.active]="step === 3"><span>3</span></div>
+    </div>
+
+    <!-- Step Illustration -->
+    <div class="illustration">
+      <img *ngIf="step===1" src="assets/illustrations/name.png" alt="Name Illustration">
+      <img *ngIf="step===2" src="assets/illustrations/email.jpg" alt="Email Illustration">
+      <img *ngIf="step===3" src="assets/illustrations/account.jpg" alt="Account Illustration">
+    </div>
+
+    <!-- Step Forms -->
+    <form *ngIf="!otpSent" [formGroup]="registerForm" (ngSubmit)="step===3 ? register() : nextStep()" novalidate class="form-step">
+
+      <!-- Step 1: Name -->
+      <div *ngIf="step===1" class="step-content">
+        <input placeholder="First Name" formControlName="firstName" [ngClass]="{'invalid': submitted && registerForm.get('firstName')?.invalid}">
+        <small *ngIf="submitted && registerForm.get('firstName')?.invalid">First name is required.</small>
+
+        <input placeholder="Last Name" formControlName="lastName" [ngClass]="{'invalid': submitted && registerForm.get('lastName')?.invalid}">
+        <small *ngIf="submitted && registerForm.get('lastName')?.invalid">Last name is required.</small>
+      </div>
+
+      <!-- Step 2: Email -->
+      <div *ngIf="step===2" class="step-content">
+        <input type="email" placeholder="Email" formControlName="email" [ngClass]="{'invalid': submitted && registerForm.get('email')?.invalid}">
+        <small *ngIf="submitted && registerForm.get('email')?.errors?.['required']">Email is required.</small>
+        <small *ngIf="submitted && registerForm.get('email')?.errors?.['email']">Enter a valid email.</small>
+      </div>
+
+      <!-- Step 3: Username & Password -->
+<div *ngIf="step===3" class="step-content">
+  <input placeholder="Username" formControlName="username" [ngClass]="{'invalid': submitted && registerForm.get('username')?.invalid}">
+  
+  <!-- Detailed validation messages -->
+  <small *ngIf="submitted">{{ getUsernameError() }}</small>
+
+  <div class="username-status" *ngIf="registerForm.controls.username.value && !registerForm.controls.username.errors?.['minlength']">
+    <ng-container *ngIf="registerForm.controls.username.pending">
+      <div class="loader"></div>
+      <span class="checking">Checking availability...</span>
+    </ng-container>
+    <ng-container *ngIf="registerForm.controls.username.valid && !registerForm.controls.username.errors?.['notAvailable']">
+      <span class="available">✅ Username available!</span>
+    </ng-container>
+    <ng-container *ngIf="registerForm.controls.username.errors?.['notAvailable']">
+      <span class="taken">❌ Username already taken</span>
+    </ng-container>
+  </div>
+
+  <input type="password" placeholder="Password" formControlName="password" [ngClass]="{'invalid': submitted && registerForm.get('password')?.invalid}">
+  <small *ngIf="submitted && registerForm.get('password')?.errors?.['required']">Password is required.</small>
+  <small *ngIf="submitted && registerForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters.</small>
+</div>
+
+
+      <!-- Navigation Buttons -->
+      <div class="step-buttons">
+        <button type="button" (click)="prevStep()" *ngIf="step>1">Back</button>
+        <button type="submit" [disabled]="isNextButtonDisabled" [class.loading]="loading" class="submit-btn">
+          <ng-container *ngIf="!loading; else loadingTemplate">
+            {{ step === 3 ? 'Sign Up' : 'Next' }}
+          </ng-container>
+
+          <ng-template #loadingTemplate>
+            <div class="spinner"></div>
+            <span class="loading-text">{{ step === 3 ? 'Creating account...' : 'Loading...' }}</span>
+          </ng-template>
+        </button>
+      </div>
+    </form>
+
+    <!-- OTP Form -->
+    <form *ngIf="otpSent" [formGroup]="otpForm" (ngSubmit)="verifyOtp()">
+      <p class="otp-text">An OTP has been sent to your email.</p>
+      <input type="text" placeholder="Enter OTP" formControlName="otp" />
+      <div class="step-buttons">
+      <button type="submit" [disabled]="loading">Verify OTP</button>
+      </div>
+    </form>
+
+    <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+    <div class="login-link">
+      Have an account? <a routerLink="/auth/login">Log in</a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,157 @@
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: auto;
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(10, 10, 10, 0.86);
+  z-index: 999;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-card {
+  width: 90%;
+  max-width: 600px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+  margin: auto;
+  max-height: calc(100vh - 40px);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1001;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-card-head {
+  background-color: #ffffff; /* Lighter header background */
+  border-bottom: 1px solid #eee;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-card-title {
+  color: #363636;
+  font-size: 1.6rem; /* Slightly larger title */
+  font-weight: 700; /* Bolder title */
+}
+
+.delete {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: #666;
+  transition: color 0.2s ease;
+}
+
+.delete:hover {
+  color: #333;
+}
+
+.modal-card-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+  background-color: #fdfdfd; /* Slightly off-white body background */
+}
+
+.textarea {
+  min-height: 150px;
+  resize: vertical;
+  border-radius: 8px; /* More rounded textarea */
+  border-color: #ddd;
+  padding: 12px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.textarea:focus {
+  border-color: #209cee;
+  box-shadow: 0 0 0 0.125em rgba(32, 158, 238, 0.25);
+}
+
+.file-cta {
+  background-color: #209cee; /* Primary blue for file upload */
+  color: #fff;
+  border-radius: 8px;
+  padding: 0.75em 1.2em;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.file-cta:hover {
+  background-color: #1a8edb;
+  box-shadow: 0 4px 8px rgba(32, 158, 238, 0.2);
+}
+
+.file-icon {
+  margin-right: 0.5em;
+}
+
+.modal-card-foot {
+  background-color: #ffffff; /* Lighter footer background */
+  border-top: 1px solid #eee;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.button.is-success {
+  background-color: #209cee;
+  border-color: transparent;
+  color: #fff;
+  font-weight: 600;
+  padding: 0.75em 1.5em;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.button.is-success:hover {
+  background-color: #1a8edb;
+  box-shadow: 0 4px 8px rgba(32, 158, 238, 0.2);
+}
+
+.button {
+  border-radius: 8px;
+  font-weight: 500;
+  padding: 0.75em 1.5em;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.button:hover {
+  background-color: #f0f0f0;
+  border-color: #ccc;
+}
+
+.help.is-danger {
+  color: #ff3860;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}

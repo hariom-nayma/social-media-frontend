@@ -1,0 +1,26 @@
+<div class="pending-requests-container">
+  <div class="pending-requests-header">
+    <div>Pending Follow Requests</div>
+  </div>
+
+  <div class="pending-request" *ngFor="let request of pendingRequests">
+    <div class="request-profile">
+      <img
+        [src]="request.follower.profileImageUrl || 'https://i.pravatar.cc/150?u=' + request.follower.username"
+        alt="Avatar"
+      />
+      <div class="request-profile-info">
+        <div class="request-username">{{ request.follower.username }}</div>
+        <div class="request-name">
+          {{ request.follower.firstName }} {{ request.follower.lastName }}
+        </div>
+      </div>
+    </div>
+    <div class="request-actions">
+      <button class="accept-btn" (click)="acceptRequest(request.id)">Accept</button>
+      <button class="decline-btn" (click)="declineRequest(request.id)">Decline</button>
+    </div>
+  </div>
+
+  <div *ngIf="pendingRequests.length === 0">No pending requests.</div>
+</div>

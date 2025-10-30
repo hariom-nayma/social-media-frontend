@@ -1,0 +1,50 @@
+.login-sessions-container {
+  padding: 20px;
+}
+
+.login-sessions-container h3 {
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.no-sessions {
+  text-align: center;
+  padding: 40px;
+  color: #8e8e8e;
+}
+
+.sessions-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.session-card {
+  width: 100%;
+}
+
+.session-card mat-card-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.session-card mat-card-subtitle {
+  font-size: 14px;
+  color: #8e8e8e;
+}
+
+.session-card mat-card-content p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.current-session-indicator {
+  font-weight: bold;
+  color: #1a73e8;
+}
+
+.terminate-all-button {
+  margin-top: 30px;
+  text-align: center;
+}

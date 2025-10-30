@@ -1,0 +1,105 @@
+.dialog-title {
+  text-align: center;
+  font-weight: 600;
+  font-size: 22px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.dialog-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px 10px;
+}
+
+/* Profile Picture Section */
+.profile-picture-container {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.profile-picture-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.profile-picture {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+}
+
+.profile-picture:hover {
+  transform: scale(1.05);
+}
+
+.edit-icon {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.upload-btn {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  border-radius: 8px;
+}
+
+/* Form Fields */
+.form-field {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+textarea {
+  resize: none;
+}
+
+/* Dialog Actions */
+.dialog-actions {
+  padding: 10px 20px;
+  border-top: 1px solid #eaeaea;
+  margin-top: 10px;
+}
+
+button[mat-flat-button],
+button[mat-stroked-button] {
+  border-radius: 8px;
+  font-weight: 500;
+  text-transform: none;
+  transition: all 0.3s ease;
+}
+
+button[mat-flat-button]:hover {
+  transform: translateY(-1px);
+}
+
+button[mat-stroked-button]:hover {
+  background-color: #f9f9f9;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .profile-picture {
+    width: 90px;
+    height: 90px;
+  }
+
+  .dialog-title {
+    font-size: 18px;
+  }
+
+  .upload-btn {
+    font-size: 13px;
+  }
+}

@@ -1,0 +1,19 @@
+<div class="post-card">
+  <div class="post-header">
+    <div class="post-avatar">
+      <img [src]="post.profileImage" alt="Avatar">
+    </div>
+    <div class="post-username">{{ post.username }}</div>
+  </div>
+  <img [src]="post.mediaUrl" alt="Post Image" class="post-image">
+  <div class="post-actions">
+    <button><i class="far fa-heart"></i></button>
+    <button><i class="far fa-comment"></i></button>
+    <button><i class="far fa-paper-plane"></i></button>
+  </div>
+  <div class="post-likes">{{ post.likeCount }} likes</div>
+  <div class="post-caption">
+    <strong>{{ post.username }}</strong> {{ post.content }}
+  </div>
+  <div class="post-comments">View all {{ post.commentsCount }} comments</div>
+</div>

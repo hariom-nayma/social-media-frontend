@@ -1,0 +1,76 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+
+<!-- Tabs -->
+<div class="tabs">
+  <button mat-button [class.active]="!isFollowing" (click)="toggleTab(false)">
+    Followers
+  </button>
+  <button mat-button [class.active]="isFollowing" (click)="toggleTab(true)">
+    Following
+  </button>
+</div>
+
+<!-- Search Bar -->
+<div class="search-container">
+  <mat-icon>search</mat-icon>
+  <input
+    type="text"
+    placeholder="Search users..."
+    [(ngModel)]="searchQuery"
+    (input)="filterUsers()"
+  />
+</div>
+
+<!-- User List -->
+<mat-dialog-content>
+  <div class="user-list">
+    <div class="user-item" *ngFor="let user of filteredUsers">
+      <div class="user-left">
+        <img
+          class="avatar"
+          [src]="user.profileImageUrl || 'https://i.pravatar.cc/150?u=' + user.id"
+          alt="Avatar"
+        />
+        <div class="user-info">
+          <div class="username">{{ user.username }}</div>
+          <div class="fullname">{{ user.firstName }} {{ user.lastName }}</div>
+        </div>
+      </div>
+
+      <div class="user-right" *ngIf="user.userId !== currentUserId">
+        <button
+          mat-stroked-button
+          class="follow-btn"
+          color="primary"
+          (click)="toggleFollow(user)"
+          *ngIf="!user.private"
+        >
+          {{ user.isFollowing ? 'Unfollow' : 'Follow' }}
+        </button>
+
+        <button
+          mat-stroked-button
+          class="request-btn"
+          color="accent"
+          (click)="toggleFollow(user)"
+          *ngIf="user.private && !user.isRequested"
+        >
+          Send Request
+        </button>
+
+        <button
+          mat-stroked-button
+          class="requested-btn"
+          disabled
+          *ngIf="user.private && user.isRequested"
+        >
+          Request Sent
+        </button>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onClose()">Close</button>
+</mat-dialog-actions>

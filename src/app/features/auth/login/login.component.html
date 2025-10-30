@@ -1,0 +1,88 @@
+<div class="login-container">
+  <div class="login-card">
+    <!-- <div class="illustration-section">
+      <img
+        src="assets/illustrations/login.png"
+        alt="Login Illustration"
+      />
+    </div> -->
+
+    <div class="form-section">
+      <h2>Welcome Back 👋</h2>
+      <p class="subtitle">Log in to continue your journey</p>
+
+      <form [formGroup]="loginForm" (ngSubmit)="submit()">
+        <div class="form-group">
+          <label>Email</label>
+          <input
+            type="email"
+            placeholder="Enter your email"
+            formControlName="email"
+            [class.invalid]="
+              loginForm.get('email')?.invalid && loginForm.get('email')?.touched
+            "
+          />
+          <div
+            class="error-text"
+            *ngIf="
+              loginForm.get('email')?.invalid && loginForm.get('email')?.touched
+            "
+          >
+            <span *ngIf="loginForm.get('email')?.errors?.['required']">
+              Email is required.
+            </span>
+            <span *ngIf="loginForm.get('email')?.errors?.['email']">
+              Please enter a valid email.
+            </span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <input
+            type="password"
+            placeholder="Enter your password"
+            formControlName="password"
+            [class.invalid]="
+              loginForm.get('password')?.invalid &&
+              loginForm.get('password')?.touched
+            "
+          />
+          <div
+            class="error-text"
+            *ngIf="
+              loginForm.get('password')?.invalid &&
+              loginForm.get('password')?.touched
+            "
+          >
+            Password is required.
+          </div>
+        </div>
+
+        <button type="submit" [disabled]="loading || loginForm.invalid">
+          <ng-container *ngIf="!loading; else loader">
+            Log In
+          </ng-container>
+          <ng-template #loader>
+            <div class="loader"></div>
+            <span class="loading-text">Logging in...</span>
+          </ng-template>
+        </button>
+
+        <div class="error-message" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+      </form>
+
+      <div class="links">
+        <a routerLink="/auth/forgot-password" class="forgot-link">
+          Forgot password?
+        </a>
+        <div class="signup-link">
+          Don’t have an account?
+          <a routerLink="/auth/register">Sign up</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,20 @@
+<div class="notification-container">
+  <div class="notification-header">
+    <h2>Notifications</h2>
+  </div>
+  <div class="notification-list">
+    <div *ngIf="(notifications$ | async)?.length === 0" class="no-notifications">
+      <p>No notifications yet.</p>
+    </div>
+    <div *ngFor="let notification of (notifications$ | async)" class="notification-item" [class.unread]="!notification.read" (click)="markAsRead(notification)">
+      <div class="notification-icon">
+        <i [class]="getNotificationIcon(notification.type)"></i>
+      </div>
+      <div class="notification-content">
+        <p class="notification-message">{{ notification.message }}</p>
+        <span class="notification-time">{{ notification.createdAt | date:'short' }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
