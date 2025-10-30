@@ -185,11 +185,12 @@
 }
 
 /* ----------- RESPONSIVE ----------- */
-@media (max-width: 1000px) {
+@media (max-width: 768px) {
   .main-container {
     grid-template-columns: 1fr;
-    max-width: 614px;
-    padding-top: 70px;
+    max-width: 100%;
+    padding-top: 10px; /* Adjusted for mobile view */
+    padding-bottom: 60px; /* Height of the bottom navbar */
   }
 
   .sidebar-container {

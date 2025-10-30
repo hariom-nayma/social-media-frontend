@@ -17,6 +17,24 @@ body {
   }
 }
 
+:root {
+  --primary-color: #0095f6;
+  --primary-hover: #007acc;
+  --bg-color: #fafafa;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --border-color: rgba(255, 255, 255, 0.3);
+  --text-primary: #262626;
+  --text-secondary: #8e8e8e;
+  --shadow: 0 4px 20px rgba(0,0,0,0.08);
+  --blur: 12px;
+}
+
+body {
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+}
+
 /* .my-story-dialog-panel.mat-mdc-dialog-container {
   background: transparent;
   box-shadow: none;

@@ -1,14 +1,19 @@
 <div class="main-container">
   <div class="feed-container">
     <app-story-bar></app-story-bar>
+
     <div class="feed">
-      <div *ngFor="let post of posts" (click)="openPostDetailsDialog(post.id)">
+      <div *ngFor="let post of posts" class="feed-card" (click)="openPostDetailsDialog(post.id)">
         <app-post-card [post]="post"></app-post-card>
       </div>
     </div>
   </div>
 
-  <app-post-details-dialog *ngIf="showPostDetailsDialog" [postId]="selectedPostId!" (close)="closePostDetailsDialog()"></app-post-details-dialog>
+  <app-post-details-dialog 
+    *ngIf="showPostDetailsDialog"
+    [postId]="selectedPostId!"
+    (close)="closePostDetailsDialog()">
+  </app-post-details-dialog>
 
   <div class="sidebar-container">
     <div class="sidebar glassy">
@@ -16,11 +21,11 @@
         <div class="sidebar-profile">
           <img [src]="currentUser?.profileImageUrl" alt="Avatar">
           <div class="sidebar-profile-info">
-              <div class="sidebar-username">{{currentUser?.username}}</div>
-            <div class="sidebar-name">{{currentUser?.firstName}} {{currentUser?.lastName}}</div>
+            <div class="sidebar-username">{{ currentUser?.username }}</div>
+            <div class="sidebar-name">{{ currentUser?.firstName }} {{ currentUser?.lastName }}</div>
           </div>
         </div>
-        <button class="switch-btn" >Switch</button>
+        <button class="switch-btn">Switch</button>
       </div>
 
       <div class="sidebar-suggestions">
@@ -29,23 +34,33 @@
           <a href="#">See All</a>
         </div>
 
-        <div class="suggestion" *ngFor="let suggestion of suggestions">
+        <div class="suggestion-card" *ngFor="let suggestion of suggestions">
           <div class="suggestion-profile" (click)="goToProfile(suggestion.username)">
             <img [src]="suggestion.profileUrl || 'https://i.pravatar.cc/150?u=' + suggestion.username" alt="Avatar">
-            <div class="suggestion-profile-info">
-              <div class="suggestion-username">{{suggestion.username}}</div>
-              <div class="suggestion-name">{{suggestion.firstName}} {{suggestion.lastName}}</div>
+            <div class="suggestion-info">
+              <div class="suggestion-username">{{ suggestion.username }}</div>
+              <div class="suggestion-name">{{ suggestion.firstName }} {{ suggestion.lastName }}</div>
               <div class="mutual-count" *ngIf="suggestion.mutualCount > 0">
-                {{suggestion.mutualCount}} mutual followers
+                {{ suggestion.mutualCount }} mutual followers
               </div>
             </div>
           </div>
-          <button class="follow-btn" (click)="toggleFollow(suggestion)" *ngIf="!suggestion.private">{{ suggestion.isFollowing ? 'Unfollow' : (suggestion.followMe ? 'Follow Back' : 'Follow') }}</button>
-          <button class="follow-btn" (click)="toggleFollow(suggestion)" *ngIf="suggestion.private && !suggestion.isRequested">Send Request</button>
-          <button class="follow-btn" (click)="toggleFollow(suggestion)" *ngIf="suggestion.private && suggestion.isRequested">Request Sent</button>
+
+          <button class="follow-btn" 
+            (click)="toggleFollow(suggestion)">
+            {{
+              suggestion.private
+                ? (suggestion.isRequested ? 'Requested' : 'Request')
+                : (suggestion.isFollowing ? 'Unfollow' : 'Follow')
+            }}
+          </button>
         </div>
       </div>
-      <app-pending-requests [pendingRequests]="pendingRequests" *ngIf="currentUser?.private && pendingRequests.length > 0"></app-pending-requests>
+
+      <app-pending-requests
+        [pendingRequests]="pendingRequests"
+        *ngIf="currentUser?.private && pendingRequests.length > 0">
+      </app-pending-requests>
     </div>
   </div>
 </div>

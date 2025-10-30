@@ -6,3 +6,18 @@
   flex-grow: 1;
   padding: 20px;
 }
+
+@media (max-width: 768px) {
+  .main-layout {
+    flex-direction: column;
+  }
+
+  app-sidebar {
+    display: none;
+  }
+
+  .content {
+    padding: 10px;
+    margin-bottom: 60px; /* Height of the bottom navbar */
+  }
+}
