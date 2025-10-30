@@ -1,10 +1,10 @@
 <div class="story-bar-container">
   <div class="story-bar">
     <!-- Current User's Story -->
-    <div class="story add-story" (click)="openCreateStoryDialog()">
+    <div class="story add-story" (click)="handleMyStoryClick()">
       <div class="story-avatar">
         <img [src]="currentUser?.profileImageUrl || 'https://i.pravatar.cc/150?u=' + currentUser?.username" alt="Avatar">
-        <div class="add-icon">+</div>
+        <div class="add-icon" (click)="openCreateStoryDialog($event)">+</div>
       </div>
       <div class="story-username">Your Story</div>
     </div>

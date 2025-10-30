@@ -1,0 +1,77 @@
+.story-dialog-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: 500px;
+  margin: auto;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.story-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+.user-info .profile-pic {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.story-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  background-color: #000;
+}
+
+.story-content img,
+.story-content video {
+  max-width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+}
+
+.story-content p {
+  color: #fff;
+  margin-top: 15px;
+  text-align: center;
+}
+
+.story-actions {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  border-top: 1px solid #eee;
+}
+
+.story-metrics {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  border-top: 1px solid #eee;
+}
+
+.metric {
+  display: flex;
+  align-items: center;
+  color: #555;
+}
+
+.metric mat-icon {
+  margin-right: 5px;
+}

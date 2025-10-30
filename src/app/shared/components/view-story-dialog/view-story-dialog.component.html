@@ -1,0 +1,34 @@
+<div class="story-dialog-container">
+  <div class="story-header">
+    <div class="user-info">
+      <img [src]="story.profileImageUrl || 'https://i.pravatar.cc/150?u=' + story.username" alt="Profile Picture" class="profile-pic">
+      <span>{{ story.username }}</span>
+    </div>
+    <button mat-icon-button (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="story-content">
+    <img *ngIf="story.contentUrl && (story.contentUrl.toLowerCase().endsWith('.jpeg') || story.contentUrl.toLowerCase().endsWith('.jpg') || story.contentUrl.toLowerCase().endsWith('.gif') || story.contentUrl.toLowerCase().endsWith('.png'))" [src]="story.contentUrl" alt="Story Image">
+    <video *ngIf="story.contentUrl && (story.contentUrl.toLowerCase().endsWith('.mp4') || story.contentUrl.toLowerCase().endsWith('.webm') || story.contentUrl.toLowerCase().endsWith('.ogg'))" [src]="story.contentUrl" controls></video>
+    <p *ngIf="story.caption">{{ story.caption }}</p>
+  </div>
+
+  <div class="story-actions" *ngIf="!isMyStory">
+    <button mat-icon-button (click)="likeStory()">
+      <mat-icon>{{ story.likedByme ? 'favorite' : 'favorite_border' }}</mat-icon>
+    </button>
+  </div>
+
+  <div class="story-metrics" *ngIf="isMyStory">
+    <div class="metric">
+      <mat-icon>favorite</mat-icon>
+      <span>{{ likes.length }} Likes</span>
+    </div>
+    <div class="metric">
+      <mat-icon>visibility</mat-icon>
+      <span>{{ views.length }} Views</span>
+    </div>
+  </div>
+</div>

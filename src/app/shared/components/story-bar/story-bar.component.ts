@@ -7,6 +7,7 @@ import { UserDTO } from '../../../core/models/user.model';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateStoryModalComponent } from '../create-story-modal/create-story-modal.component';
 import { UserService } from '../../../core/services/user.service';
+import { ViewStoryDialogComponent } from '../view-story-dialog/view-story-dialog.component';
 
 @Component({
   selector: 'app-story-bar',
@@ -23,12 +24,15 @@ export class StoryBarComponent implements OnInit {
 
   currentUser: UserDTO | null = null;
   stories: StoryDTO[] = [];
+  myStories: StoryDTO[] = [];
+  hasMyStories: boolean = false;
 
   ngOnInit(): void {
     this.userService.myMiniProfile().subscribe({
       next: (response) => {
         if (response.data) {
           this.currentUser = response.data;
+          this.fetchMyStories();
         }
       },
       error: (error) => {
@@ -36,6 +40,22 @@ export class StoryBarComponent implements OnInit {
       }
     });
     this.fetchStories();
+  }
+
+  fetchMyStories(): void {
+    // if (this.currentUser?.userId) {
+      this.storyService.getMyStories().subscribe({
+        next: (response) => {
+          if (response.data) {
+            this.myStories = response.data;
+            this.hasMyStories = this.myStories.length > 0;
+          }
+        },
+        error: (error) => {
+          console.error('Error fetching my stories:', error);
+        }
+      });
+    // }
   }
 
   fetchStories(): void {
@@ -51,7 +71,10 @@ export class StoryBarComponent implements OnInit {
     });
   }
 
-  openCreateStoryDialog(): void {
+  openCreateStoryDialog(event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
     const dialogRef = this.dialog.open(CreateStoryModalComponent, {
       width: '500px'
     });
@@ -59,11 +82,27 @@ export class StoryBarComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.fetchStories();
+        this.fetchMyStories(); // Re-fetch my stories after creating a new one
       }
     });
   }
 
+  handleMyStoryClick(): void {
+    if (this.hasMyStories) {
+      // Open my first story in the dialog
+      this.viewStory(this.myStories[0]);
+    } else {
+      // Open create story dialog
+      this.openCreateStoryDialog();
+    }
+  }
+
   viewStory(story: StoryDTO): void {
-    console.log('Viewing story:', story);
+    this.dialog.open(ViewStoryDialogComponent, {
+      data: { story: story },
+      width: '600px',
+      height: '90vh',
+      maxWidth: '90vw'
+    });
   }
 }
