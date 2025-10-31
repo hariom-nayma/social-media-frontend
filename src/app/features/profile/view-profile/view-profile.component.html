@@ -68,9 +68,34 @@
     </div>
   </div>
 
+  <!-- Tabs for Posts and Saved Posts -->
+  <div class="profile-tabs" *ngIf="isOwnProfile">
+    <button
+      class="tab-button"
+      [class.active]="activeTab === 'posts'"
+      (click)="selectTab('posts')"
+    >
+      Posts
+    </button>
+    <button
+      class="tab-button"
+      [class.active]="activeTab === 'saved'"
+      (click)="selectTab('saved')"
+    >
+      Saved
+    </button>
+  </div>
+
   <!-- Profile Posts Grid -->
-  <div class="profile-posts-grid" *ngIf="userProfile.posts?.length">
-    <div class="post-thumbnail" *ngFor="let post of userProfile.posts" (click)="openPostDetailsDialog(post.id)">
+  <div
+    class="profile-posts-grid"
+    *ngIf="activeTab === 'posts' && userProfile.posts?.length"
+  >
+    <div
+      class="post-thumbnail"
+      *ngFor="let post of userProfile.posts"
+      (click)="openPostDetailsDialog(post.id)"
+    >
       <div class="post-img-wrapper">
         <img
           [src]="post.mediaUrl || 'https://via.placeholder.com/300'"
@@ -83,13 +108,51 @@
           <i class="fas fa-heart"></i> {{ post.likeCount }}
         </div>
         <div class="post-overlay-item">
-          <i class="fas fa-comment"></i> {{ post.commentsCount }}
+          <i class="fas fa-comment"></i> {{ post.commentCount }}
         </div>
       </div>
     </div>
   </div>
 
-  <div *ngIf="!userProfile.posts?.length" class="no-posts">
+  <div
+    *ngIf="activeTab === 'posts' && !userProfile.posts?.length"
+    class="no-posts"
+  >
     <p>No posts yet</p>
+  </div>
+
+  <!-- Saved Posts Grid -->
+  <div
+    class="profile-posts-grid"
+    *ngIf="activeTab === 'saved' && savedPosts.length"
+  >
+    <div
+      class="post-thumbnail"
+      *ngFor="let post of savedPosts"
+      (click)="openPostDetailsDialog(post.id)"
+    >
+      <div class="post-img-wrapper">
+        <img
+          [src]="post.mediaUrl || 'https://via.placeholder.com/300'"
+          alt="Post Image"
+          class="post-img"
+        />
+      </div>
+      <div class="post-overlay">
+        <div class="post-overlay-item">
+          <i class="fas fa-heart"></i> {{ post.likeCount }}
+        </div>
+        <div class="post-overlay-item">
+          <i class="fas fa-comment"></i> {{ post.commentCount }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    *ngIf="activeTab === 'saved' && !savedPosts.length"
+    class="no-posts"
+  >
+    <p>No saved posts yet</p>
   </div>
 </div>

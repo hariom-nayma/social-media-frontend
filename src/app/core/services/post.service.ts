@@ -39,4 +39,12 @@ export class PostService {
   toggleCommentLike(commentId: string): Observable<ApiResponse<string>> {
     return this.http.post<ApiResponse<string>>(`${this.base}/comment/${commentId}/like`, {});
   }
+
+  toggleSavePost(postId: string): Observable<ApiResponse<string>> {
+    return this.http.post<ApiResponse<string>>(`${this.base}/${postId}/save`, {});
+  }
+
+  getSavedPosts(page: number, size: number): Observable<ApiResponse<FeedPostResponseDTO[]>> {
+    return this.http.get<ApiResponse<FeedPostResponseDTO[]>>(`${this.base}/saved`, { params: { page: page.toString(), size: size.toString() } });
+  }
 }

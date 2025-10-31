@@ -1,38 +1,28 @@
 import { CommentDTO } from './comment.model';
 
 export interface PostDTO {
+  likedByCurrentUser: boolean;
   id: string;
-  content: string;
-  mediaUrl?: string;
-  userId: string;
   username: string;
-  firstName?: string;
-  lastName?: string;
+  profileImage: string;
+  mediaUrl: string;
+  content: string;
   likeCount: number;
-  commentsCount: number;
-  public: boolean;
-  likedByCurrentUser?: boolean;
-  createdAt?: string;
-  updatedAt?: string;
-  profileImage?: string;
-  
-  // comments?: CommentDTO[];
+  commentCount: number;
+  savedByMe: boolean;
+  createdAt: Date;
 }
 
 export interface FeedPostResponseDTO {
   id: string;
-  content: string;
-  mediaUrl: string;
-  profileImage: string;
-  createdAt: string;
-  isPublic: boolean;
-  userId: string;
   username: string;
-  firstName: string;
-  lastName: string;
+  profileImage: string;
+  mediaUrl: string;
+  content: string;
   likeCount: number;
-  commentsCount: number;
-  likedByCurrentUser: boolean;
+  commentCount: number;
+  savedByMe: boolean;
+  createdAt: Date;
 }
 
 export interface CreatePostRequest {

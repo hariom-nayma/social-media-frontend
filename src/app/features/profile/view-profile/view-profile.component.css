@@ -113,6 +113,44 @@
   max-width: 450px;
 }
 
+/* Profile Tabs */
+.profile-tabs {
+  display: flex;
+  justify-content: center;
+  border-bottom: 1px solid #e0e0e0;
+  margin-top: 30px;
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  padding: 15px 25px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #8e8e8e;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.tab-button:hover {
+  color: #262626;
+}
+
+.tab-button.active {
+  color: #262626;
+}
+
+.tab-button.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #262626;
+}
+
 /* Posts Grid */
 .profile-posts-grid {
   display: grid;

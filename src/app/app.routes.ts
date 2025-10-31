@@ -13,7 +13,7 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/feed/home/home.component').then(m => m.HomeComponent)
             },
             {
-                path: 'profile/:id',
+                path: 'profile/:username',
                 loadComponent: () => import('./features/profile/view-profile/view-profile.component').then(m => m.ViewProfileComponent)
             },
             {

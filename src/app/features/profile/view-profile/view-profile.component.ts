@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { UserService } from '../../../core/services/user.service';
 import { UserDTO } from '../../../core/models/user.model';
 import { CommonModule } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
@@ -8,6 +7,9 @@ import { UpdateProfileComponent } from '../update-profile/update-profile.compone
 import { AuthService } from '../../../core/services/auth.service';
 import { FollowersDialogComponent } from '../../../shared/components/followers-dialog/followers-dialog.component';
 import { PostDetailsDialogComponent } from '../../../shared/components/post-details-dialog/post-details-dialog.component';
+import { PostService } from '../../../core/services/post.service';
+import { FeedPostResponseDTO } from '../../../core/models/post.model';
+import { UserService } from '../../../core/services/user.service';
 
 @Component({
   selector: 'app-view-profile',
@@ -21,12 +23,15 @@ export class ViewProfileComponent implements OnInit {
   userProfile: (UserDTO & { isFollowing: boolean; isRequested: boolean }) | undefined;
   username: string | null = null;
   isOwnProfile: boolean = false;
+  savedPosts: FeedPostResponseDTO[] = [];
+  activeTab: 'posts' | 'saved' = 'posts';
 
   constructor(
     private route: ActivatedRoute,
     private userService: UserService,
     private dialog: MatDialog,
-    private authService: AuthService
+    private authService: AuthService,
+    private postService: PostService
   ) {}
 
   ngOnInit(): void {
@@ -42,6 +47,9 @@ export class ViewProfileComponent implements OnInit {
         this.userService.getMyProfile().subscribe(response => {
           this.userProfile = { ...response.data!, isFollowing: response.data?.following || false, isRequested: response.data?.requested || false };
           this.isOwnProfile = true;
+          if (this.isOwnProfile) {
+            this.loadSavedPosts();
+          }
         });
       }
     });
@@ -51,8 +59,26 @@ export class ViewProfileComponent implements OnInit {
     this.userService.getMyProfile().subscribe(response => {
       if (response.data?.username === this.username) {
         this.isOwnProfile = true;
+        if (this.isOwnProfile) {
+          this.loadSavedPosts();
+        }
       }
     });
+  }
+
+  loadSavedPosts(): void {
+    this.postService.getSavedPosts(0, 10).subscribe(response => {
+      if (response.data) {
+        this.savedPosts = response.data;
+      }
+    });
+  }
+
+  selectTab(tab: 'posts' | 'saved'): void {
+    this.activeTab = tab;
+    if (tab === 'saved' && this.savedPosts.length === 0) {
+      this.loadSavedPosts();
+    }
   }
 
   openUpdateProfileDialog(): void {
