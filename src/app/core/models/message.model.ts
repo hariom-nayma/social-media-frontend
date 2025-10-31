@@ -10,6 +10,7 @@ export interface MessageDTO {
   seen: boolean;
   delivered: boolean;
   createdAt: string;
+  isUnsent: boolean;
 }
 
 export interface CreateMessageRequest {

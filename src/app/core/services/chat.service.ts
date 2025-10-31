@@ -115,13 +115,8 @@ export class ChatService {
 
   // API call to send message reaction
   sendMessageReaction(messageId: string, reaction: string): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/messages/${messageId}/react`, { reaction });
+    return this.http.post(`${environment.apiUrl}/messages/${messageId}/reactions`, { reaction });
   }
-
-  // // API call to send message reaction
-  // sendMessageReaction(messageId: string, reaction: string): Observable<any> {
-  //   return this.http.post(`${environment.apiUrl}/api/messages/${messageId}/react`, { reaction });
-  // }
 
   // API call to unsend message (delete for all)
   unsendMessage(messageId: string): Observable<any> {

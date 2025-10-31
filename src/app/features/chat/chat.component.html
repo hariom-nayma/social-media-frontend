@@ -1,72 +1,105 @@
-<div class="chat-wrapper">
-  <!-- Header -->
+<div class="chat-wrapper" [class.dark-mode]="isDarkMode">
+  <!-- HEADER -->
   <div class="chat-header">
-    <div *ngIf="recipientUser" class="recipient-info">
+    <div class="recipient-info" *ngIf="recipientUser">
       <img
         [src]="recipientUser.profileImageUrl || 'https://i.pravatar.cc/150?u=' + recipientUser.username"
-        alt=""
+        alt="Avatar"
         class="avatar"
       />
       <div class="details">
-        <span class="username">{{ recipientUser.username }}</span>
-        <span *ngIf="isRecipientTyping" class="status typing">Typing...</span>
-        <span *ngIf="!isRecipientTyping && isRecipientOnline" class="status online">Online</span>
-        <span *ngIf="!isRecipientTyping && !isRecipientOnline" class="status offline">Offline</span>
+        <div class="username">{{ recipientUser.username }}</div>
+        <div class="status">
+          <span *ngIf="isRecipientTyping" class="typing">Typing...</span>
+          <ng-container *ngIf="!isRecipientTyping">
+            <span *ngIf="isRecipientOnline" class="online">● Online</span>
+            <span *ngIf="!isRecipientOnline" class="offline">● Offline</span>
+          </ng-container>
+        </div>
       </div>
     </div>
+
+    <button class="theme-toggle" (click)="toggleTheme()">
+      {{ isDarkMode ? '🌙' : '☀️' }}
+    </button>
   </div>
 
-  <!-- Messages -->
-  <div class="chat-messages" #messagesContainer (scroll)="onScroll($event)">
+  <!-- MESSAGES -->
+  <div class="messages" #messagesContainer (scroll)="onScroll($event)">
     <div
       *ngFor="let msg of messages"
-      class="message-item"
-      [ngClass]="{ sent: msg.senderId === currentUser?.id, received: msg.senderId !== currentUser?.id }"
+      class="message-row"
+      [ngClass]="{'sent': msg.senderId === currentUser?.id, 'received': msg.senderId !== currentUser?.id}"
     >
       <img
         *ngIf="msg.senderId !== currentUser?.id"
         [src]="msg.senderProfileImageUrl || 'https://i.pravatar.cc/150?u=' + msg.senderUsername"
-        alt=""
         class="message-avatar"
-        [routerLink]="['/profile', msg.senderUsername]"
+        alt="User"
       />
 
-      <div class="message-content">
-        <div class="message-bubble">
-          <p>{{ msg.content }}</p>
+      <div class="message-bubble">
+        <div class="sender-name" *ngIf="msg.senderId !== currentUser?.id">
+          {{ msg.senderFirstName }} {{ msg.senderLastName }}
         </div>
-        <div class="message-meta">
-          <span class="timestamp">{{ msg.sentAt | date: 'shortTime' }}</span>
+
+        <div class="content">{{ msg.content }}</div>
+
+        <!-- Reactions -->
+        <div class="reactions" *ngIf="msg.reactions?.length">
+          <span *ngFor="let r of msg.reactions">{{ r.reaction }}</span>
+        </div>
+
+        <div class="meta">
+          <span class="time">{{ msg.sentAt | date: 'shortTime' }}</span>
+          <span *ngIf="msg.senderId === currentUser?.id">
+            <i *ngIf="!msg.delivered" class="fa fa-check"></i>
+            <i *ngIf="msg.delivered && !msg.seen" class="fa fa-check-double"></i>
+            <i *ngIf="msg.seen" class="fa fa-check-double seen"></i>
+          </span>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="actions">
+          <button (click)="toggleEmojiPicker(msg)">😊</button>
+          <button *ngIf="msg.senderId === currentUser?.id" (click)="unsendMessage(msg.id)">⏪</button>
+          <button *ngIf="msg.senderId === currentUser?.id" (click)="deleteMessageForMe(msg.id)">🗑️</button>
+        </div>
+
+        <!-- Emoji Picker -->
+        <div *ngIf="msg.showEmojiPicker" class="emoji-picker">
           <span
-            *ngIf="msg.senderId === currentUser?.id && msg.seen"
-            class="status-icon seen"
-            >✓✓</span
+            *ngFor="let emoji of availableEmojis"
+            (click)="reactToMessage(msg.id, emoji)"
+            >{{ emoji }}</span
           >
         </div>
       </div>
 
       <img
         *ngIf="msg.senderId === currentUser?.id"
-        [src]="currentUser?.profileImageUrl || 'https://i.pravatar.cc/150?u=' + currentUser?.username"
-        alt=""
+        [src]="msg.senderProfileImageUrl || 'https://i.pravatar.cc/150?u=' + msg.senderUsername"
         class="message-avatar"
+        alt="Me"
       />
+    </div>
+
+    <!-- Typing Dots -->
+    <div *ngIf="isRecipientTyping" class="typing-dots">
+      <span></span><span></span><span></span>
     </div>
   </div>
 
-  <!-- Input -->
-  <div class="chat-input-area">
+  <!-- INPUT -->
+  <div class="chat-input">
     <input
       type="text"
       [(ngModel)]="newMessageContent"
-      (keyup.enter)="sendMessage()"
+      placeholder="Message..."
       (focus)="onTyping()"
       (blur)="onBlur()"
-      placeholder="Message..."
-      class="message-input"
+      (keyup.enter)="sendMessage()"
     />
-    <button title="send" class="send-btn" (click)="sendMessage()">
-      <i class="fa fa-paper-plane"></i>
-    </button>
+    <button (click)="sendMessage()">➤</button>
   </div>
 </div>

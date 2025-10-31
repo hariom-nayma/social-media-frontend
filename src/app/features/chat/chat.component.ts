@@ -22,6 +22,11 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   private chatService = inject(ChatService);
   private userService = inject(UserService);
   private route = inject(ActivatedRoute);
+isDarkMode = false;
+
+toggleTheme(): void {
+  this.isDarkMode = !this.isDarkMode;
+}
 
   messages: Message[] = [];
   newMessageContent: string = '';
@@ -30,7 +35,11 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   conversationId: string | null = null;
   isRecipientTyping: boolean = false;
   isRecipientOnline: boolean = false;
-  availableEmojis: string[] = ['👍', '❤️', '😂', '😢', '😡'];
+  availableEmojis: string[] = ['👍', '❤️', '😂', '😢', '😡', '🔥', '👏', '🎉'];
+
+  // UI state
+  isDark = false;
+  showInputEmojiPicker = false;
 
   currentPage: number = 0;
   pageSize: number = 20;
@@ -41,6 +50,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   private subscriptions: Subscription = new Subscription();
 
   ngOnInit(): void {
+    // read theme
+    const stored = localStorage.getItem('chatTheme');
+    this.isDark = stored === 'dark';
+
     this.subscriptions.add(combineLatest([
       this.userService.getMyProfile().pipe(filter(response => response.data !== null)),
       this.route.paramMap.pipe(filter(params => params.has('conversationId') || params.has('username')))
@@ -48,20 +61,19 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       switchMap(([currentUserResponse, params]) => {
         this.currentUser = currentUserResponse.data!;
         this.conversationId = params.get('conversationId');
-        const recipientUsername = params.get('username'); // For direct chat initiation
+        const recipientUsername = params.get('username');
+
+        // connect websocket once we have current user
+        this.chatService.connect(this.currentUser.id);
+        this.subscribeToChatEvents();
 
         if (this.conversationId) {
-          this.chatService.connect(this.currentUser.id);
-          this.subscribeToChatEvents();
           this.loadMessages(0, this.pageSize);
           return this.userService.getUserProfileByConversationId(this.conversationId);
         } else if (recipientUsername) {
-          // If no conversationId but username is present, it's a new chat
-          this.chatService.connect(this.currentUser.id);
-          this.subscribeToChatEvents();
           return this.userService.getUserProfileByUsername(recipientUsername);
         }
-        return []; // No conversationId and no recipientUsername
+        return []; // nothing
       })
     ).subscribe(response => {
       if (response && response.data) {
@@ -82,18 +94,18 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.chatService.disconnect();
   }
 
+  // toggleTheme(): void {
+  //   this.isDark = !this.isDark;
+  //   localStorage.setItem('chatTheme', this.isDark ? 'dark' : 'light');
+  // }
+
   private subscribeToChatEvents(): void {
     this.subscriptions.add(this.chatService.messages$.subscribe(msg => {
-      console.log('WebSocket received message:', msg);
-      console.log('Message sender ID:', msg.senderId, 'Current user ID:', this.currentUser?.id);
-      // If this is the first message and it has a conversationId, store it
-      if (!this.conversationId && msg.conversationId) {
-        this.conversationId = msg.conversationId;
-        this.loadMessages(0, this.pageSize); // Load previous messages once conversationId is established
-      }
+      // normalize showEmojiPicker/reactions if absent
+      (msg as any).showEmojiPicker = false;
+      (msg as any).reactions = msg.reactions ?? [];
       this.messages.push(msg);
-      this.shouldScrollToBottom = true; // Scroll to bottom on new message
-      // Mark message as seen if it's for the current user and visible
+      this.shouldScrollToBottom = true;
       if (msg.senderId !== this.currentUser!.id && !msg.seen) {
         this.chatService.markMessageAsSeen(msg.id);
       }
@@ -125,17 +137,20 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.isLoadingMessages = true;
       this.chatService.getMessages(this.conversationId, page, size).pipe(
         tap(response => {
-          console.log('HTTP loaded messages (response.content):', response.content);
-          response.content.forEach((msg: any) => {
-            console.log('Loaded message sender ID:', msg.senderId, 'Current user ID:', this.currentUser?.id);
-          });
+          const normalized = response.content.map((m: any) => ({ ...m, showEmojiPicker: false, reactions: m.reactions ?? [] })).reverse();
           if (page === 0) {
-            this.messages = response.content; // Initial load or refresh
+            this.messages = normalized;
             this.shouldScrollToBottom = true;
           } else {
-            this.messages = [...response.content, ...this.messages]; // Prepend older messages
+            const oldScrollHeight = this.messagesContainer.nativeElement.scrollHeight;
+            this.messages = [...normalized, ...this.messages];
+            // We need to wait for the view to update before we can adjust the scroll position
+            setTimeout(() => {
+              const newScrollHeight = this.messagesContainer.nativeElement.scrollHeight;
+              this.messagesContainer.nativeElement.scrollTop = newScrollHeight - oldScrollHeight;
+            }, 0);
           }
-          this.hasMoreMessages = !response.last; // Assuming 'last' property from Spring Page
+          this.hasMoreMessages = !response.last;
           this.currentPage = page;
           this.isLoadingMessages = false;
         })
@@ -144,26 +159,19 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   sendMessage(): void {
-    console.log('Attempting to send message...');
     if (this.newMessageContent.trim() && this.currentUser && this.recipientUser) {
       const chatMessage: ChatMessageDto = {
-        conversationId: this.conversationId || '', // Send empty string if new conversation
+        conversationId: this.conversationId || '',
         senderId: this.currentUser.id,
         recipientId: this.recipientUser.id,
-        content: this.newMessageContent,
+        content: this.newMessageContent.trim(),
         timestamp: new Date()
       };
       this.chatService.sendMessage(chatMessage);
       this.newMessageContent = '';
+      this.showInputEmojiPicker = false;
       this.sendTypingStatus(false);
-      console.log('Message sent (frontend):', chatMessage);
-    } else {
-      console.warn('Message not sent. Missing content, currentUser, or recipientUser.', {
-        content: this.newMessageContent,
-        currentUser: this.currentUser,
-        recipientUser: this.recipientUser,
-        conversationId: this.conversationId
-      });
+      this.shouldScrollToBottom = true;
     }
   }
 
@@ -175,7 +183,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         typing: typing
       };
       this.chatService.sendTypingStatus(typingDto);
-      console.log('Sending typing status:', typingDto);
     }
   }
 
@@ -188,21 +195,30 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   toggleEmojiPicker(message: Message): void {
+    // toggle for a particular message; ensure we close input picker
+    this.showInputEmojiPicker = false;
     message.showEmojiPicker = !message.showEmojiPicker;
   }
 
+  toggleInputEmojiPicker(): void {
+    this.showInputEmojiPicker = !this.showInputEmojiPicker;
+    // close all message pickers
+    this.messages.forEach(m => (m as any).showEmojiPicker = false);
+  }
+
   reactToMessage(messageId: string, emoji: string): void {
+    // use your existing API hook
     this.chatService.sendMessageReaction(messageId, emoji).subscribe(() => {
-      // Update UI or fetch messages again
-      const message = this.messages.find(msg => msg.id === messageId);
+      const message = this.messages.find(m => m.id === messageId);
       if (message) {
-        if (!message.reactions) {
-          message.reactions = [];
-        }
-        message.reactions.push({ messageId, reaction: emoji, id: '', userId: this.currentUser!.id }); // Mock ID and userId
-        message.showEmojiPicker = false;
+        (message.reactions ||= []).push({ messageId, reaction: emoji, id: '', userId: this.currentUser!.id });
+        (message as any).showEmojiPicker = false;
       }
     });
+  }
+
+  addEmojiToInput(emoji: string): void {
+    this.newMessageContent = (this.newMessageContent || '') + emoji;
   }
 
   unsendMessage(messageId: string): void {
@@ -218,7 +234,6 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   onScroll(event: Event): void {
     const element = event.target as HTMLElement;
-    // Detect if scrolled to the top
     if (element.scrollTop === 0 && this.hasMoreMessages && !this.isLoadingMessages) {
       this.currentPage++;
       this.loadMessages(this.currentPage, this.pageSize);
