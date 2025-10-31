@@ -9,7 +9,61 @@
 
 @media (max-width: 768px) {
   .main-layout {
+    flex-dir/* 🌈 Clean responsive Instagram-style layout */
+.main-layout {
+  display: flex;
+  justify-content: center;
+  background-color: #fafafa;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar-desktop {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+/* Content area */
+.content {
+  flex: 1;
+  max-width: 960px;
+  padding: 24px 16px;
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+/* Hide scrollbar for aesthetic feed look */
+.content::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+}
+
+/* Mobile Layout Adjustments */
+@media (max-width: 768px) {
+  .main-layout {
     flex-direction: column;
+    align-items: center;
+  }
+
+  .sidebar-desktop {
+    display: none;
+  }
+
+  .content {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 70px; /* height of bottom nav */
+  }
+
+  .bottom-navbar-mobile {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+  }
+}
+ection: column;
   }
 
   app-sidebar {

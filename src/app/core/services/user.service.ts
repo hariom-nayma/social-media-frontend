@@ -97,4 +97,8 @@ export class UserService {
   getOwnFollowing(): Observable<ApiResponse<UserDTO[]>> {
     return this.http.get<ApiResponse<UserDTO[]>>(`${this.apiUrl}/following`);
   }
+
+  getUserProfileByConversationId(conversationId: string): Observable<ApiResponse<UserDTO>> {
+    return this.http.get<ApiResponse<UserDTO>>(`${this.profileApi}/conversation/${conversationId}`);
+  }
 }

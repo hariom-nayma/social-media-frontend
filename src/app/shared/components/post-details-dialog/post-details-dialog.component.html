@@ -1,26 +1,29 @@
 <div class="dialog-overlay" (click)="closeDialog()">
   <div class="dialog-content" (click)="$event.stopPropagation()">
+    <!-- LEFT: IMAGE -->
     <div class="post-section">
       <img
         *ngIf="post?.mediaUrl"
         [src]="post?.mediaUrl"
-        alt="Post media"
+        alt="Post"
         class="post-image"
       />
     </div>
 
+    <!-- RIGHT: COMMENTS -->
     <div class="comments-section">
       <div class="post-header">
         <div class="user-info">
           <img
-            [src]="post?.profileImage || 'https://i.pravatar.cc/150?u=' + post?.userId"
-            alt="User"
+            [src]="
+              post?.profileImage || 'https://i.pravatar.cc/150?u=' + post?.userId
+            "
             class="user-avatar"
+            alt="user"
           />
           <div class="user-details">
             <p class="name">{{ post?.firstName }} {{ post?.lastName }}</p>
             <p class="username">@{{ post?.username }}</p>
-            <p class="created-at">{{ post?.createdAt | date:'medium' }}</p>
           </div>
         </div>
         <button title="close" class="close-btn" (click)="closeDialog()">
@@ -28,59 +31,83 @@
         </button>
       </div>
 
-      <div class="post-content">
-        <p>{{ post?.content }}</p>
-      </div>
+      <p class="post-content">{{ post?.content }}</p>
 
       <div class="post-actions">
         <div class="action-buttons">
-          <button title="like" class="like-btn" (click)="likePost()">
+          <button title="like" class="icon-btn" (click)="likePost()">
             <i
-              [ngClass]="post?.likedByCurrentUser ? 'fa-solid fa-heart liked' : 'fa-regular fa-heart'"
+              [ngClass]="
+                post1?.likedByCurrentUser
+                  ? 'fa-solid fa-heart liked'
+                  : 'fa-regular fa-heart'
+              "
             ></i>
           </button>
           <i class="fa-regular fa-comment"></i>
         </div>
-        <span class="likes">{{ post?.likeCount }} likes</span>
+        <span class="likes">{{ post1?.likeCount }} likes</span>
       </div>
 
       <div class="comments-list">
-        <ng-container *ngTemplateOutlet="commentTemplate; context: { comments: comments }"></ng-container>
+        <ng-container
+          *ngTemplateOutlet="commentTemplate; context: { comments: comments }"
+        ></ng-container>
 
         <ng-template #commentTemplate let-comments="comments">
           <div *ngFor="let comment of comments" class="comment-item">
             <img
-              [src]="comment.userProfileImage || 'https://i.pravatar.cc/150?u=' + comment.userId"
-              alt="Profile"
+              [src]="
+                comment.userProfileImage ||
+                'https://i.pravatar.cc/150?u=' + comment.userId
+              "
               class="comment-avatar"
+              alt="profile"
             />
             <div class="comment-body">
-              <p class="comment-username">
-                <strong>{{ comment.username }}</strong>
-              </p>
+              <p class="comment-username"><strong>{{ comment.username }}</strong></p>
               <p class="comment-text">{{ comment.text }}</p>
+
               <div class="comment-actions">
-                <button title="comment" (click)="toggleCommentLike(comment)" class="icon-btn">
+                <button title="like" (click)="toggleCommentLike(comment)" class="icon-btn">
                   <i
-                    [ngClass]="comment.isLiked ? 'fa-solid fa-heart liked' : 'fa-regular fa-heart'"
+                    [ngClass]="
+                      comment.isLiked
+                        ? 'fa-solid fa-heart liked'
+                        : 'fa-regular fa-heart'
+                    "
                   ></i>
                 </button>
-                <button *ngIf="!comment.parentCommentId" class="reply-btn" (click)="openReplyForm(comment.id)">
+                <span class="likes-count"
+                  >{{ comment.likesCount || 0 }}</span
+               >
+                <button
+                  *ngIf="!comment.parentCommentId"
+                  class="reply-btn"
+                  (click)="openReplyForm(comment)"
+                >
                   Reply
                 </button>
               </div>
 
-              <div *ngIf="comment.replies && comment.replies.size > 0" class="replies">
+              <div *ngIf="comment.replies?.size" class="replies">
                 <button
                   class="toggle-replies-btn"
                   (click)="toggleRepliesVisibility(comment)"
                 >
-                  {{ comment.showReplies ? 'Hide replies' : 'View replies (' + comment.replies.size + ')' }}
+                  {{
+                    comment.showReplies
+                      ? 'Hide replies'
+                      : 'View replies (' + comment.replies.size + ')'
+                  }}
                 </button>
 
                 <div *ngIf="comment.showReplies" class="reply-list">
                   <ng-container
-                    *ngTemplateOutlet="commentTemplate; context: { comments: comment.replies }"
+                    *ngTemplateOutlet="
+                      commentTemplate;
+                      context: { comments: comment.replies }
+                    "
                   ></ng-container>
                 </div>
               </div>
@@ -89,7 +116,16 @@
         </ng-template>
       </div>
 
-      <form [formGroup]="commentForm" (ngSubmit)="addComment()" class="comment-form">
+      <form
+        [formGroup]="commentForm"
+        (ngSubmit)="addComment()"
+        class="comment-form"
+      >
+        <div *ngIf="replyingToUsername" class="replying-banner">
+          Replying to <strong>@{{ replyingToUsername }}</strong>
+          <button type="button" (click)="cancelReply()">×</button>
+        </div>
+
         <input
           type="text"
           placeholder="Add a comment..."

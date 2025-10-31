@@ -23,6 +23,11 @@ export interface FeedPostResponseDTO {
   commentCount: number;
   savedByMe: boolean;
   createdAt: Date;
+  likedByCurrentUser: boolean;
+  firstName: string;
+  lastName: string;
+  userId: string;
+  comments: CommentDTO[];
 }
 
 export interface CreatePostRequest {

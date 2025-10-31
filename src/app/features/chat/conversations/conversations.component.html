@@ -1,0 +1,43 @@
+<div class="conversations-container">
+  <h2>Messages</h2>
+
+  <div *ngIf="conversations.length === 0 && suggestedUsers.length === 0 && followers.length === 0" class="no-conversations">
+    <p>No conversations yet. Start a new chat!</p>
+  </div>
+
+  <div *ngIf="conversations.length > 0" class="conversation-list">
+    <h3>Your Conversations</h3>
+    <div *ngFor="let conversation of conversations" class="conversation-item" (click)="openChat(conversation.conversationId)">
+      <img [src]="conversation.otherProfileImageUrl || 'https://i.pravatar.cc/150?u=' + conversation.otherUsername" alt="" class="avatar">
+      <div class="conversation-details">
+        <div class="username">{{ conversation.otherUsername }}</div>
+        <div class="last-message">{{ conversation.lastMessageContent }}</div>
+      </div>
+      <div *ngIf="conversation.unreadMessageCount > 0" class="unread-count">
+        {{ conversation.unreadMessageCount }}
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="suggestedUsers.length > 0" class="suggestions-list">
+    <h3>Suggested for you</h3>
+    <div *ngFor="let user of suggestedUsers" class="suggestion-item" (click)="openChat(user.username)">
+      <img [src]="user.profileImageUrl || 'https://i.pravatar.cc/150?u=' + user.username" alt="" class="avatar">
+      <div class="user-details">
+        <div class="username">{{ user.username }}</div>
+        <div class="name">{{ user.firstName }} {{ user.lastName }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="followers.length > 0" class="followers-list">
+    <h3>Your Followers</h3>
+    <div *ngFor="let user of followers" class="follower-item" (click)="openChat(user.username)">
+      <img [src]="user.profileImageUrl || 'https://i.pravatar.cc/150?u=' + user.username" alt="" class="avatar">
+      <div class="user-details">
+        <div class="username">{{ user.username }}</div>
+        <div class="name">{{ user.firstName }} {{ user.lastName }}</div>
+      </div>
+    </div>
+  </div>
+</div>

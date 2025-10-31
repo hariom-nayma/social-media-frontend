@@ -1,0 +1,72 @@
+<div class="chat-wrapper">
+  <!-- Header -->
+  <div class="chat-header">
+    <div *ngIf="recipientUser" class="recipient-info">
+      <img
+        [src]="recipientUser.profileImageUrl || 'https://i.pravatar.cc/150?u=' + recipientUser.username"
+        alt=""
+        class="avatar"
+      />
+      <div class="details">
+        <span class="username">{{ recipientUser.username }}</span>
+        <span *ngIf="isRecipientTyping" class="status typing">Typing...</span>
+        <span *ngIf="!isRecipientTyping && isRecipientOnline" class="status online">Online</span>
+        <span *ngIf="!isRecipientTyping && !isRecipientOnline" class="status offline">Offline</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div class="chat-messages" #messagesContainer (scroll)="onScroll($event)">
+    <div
+      *ngFor="let msg of messages"
+      class="message-item"
+      [ngClass]="{ sent: msg.senderId === currentUser?.id, received: msg.senderId !== currentUser?.id }"
+    >
+      <img
+        *ngIf="msg.senderId !== currentUser?.id"
+        [src]="msg.senderProfileImageUrl || 'https://i.pravatar.cc/150?u=' + msg.senderUsername"
+        alt=""
+        class="message-avatar"
+        [routerLink]="['/profile', msg.senderUsername]"
+      />
+
+      <div class="message-content">
+        <div class="message-bubble">
+          <p>{{ msg.content }}</p>
+        </div>
+        <div class="message-meta">
+          <span class="timestamp">{{ msg.sentAt | date: 'shortTime' }}</span>
+          <span
+            *ngIf="msg.senderId === currentUser?.id && msg.seen"
+            class="status-icon seen"
+            >✓✓</span
+          >
+        </div>
+      </div>
+
+      <img
+        *ngIf="msg.senderId === currentUser?.id"
+        [src]="currentUser?.profileImageUrl || 'https://i.pravatar.cc/150?u=' + currentUser?.username"
+        alt=""
+        class="message-avatar"
+      />
+    </div>
+  </div>
+
+  <!-- Input -->
+  <div class="chat-input-area">
+    <input
+      type="text"
+      [(ngModel)]="newMessageContent"
+      (keyup.enter)="sendMessage()"
+      (focus)="onTyping()"
+      (blur)="onBlur()"
+      placeholder="Message..."
+      class="message-input"
+    />
+    <button title="send" class="send-btn" (click)="sendMessage()">
+      <i class="fa fa-paper-plane"></i>
+    </button>
+  </div>
+</div>

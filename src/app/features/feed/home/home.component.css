@@ -1,175 +1,129 @@
-/* ----------- MAIN LAYOUT ----------- */
-.main-container {
+/* 🌈 Instagram-like Feed Layout */
+.home-container {
   display: grid;
   grid-template-columns: 1fr 320px;
   gap: 30px;
-  max-width: 950px;
+  max-width: 960px;
   margin: 0 auto;
-  padding-top: 90px;
-  transition: all 0.3s ease;
+  padding-top: 30px;
 }
 
-/* FEED AREA */
-.feed-container {
-  width: 100%;
-}
-
-.feed {
+/* FEED SECTION */
+.feed-section {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
-/* ----------- SIDEBAR ----------- */
-.sidebar-container {
+/* STORY BAR */
+app-story-bar {
   position: sticky;
-  top: 90px;
-  height: calc(100vh - 90px);
+  top: 0;
+  background-color: #fafafa;
+  padding: 12px 0;
+  z-index: 10;
 }
 
-.sidebar {
-  padding: 20px;
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 4px 18px rgba(0,0,0,0.06);
-  transition: all 0.3s ease;
+/* SIDEBAR */
+.right-sidebar {
+  position: sticky;
+  top: 40px;
+  height: fit-content;
 }
 
-/* Optional: Glassy look for modern feel */
-.glassy {
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-
-  background: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-/* ----------- PROFILE SECTION ----------- */
-.sidebar-header {
+.profile-section {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
-.sidebar-profile {
-  display: flex;
-  align-items: center;
-}
-
-.sidebar-profile img {
-  width: 58px;
-  height: 58px;
+.profile-pic {
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
-  margin-right: 12px;
   object-fit: cover;
-  border: 2px solid #f1f1f1;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-right: 10px;
 }
 
-.sidebar-profile img:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 12px rgba(0,0,0,0.08);
+.profile-info {
+  flex-grow: 1;
 }
 
-.sidebar-username {
+.username {
   font-weight: 600;
   font-size: 14px;
 }
 
-.sidebar-name {
+.fullname {
   color: #8e8e8e;
   font-size: 13px;
 }
 
-/* Switch button */
 .switch-btn {
   border: none;
   background: transparent;
-  font-weight: 600;
   color: #0095f6;
+  font-weight: 600;
   cursor: pointer;
-  font-size: 13px;
-  transition: color 0.2s ease;
 }
 
-.switch-btn:hover {
-  color: #007acc;
-}
-
-/* ----------- SUGGESTIONS SECTION ----------- */
-.sidebar-suggestions {
-  margin-top: 18px;
+/* Suggestions */
+.suggestions {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  padding: 16px;
 }
 
 .suggestions-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 
 .suggestions-header div {
   font-weight: 600;
-  color: #8e8e8e;
   font-size: 13px;
+  color: #8e8e8e;
 }
 
 .suggestions-header a {
-  font-weight: 600;
   color: #262626;
-  font-size: 12px;
   text-decoration: none;
+  font-size: 12px;
 }
 
-.suggestions-header a:hover {
-  text-decoration: underline;
-}
-
-/* ----------- EACH SUGGESTION ----------- */
 .suggestion {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
-  transition: background 0.3s ease;
-  border-radius: 10px;
-  padding: 4px 8px;
+  margin-bottom: 12px;
 }
 
-.suggestion:hover {
-  background-color: rgba(0, 0, 0, 0.03);
-}
-
-.suggestion-profile {
+.suggestion-left {
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 
-.suggestion-profile img {
+.suggestion-img {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  margin-right: 12px;
-  object-fit: cover;
-  transition: transform 0.2s ease;
+  margin-right: 10px;
 }
 
-.suggestion-profile img:hover {
-  transform: scale(1.1);
-}
-
-.suggestion-username {
+.suggestion-info .username {
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
 }
 
-.suggestion-name {
+.suggestion-info .mutual {
   color: #8e8e8e;
   font-size: 12px;
 }
 
-/* Follow Button */
 .follow-btn {
   border: none;
   background: none;
@@ -177,35 +131,30 @@
   color: #0095f6;
   font-size: 13px;
   cursor: pointer;
-  transition: color 0.2s ease;
 }
 
 .follow-btn:hover {
   color: #007acc;
 }
 
-/* ----------- RESPONSIVE ----------- */
+/* 📱 RESPONSIVENESS */
 @media (max-width: 768px) {
-  .main-container {
+  .home-container {
     grid-template-columns: 1fr;
-    max-width: 100%;
-    padding-top: 10px; /* Adjusted for mobile view */
-    padding-bottom: 60px; /* Height of the bottom navbar */
+    gap: 0;
+    padding: 0;
   }
 
-  .sidebar-container {
+  .right-sidebar {
     display: none;
   }
-}
 
-/* ----------- SCROLL BAR ----------- */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-thumb {
-  background-color: rgba(180, 180, 180, 0.5);
-  border-radius: 6px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(130, 130, 130, 0.6);
+  app-story-bar {
+    position: static;
+    margin-bottom: 12px;
+  }
+
+  .feed-section {
+    gap: 12px;
+  }
 }

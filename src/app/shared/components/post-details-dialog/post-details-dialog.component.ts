@@ -1,4 +1,13 @@
-import { Component, EventEmitter, Input, Output, inject, OnInit, Optional, Inject } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  inject,
+  OnInit,
+  Optional,
+  Inject,
+} from '@angular/core';
 import { PostService } from '../../../core/services/post.service';
 import { FeedPostResponseDTO, PostDTO } from '../../../core/models/post.model';
 import { CommentDTO } from '../../../core/models/comment.model';
@@ -17,12 +26,11 @@ interface CommentDisplayDTO extends CommentDTO {
   templateUrl: './post-details-dialog.component.html',
   styleUrls: ['./post-details-dialog.component.css'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule]
+  imports: [CommonModule, ReactiveFormsModule],
 })
 export class PostDetailsDialogComponent implements OnInit {
   @Input() postId!: string;
-    @Input() post1!: PostDTO;
-  
+  @Input() post1!: PostDTO;
   @Output() close = new EventEmitter<void>();
 
   private postService = inject(PostService);
@@ -32,9 +40,10 @@ export class PostDetailsDialogComponent implements OnInit {
   post: FeedPostResponseDTO | null = null;
   comments: CommentDisplayDTO[] = [];
   commentForm = this.fb.group({
-    text: ['', Validators.required]
+    text: ['', Validators.required],
   });
   replyToCommentId: string | null = null;
+  replyingToUsername: string | null = null;
 
   constructor(
     @Optional() @Inject(MAT_DIALOG_DATA) public dialogData: { postId: string },
@@ -50,83 +59,95 @@ export class PostDetailsDialogComponent implements OnInit {
   }
 
   loadPostDetails() {
-    this.postService.getPostById(this.postId).subscribe(response => {
+    this.postService.getPostById(this.postId).subscribe((response) => {
       this.post = response.data || null;
     });
   }
 
   loadComments() {
-    this.userService.currentUser$.subscribe(user => {
-      if (user && user.id) {
-        this.postService.getCommentsByPost(this.postId, user.id).subscribe(response => {
-          this.comments = this.mapCommentsForDisplay(response.data || []);
+    this.userService.currentUser$.subscribe((user) => {
+      const load = (userId: string) => {
+        this.postService
+          .getCommentsByPost(this.postId, userId)
+          .subscribe((response) => {
+            this.comments = this.mapCommentsForDisplay(response.data || []);
+          });
+      };
+
+      if (user?.id) load(user.id);
+      else
+        this.userService.myMiniProfile().subscribe((res) => {
+          if (res.data?.id) load(res.data.id);
         });
-      } else {
-        // If user is not available, fetch it
-        this.userService.myMiniProfile().subscribe(response => {
-          if (response.data && response.data.id) {
-            this.postService.getCommentsByPost(this.postId, response.data.id).subscribe(commentResponse => {
-              this.comments = this.mapCommentsForDisplay(commentResponse.data || []);
-            });
-          }
-        });
-      }
     });
   }
 
   private mapCommentsForDisplay(comments: CommentDTO[]): CommentDisplayDTO[] {
-    return comments.map(comment => ({
+    return comments.map((comment) => ({
       ...comment,
       isLiked: comment.likedByCurrentUser,
-      showReplies: false, // Initialize showReplies to false
-      replies: comment.replies ? new Set(this.mapCommentsForDisplay(Array.from(comment.replies))) : new Set()
+      showReplies: false,
+      replies: comment.replies
+        ? new Set(this.mapCommentsForDisplay(Array.from(comment.replies)))
+        : new Set(),
     }));
   }
 
   addComment() {
-    if (this.commentForm.valid) {
-      const text = this.commentForm.value.text!;
-      const parentCommentId = this.replyToCommentId ?? undefined;
+    if (this.commentForm.invalid) return;
 
-      this.postService.addComment(this.postId, text, parentCommentId).subscribe(response => {
+    const text = this.commentForm.value.text!;
+    const parentCommentId = this.replyToCommentId ?? undefined;
+
+    this.postService
+      .addComment(this.postId, text, parentCommentId)
+      .subscribe((response) => {
         if (response.data) {
-          const newComment: CommentDisplayDTO = { ...response.data, showReplies: false };
-          if (parentCommentId) {
+          const newComment: CommentDisplayDTO = {
+            ...response.data,
+            showReplies: false,
+          };
+
+          if (parentCommentId)
             this.addReplyToComment(this.comments, parentCommentId, newComment);
-          } else {
-            this.comments.unshift(newComment);
-          }
+          else this.comments.unshift(newComment);
+
+          // Reset reply mode
+          this.replyToCommentId = null;
+          this.replyingToUsername = null;
+          this.commentForm.reset();
         }
-        this.commentForm.reset();
-        this.replyToCommentId = null;
       });
-    }
   }
 
-  private addReplyToComment(comments: CommentDisplayDTO[], parentId: string, newReply: CommentDisplayDTO): void {
+  private addReplyToComment(
+    comments: CommentDisplayDTO[],
+    parentId: string,
+    newReply: CommentDisplayDTO
+  ): void {
     for (const comment of comments) {
       if (comment.id === parentId) {
-        if (!comment.replies) {
-          comment.replies = new Set();
-        }
+        comment.replies ??= new Set();
         comment.replies.add(newReply);
-        comment.showReplies = true; // Show replies when a new one is added
+        comment.showReplies = true;
         return;
       }
-      if (comment.replies && comment.replies.size > 0) {
+      if (comment.replies?.size)
         this.addReplyToComment(Array.from(comment.replies), parentId, newReply);
-      }
     }
   }
 
   toggleCommentLike(comment: CommentDisplayDTO) {
-    this.postService.toggleCommentLike(comment.id).subscribe(() => {
-      comment.isLiked = !comment.isLiked;
-      if (comment.isLiked) {
-        comment.likesCount = (comment.likesCount || 0) + 1;
-      } else {
-        comment.likesCount = (comment.likesCount || 0) - 1;
-      }
+    comment.isLiked = !comment.isLiked;
+    comment.likesCount = (comment.likesCount || 0) + (comment.isLiked ? 1 : -1);
+
+    this.postService.toggleCommentLike(comment.id).subscribe({
+      error: () => {
+        // revert on error
+        comment.isLiked = !comment.isLiked;
+        comment.likesCount =
+          (comment.likesCount || 0) + (comment.isLiked ? 1 : -1);
+      },
     });
   }
 
@@ -134,29 +155,33 @@ export class PostDetailsDialogComponent implements OnInit {
     comment.showReplies = !comment.showReplies;
   }
 
-  openReplyForm(commentId: string) {
-    this.replyToCommentId = commentId;
-    // Optionally, focus the comment input field
+  openReplyForm(comment: CommentDisplayDTO) {
+    this.replyToCommentId = comment.id;
+    this.replyingToUsername = comment.username;
+  }
+
+  cancelReply() {
+    this.replyToCommentId = null;
+    this.replyingToUsername = null;
   }
 
   closeDialog() {
-    if (this.dialogRef) {
-      this.dialogRef.close();
-    } else {
-      this.close.emit();
-    }
+    this.dialogRef ? this.dialogRef.close() : this.close.emit();
   }
-    likePost(){
+
+  likePost() {
+    if (!this.post1) return;
+
     this.post1.likedByCurrentUser = !this.post1.likedByCurrentUser;
     this.post1.likeCount += this.post1.likedByCurrentUser ? 1 : -1;
 
     this.postService.toggleLike(this.post1.id).subscribe({
       error: (err) => {
-        console.log(err);
-        // Revert the changes on error
+        console.error(err);
+        // revert if error
         this.post1.likedByCurrentUser = !this.post1.likedByCurrentUser;
         this.post1.likeCount += this.post1.likedByCurrentUser ? 1 : -1;
-      }
+      },
     });
   }
 }

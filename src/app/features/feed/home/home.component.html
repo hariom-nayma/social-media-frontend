@@ -1,66 +1,68 @@
-<div class="main-container">
-  <div class="feed-container">
+<div class="home-container">
+  <!-- Left Feed Section -->
+  <div class="feed-section">
     <app-story-bar></app-story-bar>
 
     <div class="feed">
-      <div *ngFor="let post of posts" class="feed-card" (click)="openPostDetailsDialog(post.id)">
-        <app-post-card [post]="post"></app-post-card>
-      </div>
+      <app-post-card
+        *ngFor="let post of posts"
+        [post]="post"
+        (click)="openPostDetailsDialog(post.id)">
+      </app-post-card>
     </div>
   </div>
 
+  <!-- Post Details Modal -->
   <app-post-details-dialog 
     *ngIf="showPostDetailsDialog"
     [postId]="selectedPostId!"
     (close)="closePostDetailsDialog()">
   </app-post-details-dialog>
 
-  <div class="sidebar-container">
-    <div class="sidebar glassy">
-      <div class="sidebar-header">
-        <div class="sidebar-profile">
-          <img [src]="currentUser?.profileImageUrl" alt="Avatar">
-          <div class="sidebar-profile-info">
-            <div class="sidebar-username">{{ currentUser?.username }}</div>
-            <div class="sidebar-name">{{ currentUser?.firstName }} {{ currentUser?.lastName }}</div>
-          </div>
-        </div>
-        <button class="switch-btn">Switch</button>
+  <!-- Right Sidebar -->
+  <aside class="right-sidebar">
+    <div class="profile-section">
+      <img [src]="currentUser?.profileImageUrl" alt="User" class="profile-pic" />
+      <div class="profile-info">
+        <div class="username">{{ currentUser?.username }}</div>
+        <div class="fullname">{{ currentUser?.firstName }} {{ currentUser?.lastName }}</div>
+      </div>
+      <button class="switch-btn">Switch</button>
+    </div>
+
+    <div class="suggestions">
+      <div class="suggestions-header">
+        <div>Suggestions for you</div>
+        <a href="#">See All</a>
       </div>
 
-      <div class="sidebar-suggestions">
-        <div class="suggestions-header">
-          <div>Suggestions For You</div>
-          <a href="#">See All</a>
-        </div>
-
-        <div class="suggestion-card" *ngFor="let suggestion of suggestions">
-          <div class="suggestion-profile" (click)="goToProfile(suggestion.username)">
-            <img [src]="suggestion.profileUrl || 'https://i.pravatar.cc/150?u=' + suggestion.username" alt="Avatar">
-            <div class="suggestion-info">
-              <div class="suggestion-username">{{ suggestion.username }}</div>
-              <div class="suggestion-name">{{ suggestion.firstName }} {{ suggestion.lastName }}</div>
-              <div class="mutual-count" *ngIf="suggestion.mutualCount > 0">
-                {{ suggestion.mutualCount }} mutual followers
-              </div>
+      <div *ngFor="let suggestion of suggestions" class="suggestion">
+        <div class="suggestion-left" (click)="goToProfile(suggestion.username)">
+          <img
+            [src]="suggestion.profileUrl || 'https://i.pravatar.cc/150?u=' + suggestion.username"
+            alt="User"
+            class="suggestion-img"
+          />
+          <div class="suggestion-info">
+            <div class="username">{{ suggestion.username }}</div>
+            <div class="mutual" *ngIf="suggestion.mutualCount > 0">
+              {{ suggestion.mutualCount }} mutuals
             </div>
           </div>
-
-          <button class="follow-btn" 
-            (click)="toggleFollow(suggestion)">
-            {{
-              suggestion.private
-                ? (suggestion.isRequested ? 'Requested' : 'Request')
-                : (suggestion.isFollowing ? 'Unfollow' : 'Follow')
-            }}
-          </button>
         </div>
+        <button class="follow-btn" (click)="toggleFollow(suggestion)">
+          {{
+            suggestion.private
+              ? (suggestion.isRequested ? 'Requested' : 'Request')
+              : (suggestion.isFollowing ? 'Unfollow' : 'Follow')
+          }}
+        </button>
       </div>
-
-      <app-pending-requests
-        [pendingRequests]="pendingRequests"
-        *ngIf="currentUser?.private && pendingRequests.length > 0">
-      </app-pending-requests>
     </div>
-  </div>
+
+    <app-pending-requests
+      *ngIf="currentUser?.private && pendingRequests.length > 0"
+      [pendingRequests]="pendingRequests">
+    </app-pending-requests>
+  </aside>
 </div>
