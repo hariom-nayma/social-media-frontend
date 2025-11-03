@@ -101,10 +101,17 @@ toggleTheme(): void {
 
   private subscribeToChatEvents(): void {
     this.subscriptions.add(this.chatService.messages$.subscribe(msg => {
-      // normalize showEmojiPicker/reactions if absent
-      (msg as any).showEmojiPicker = false;
-      (msg as any).reactions = msg.reactions ?? [];
-      this.messages.push(msg);
+      console.log('New message received from WebSocket:', msg);
+      const optimisticMessageIndex = this.messages.findIndex(m => m.id.startsWith('temp-') && m.content === msg.content);
+
+      if (optimisticMessageIndex !== -1) {
+        const newMessages = [...this.messages];
+        newMessages[optimisticMessageIndex] = { ...msg, showEmojiPicker: false, reactions: msg.reactions ?? [] };
+        this.messages = newMessages;
+      } else {
+        this.messages = [...this.messages, { ...msg, showEmojiPicker: false, reactions: msg.reactions ?? [] }];
+      }
+
       this.shouldScrollToBottom = true;
       if (msg.senderId !== this.currentUser!.id && !msg.seen) {
         this.chatService.markMessageAsSeen(msg.id);

@@ -15,6 +15,7 @@ export interface UserDTO {
   verified: boolean;
   followersCount?: number;
   followingCount?: number;
+  postsCount?: number;
   posts?: PostDTO[];
   roles: UserRole[];
   createdAt?: string;

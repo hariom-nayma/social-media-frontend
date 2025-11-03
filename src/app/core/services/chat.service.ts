@@ -35,14 +35,20 @@ export class ChatService {
     this.stompClient = Stomp.over(socket);
 
     this.stompClient.connect({}, () => {
-      console.log('Connected to WebSocket');
+      console.log('WebSocket connected successfully.');
 
       // Subscribe to private messages
       this.stompClient?.subscribe(`/user/${userId}/queue/messages`, (message) => {
-        console.log('Received message:', JSON.parse(message.body));
-        this.messageSubject.next(JSON.parse(message.body));
+        console.log('Received raw message:', message);
+        try {
+          const parsedMessage = JSON.parse(message.body);
+          console.log('Parsed message:', parsedMessage);
+          this.messageSubject.next(parsedMessage);
+        } catch (error) {
+          console.error('Error parsing message body:', error);
+        }
       });
-      console.log(`Subscribed to /user/${userId}/queue/messages`);
+      console.log(`Subscribed to message queue: /user/${userId}/queue/messages`);
 
       // Subscribe to typing status
       this.stompClient?.subscribe(`/user/${userId}/queue/typing`, (typingDto) => {

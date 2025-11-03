@@ -35,7 +35,7 @@
               (click)="toggleFollow()"
               *ngIf="userProfile.private && !userProfile.isRequested"
             >
-              Send Request
+              Request
             </button>
 
             <button
@@ -51,7 +51,7 @@
 
       <div class="profile-stats">
         <div>
-          <strong>{{ userProfile.posts?.length || 0 }}</strong> posts
+          <strong>{{ userProfile.postsCount || 0 }}</strong> posts
         </div>
         <div (click)="openFollowersDialog()">
           <strong>{{ userProfile.followersCount || 0 }}</strong> followers
