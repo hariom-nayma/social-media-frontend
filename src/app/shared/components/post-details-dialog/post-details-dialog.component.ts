@@ -15,6 +15,9 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UserService } from '../../../core/services/user.service';
+import { Router } from '@angular/router';
+import { UserDTO } from '../../../core/models/user.model';
+
 
 interface CommentDisplayDTO extends CommentDTO {
   isLiked?: boolean;
@@ -44,10 +47,13 @@ export class PostDetailsDialogComponent implements OnInit {
   });
   replyToCommentId: string | null = null;
   replyingToUsername: string | null = null;
+  showOptionsMenu = false;
+  currentUser: UserDTO | null = null;
 
   constructor(
     @Optional() @Inject(MAT_DIALOG_DATA) public dialogData: { postId: string },
-    @Optional() private dialogRef: MatDialogRef<PostDetailsDialogComponent>
+    @Optional() private dialogRef: MatDialogRef<PostDetailsDialogComponent>,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -56,6 +62,7 @@ export class PostDetailsDialogComponent implements OnInit {
     }
     this.loadPostDetails();
     this.loadComments();
+    this.userService.currentUser$.subscribe(user => this.currentUser = user);
   }
 
   loadPostDetails() {
@@ -182,6 +189,52 @@ export class PostDetailsDialogComponent implements OnInit {
         this.post1.likedByCurrentUser = !this.post1.likedByCurrentUser;
         this.post1.likeCount += this.post1.likedByCurrentUser ? 1 : -1;
       },
+    });
+  }
+
+  deletePost() {
+    if (!this.post) return;
+    this.postService.deletePost(this.post.id).subscribe(() => {
+      this.closeDialog();
+    });
+  }
+
+  archivePost() {
+    if (!this.post) return;
+    this.postService.archivePost(this.post.id).subscribe(() => {
+      this.closeDialog();
+    });
+  }
+
+  viewProfile() {
+    if (!this.post) return;
+    this.router.navigate(['/profile', this.post.username]);
+    this.closeDialog();
+  }
+
+  toggleFollow() {
+    if (!this.post) return;
+    if (this.post.following) {
+      this.userService.unfollowUser(this.post.userId).subscribe(() => {
+        this.post!.following = false;
+      });
+    } else {
+      this.userService.followUser(this.post.userId).subscribe(() => {
+        this.post!.following = true;
+      });
+    }
+  }
+
+  copyPostUrl() {
+    const postUrl = `${window.location.origin}/post/${this.post?.id}`;
+    navigator.clipboard.writeText(postUrl);
+    this.showOptionsMenu = false;
+  }
+
+  unarchivePost() {
+    if (!this.post) return;
+    this.postService.unarchivePost(this.post.id).subscribe(() => {
+      this.closeDialog();
     });
   }
 }

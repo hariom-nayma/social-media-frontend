@@ -141,6 +141,13 @@ toggleTheme(): void {
         this.messages[messageIndex].seenAt = seenMessage.seenAt;
       }
     }));
+
+    this.subscriptions.add(this.chatService.messageReactions$.subscribe(updatedMessage => {
+      const messageIndex = this.messages.findIndex(msg => msg.id === updatedMessage.id);
+      if (messageIndex !== -1) {
+        this.messages[messageIndex].reactions = updatedMessage.reactions;
+      }
+    }));
   }
 
   loadMessages(page: number, size: number): void {
@@ -242,7 +249,6 @@ toggleTheme(): void {
   unsendMessage(messageId: string): void {
     this.chatService.unsendMessage(messageId).subscribe(() => {
       this.messages = this.messages.filter(msg => msg.id !== messageId);
-      this.loadMessages(this.currentPage, this.pageSize);
     });
   }
 

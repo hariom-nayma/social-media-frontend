@@ -11,6 +11,7 @@ export interface PostDTO {
   commentCount: number;
   savedByMe: boolean;
   createdAt: Date;
+  archived: boolean;
 }
 
 export interface FeedPostResponseDTO {
@@ -28,6 +29,8 @@ export interface FeedPostResponseDTO {
   lastName: string;
   userId: string;
   comments: CommentDTO[];
+  following?: boolean;
+  archived: boolean;
 }
 
 export interface CreatePostRequest {

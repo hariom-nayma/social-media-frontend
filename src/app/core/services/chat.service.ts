@@ -15,11 +15,13 @@ export class ChatService {
   private typingSubject: Subject<TypingDTO> = new Subject<TypingDTO>();
   private presenceSubject: Subject<PresenceDTO> = new Subject<PresenceDTO>();
   private messagesSeenSubject: Subject<Message> = new Subject<Message>();
+  private messageReactionsSubject: Subject<Message> = new Subject<Message>();
 
   public messages$: Observable<Message> = this.messageSubject.asObservable();
   public typingStatus$: Observable<TypingDTO> = this.typingSubject.asObservable();
   public presenceStatus$: Observable<any> = this.presenceSubject.asObservable();
   public messagesSeen$: Observable<Message> = this.messagesSeenSubject.asObservable();
+  public messageReactions$: Observable<Message> = this.messageReactionsSubject.asObservable();
 
   constructor(private http: HttpClient) { }
 
@@ -70,6 +72,13 @@ export class ChatService {
         this.messagesSeenSubject.next(JSON.parse(message.body));
       });
       console.log(`Subscribed to /user/${userId}/queue/messages.seen`);
+
+      // Subscribe to message reactions updates
+      this.stompClient?.subscribe(`/user/${userId}/queue/messages.reactions`, (message) => {
+        console.log('Received message reaction update:', JSON.parse(message.body));
+        this.messageReactionsSubject.next(JSON.parse(message.body));
+      });
+      console.log(`Subscribed to /user/${userId}/queue/messages.reactions`);
 
     }, (error) => {
       console.error('WebSocket connection error:', error);

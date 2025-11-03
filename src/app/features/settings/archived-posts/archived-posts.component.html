@@ -1,0 +1,11 @@
+<div class="archived-posts-container">
+  <h2>Archived Posts</h2>
+  <div *ngIf="archivedPosts.length === 0" class="no-posts">
+    <p>You have no archived posts.</p>
+  </div>
+  <div *ngIf="archivedPosts.length > 0" class="posts-grid">
+    <div *ngFor="let post of archivedPosts" class="post-item" (click)="openPostDetails(post.id)">
+      <img [src]="post.mediaUrl" alt="Archived Post" class="post-image">
+    </div>
+  </div>
+</div>

@@ -47,4 +47,20 @@ export class PostService {
   getSavedPosts(page: number, size: number): Observable<ApiResponse<FeedPostResponseDTO[]>> {
     return this.http.get<ApiResponse<FeedPostResponseDTO[]>>(`${this.base}/saved`, { params: { page: page.toString(), size: size.toString() } });
   }
+
+  deletePost(postId: string): Observable<ApiResponse<string>> {
+    return this.http.delete<ApiResponse<string>>(`${this.base}/${postId}`);
+  }
+
+  archivePost(postId: string): Observable<ApiResponse<string>> {
+    return this.http.put<ApiResponse<string>>(`${this.base}/${postId}/archive`, {});
+  }
+
+  getArchivedPosts(): Observable<ApiResponse<FeedPostResponseDTO[]>> {
+    return this.http.get<ApiResponse<FeedPostResponseDTO[]>>(`${this.base}/archived`);
+  }
+
+  unarchivePost(postId: string): Observable<ApiResponse<string>> {
+    return this.http.put<ApiResponse<string>>(`${this.base}/${postId}/unarchive`, {});
+  }
 }
