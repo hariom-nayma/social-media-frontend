@@ -1,5 +1,17 @@
 <div class="toast-container">
-  <div *ngFor="let toast of toasts" class="toast" [ngClass]="toast.type" (click)="removeToast(toast)">
-    {{ toast.message }}
+  <div
+    *ngFor="let toast of toasts"
+    class="toast"
+    [class.closing]="$any(toast).closing"
+    [ngClass]="toast.type"
+    (click)="removeToast(toast)"
+  >
+    <div class="toast-icon">
+      <lucide-icon [name]="getIcon(toast.type)"></lucide-icon>
+    </div>
+    <div class="toast-message">
+      {{ toast.message }}
+    </div>
+    <div class="toast-progress"></div>
   </div>
 </div>

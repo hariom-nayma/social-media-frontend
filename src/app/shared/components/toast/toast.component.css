@@ -1,38 +1,131 @@
+/* Container */
 .toast-container {
   position: fixed;
-  top: 20px;
-  right: 20px;
+  top: 25px;
+  right: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   z-index: 9999;
+  pointer-events: none;
 }
 
+/* Toast Card */
 .toast {
-  padding: 15px 20px;
-  margin-bottom: 10px;
-  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 270px;
+  max-width: 340px;
+  padding: 14px 18px;
+  border-radius: 14px;
   color: #fff;
+  font-weight: 500;
+  font-size: 15px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
   cursor: pointer;
-  animation: slideIn 0.3s ease-in-out;
+  pointer-events: all;
+  position: relative;
+  animation: toastIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-.toast.info {
-  background-color: #3498db;
+/* Toast Exit Animation */
+.toast.closing {
+  animation: toastOut 0.3s ease forwards;
 }
 
+/* Icons */
+.toast-icon lucide-icon {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2.4;
+}
+
+/* Toast Variants */
 .toast.success {
-  background-color: #2ecc71;
+  background: linear-gradient(135deg, #00c851, #007e33);
 }
 
 .toast.error {
-  background-color: #e74c3c;
+  background: linear-gradient(135deg, #ff4444, #cc0000);
 }
 
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
+.toast.info {
+  background: linear-gradient(135deg, #7fcdea, #0099cc);
+}
+
+.toast.warning {
+  background: linear-gradient(135deg, #ffbb33, #ff8800);
+}
+
+/* Message */
+.toast-message {
+  flex: 1;
+  line-height: 1.4;
+}
+
+/* Progress bar */
+.toast-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 0 0 14px 14px;
+  animation: progressBar 4s linear forwards;
+}
+
+/* Animations */
+@keyframes toastIn {
+  0% {
     opacity: 0;
+    transform: translateX(120%) scale(0.9);
+  }
+  80% {
+    transform: translateX(-5%) scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes toastOut {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(120%) scale(0.9);
+  }
+}
+
+@keyframes progressBar {
+  from {
+    width: 100%;
   }
   to {
-    transform: translateX(0);
-    opacity: 1;
+    width: 0%;
+  }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .toast-container {
+    right: 10px;
+    top: 15px;
+  }
+
+  .toast {
+    min-width: 240px;
+    max-width: 280px;
+    padding: 12px 14px;
+    font-size: 14px;
   }
 }
