@@ -22,6 +22,7 @@ export interface UserDTO {
   updatedAt?: string;
   following?: boolean;
   requested?: boolean;
+  isOnline?: boolean;
 }
 
 export interface UpdateProfileRequest {

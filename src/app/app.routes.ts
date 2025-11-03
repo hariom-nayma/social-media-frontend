@@ -33,6 +33,10 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/notification/notification.component').then(m => m.NotificationComponent)
             },
             {
+                path: 'chat/user/:username',
+                loadComponent: () => import('./features/chat/chat.component').then(m => m.ChatComponent)
+            },
+            {
                 path: 'chat/:conversationId',
                 loadComponent: () => import('./features/chat/chat.component').then(m => m.ChatComponent)
             },

@@ -53,8 +53,7 @@
         <div class="meta">
           <span class="time">{{ msg.sentAt | date: 'shortTime' }}</span>
           <span *ngIf="msg.senderId === currentUser?.id">
-            <i *ngIf="!msg.delivered" class="fa fa-check"></i>
-            <i *ngIf="msg.delivered && !msg.seen" class="fa fa-check-double"></i>
+            <i *ngIf="!msg.seen" class="fa fa-check"></i>
             <i *ngIf="msg.seen" class="fa fa-check-double seen"></i>
           </span>
         </div>

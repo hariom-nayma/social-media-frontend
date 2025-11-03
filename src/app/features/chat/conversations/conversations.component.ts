@@ -59,7 +59,11 @@ export class ConversationsComponent implements OnInit {
     });
   }
 
-  openChat(conversationId: string): void {
+  openConversation(conversationId: string): void {
     this.router.navigate(['/chat', conversationId]);
+  }
+
+  startNewChat(username: string): void {
+    this.router.navigate(['/chat/user', username]);
   }
 }

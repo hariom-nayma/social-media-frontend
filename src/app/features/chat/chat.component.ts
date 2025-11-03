@@ -78,6 +78,7 @@ toggleTheme(): void {
     ).subscribe(response => {
       if (response && response.data) {
         this.recipientUser = response.data;
+        this.isRecipientOnline = this.recipientUser.isOnline ?? false;
       }
     }));
   }
@@ -101,6 +102,9 @@ toggleTheme(): void {
 
   private subscribeToChatEvents(): void {
     this.subscriptions.add(this.chatService.messages$.subscribe(msg => {
+      if (!this.conversationId && msg.conversationId) {
+        this.conversationId = msg.conversationId;
+      }
       console.log('New message received from WebSocket:', msg);
       const optimisticMessageIndex = this.messages.findIndex(m => m.id.startsWith('temp-') && m.content === msg.content);
 
@@ -160,6 +164,13 @@ toggleTheme(): void {
           this.hasMoreMessages = !response.last;
           this.currentPage = page;
           this.isLoadingMessages = false;
+
+          // Mark all unread messages as seen
+          this.messages.forEach(message => {
+            if (message.senderId !== this.currentUser!.id && !message.seen) {
+              this.chatService.markMessageAsSeen(message.id);
+            }
+          });
         })
       ).subscribe();
     }
@@ -231,6 +242,7 @@ toggleTheme(): void {
   unsendMessage(messageId: string): void {
     this.chatService.unsendMessage(messageId).subscribe(() => {
       this.messages = this.messages.filter(msg => msg.id !== messageId);
+      this.loadMessages(this.currentPage, this.pageSize);
     });
   }
 
