@@ -21,12 +21,11 @@ export class NotificationComponent implements OnInit, OnDestroy {
     this.notifications$.subscribe(notifications => {
       console.log('NotificationComponent: Received notifications:', notifications);
     });
-    this.notificationService.connect();
     this.notificationService.fetchRecent();
   }
 
   ngOnDestroy(): void {
-    this.notificationService.disconnect();
+    // No need to disconnect here anymore
   }
 
   markAsRead(notification: Notification): void {

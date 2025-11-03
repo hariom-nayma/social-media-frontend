@@ -7,6 +7,7 @@ import { environment } from '../../../environments/environment';
 import { Notification } from '../models/notification.model';
 import { AuthService } from './auth.service';
 import { ApiResponse } from '../models/api-response.model';
+import { ToastService } from './toast.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,8 +17,9 @@ export class NotificationService {
   private apiUrl = `${environment.apiUrl}/notifications`;
   private notificationSubject = new BehaviorSubject<Notification[]>([]);
   public notifications$ = this.notificationSubject.asObservable();
+  private connectionState = new BehaviorSubject<'disconnected' | 'connecting' | 'connected'>('disconnected');
 
-  constructor(private http: HttpClient, private authService: AuthService, private ngZone: NgZone) { }
+  constructor(private http: HttpClient, private authService: AuthService, private ngZone: NgZone, private toastService: ToastService) { }
 
   private _convertNotificationDates(notification: Notification): Notification {
     return {
@@ -26,7 +28,11 @@ export class NotificationService {
     };
   }
 
-  connect() {
+  connect(userId: string) {
+    if (this.connectionState.value === 'connected' || this.connectionState.value === 'connecting') {
+      return;
+    }
+    this.connectionState.next('connecting');
     const accessToken = this.authService.getAccessToken();
     const socket = new SockJS(`${environment.apiUrl.replace('/api', '')}/ws?token=${accessToken}`);
     this.stompClient = Stomp.over(socket);
@@ -36,18 +42,22 @@ export class NotificationService {
     console.log('WebSocket connection attempt with token:', accessToken);
 
     this.stompClient.connect(headers, () => {
-      this.stompClient.subscribe('/user/queue/notifications', (message) => {
+      console.log('WebSocket connected successfully.');
+      this.connectionState.next('connected');
+      this.stompClient.subscribe(`/user/${userId}/queue/notifications`, (message) => {
         this.ngZone.run(() => {
           const notification: Notification = JSON.parse(message.body);
           const convertedNotification = this._convertNotificationDates(notification);
           const currentNotifications = this.notificationSubject.value;
           this.notificationSubject.next([convertedNotification, ...currentNotifications]);
+          this.toastService.show(notification.message);
           console.log('WebSocket: New notification emitted:', convertedNotification);
           console.log('Current notifications in service:', this.notificationSubject.value);
         });
       });
     }, (error: any) => {
       console.error('WebSocket connection error:', error);
+      this.connectionState.next('disconnected');
     });
   }
 
@@ -74,8 +84,10 @@ export class NotificationService {
   }
 
   disconnect() {
-    if (this.stompClient) {
-      this.stompClient.disconnect(() => {});
+    if (this.stompClient && this.stompClient.connected) {
+      this.stompClient.disconnect(() => {
+        this.connectionState.next('disconnected');
+      });
     }
   }
 }

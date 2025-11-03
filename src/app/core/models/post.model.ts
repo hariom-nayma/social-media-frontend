@@ -12,6 +12,8 @@ export interface PostDTO {
   savedByMe: boolean;
   createdAt: Date;
   archived: boolean;
+  userId?: string;
+  following?: boolean;
 }
 
 export interface FeedPostResponseDTO {

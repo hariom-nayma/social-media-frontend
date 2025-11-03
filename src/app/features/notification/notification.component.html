@@ -8,6 +8,8 @@
     </div>
     <div *ngFor="let notification of (notifications$ | async)" class="notification-item" [class.unread]="!notification.read" (click)="markAsRead(notification)">
       <div class="notification-icon">
+
+        
         <i [class]="getNotificationIcon(notification.type)"></i>
       </div>
       <div class="notification-content">

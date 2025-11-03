@@ -60,6 +60,10 @@ export class HomeComponent implements OnInit {
     this.selectedPostId = null;
   }
 
+  onPostDeleted(postId: string) {
+    this.posts = this.posts.filter(post => post.id !== postId);
+  }
+
   goToProfile(username: string): void {
     this.router.navigate(['/profile', username]);
   }

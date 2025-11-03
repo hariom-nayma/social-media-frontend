@@ -8,7 +8,29 @@
         <div class="location">{{ 'Unknown location' }}</div>
       </div>
     </div>
-    <button title="options" class="options-btn"><i class="fas fa-ellipsis-h"></i></button>
+    <button title="options" class="options-btn" (click)="showOptionsMenu = !showOptionsMenu; $event.stopPropagation()">
+      <i class="fas fa-ellipsis-h"></i>
+    </button>
+  </div>
+
+  <!-- Options Menu -->
+  <div *ngIf="showOptionsMenu" class="options-menu-overlay" (click)="showOptionsMenu = false; $event.stopPropagation()">
+    <div class="options-menu" (click)="$event.stopPropagation()">
+      <ng-container *ngIf="post?.username === currentUser?.username">
+        <button class="option-item destructive" (click)="deletePost()">Delete post</button>
+        <button class="option-item" (click)="archivePost()" *ngIf="!post?.archived">Archive post</button>
+        <button class="option-item" (click)="unarchivePost()" *ngIf="post?.archived">Unarchive post</button>
+        <button class="option-item" (click)="showOptionsMenu = false">Cancel</button>
+      </ng-container>
+      <ng-container *ngIf="post?.username !== currentUser?.username">
+        <button class="option-item" (click)="viewProfile()">View profile</button>
+        <button class="option-item" (click)="toggleFollow()">
+          {{ post?.following ? 'Unfollow' : 'Follow' }}
+        </button>
+        <button class="option-item" (click)="copyPostUrl()">Copy post URL</button>
+        <button class="option-item" (click)="showOptionsMenu = false">Cancel</button>
+      </ng-container>
+    </div>
   </div>
 
   <!-- Image with like animation -->

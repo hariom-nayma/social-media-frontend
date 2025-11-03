@@ -23,6 +23,7 @@
     "@fortawesome/fontawesome-free": "^7.1.0",
     "@types/sockjs-client": "^1.5.4",
     "@types/stompjs": "^2.3.9",
+    "lucide-angular": "^0.552.0",
     "ng-lazyload-image": "^9.1.3",
     "rxjs": "~7.8.1",
     "sockjs-client": "^1.6.1",

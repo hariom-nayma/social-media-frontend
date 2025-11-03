@@ -1,8 +1,10 @@
-import { Component, Input, inject, HostListener } from '@angular/core';
+import { Component, Input, inject, HostListener, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PostDTO } from '../../../core/models/post.model';
 import { PostService } from '../../../core/services/post.service';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
+import { UserService } from '../../../core/services/user.service';
+import { UserDTO } from '../../../core/models/user.model';
 
 @Component({
   selector: 'app-post-card',
@@ -11,11 +13,21 @@ import { RouterModule } from '@angular/router';
   templateUrl: './post-card.component.html',
   styleUrls: ['./post-card.component.css']
 })
-export class PostCardComponent {
+export class PostCardComponent implements OnInit {
   @Input() post!: PostDTO;
+  @Output() postDeleted = new EventEmitter<string>();
+
   private postService = inject(PostService);
+  private userService = inject(UserService);
+  private router = inject(Router);
 
   showLikeAnimation = false;
+  showOptionsMenu = false;
+  currentUser: UserDTO | null = null;
+
+  ngOnInit(): void {
+    this.userService.currentUser$.subscribe(user => this.currentUser = user);
+  }
 
   onLike(event: Event): void {
     event.stopPropagation();
@@ -58,5 +70,50 @@ export class PostCardComponent {
     this.postService.toggleSavePost(this.post.id).subscribe(() => {
       this.post.savedByMe = !this.post.savedByMe;
     });
+  }
+
+  deletePost() {
+    this.postService.deletePost(this.post.id).subscribe(() => {
+      this.postDeleted.emit(this.post.id);
+      this.showOptionsMenu = false;
+    });
+  }
+
+  archivePost() {
+    this.postService.archivePost(this.post.id).subscribe(() => {
+      this.post.archived = true;
+      this.showOptionsMenu = false;
+    });
+  }
+
+  unarchivePost() {
+    this.postService.unarchivePost(this.post.id).subscribe(() => {
+      this.post.archived = false;
+      this.showOptionsMenu = false;
+    });
+  }
+
+  viewProfile() {
+    this.router.navigate(['/profile', this.post.username]);
+    this.showOptionsMenu = false;
+  }
+
+  toggleFollow() {
+    if (!this.post.userId) return;
+    if (this.post.following) {
+      this.userService.unfollowUser(this.post.userId).subscribe(() => {
+        this.post.following = false;
+      });
+    } else {
+      this.userService.followUser(this.post.userId).subscribe(() => {
+        this.post.following = true;
+      });
+    }
+  }
+
+  copyPostUrl() {
+    const postUrl = `${window.location.origin}/post/${this.post.id}`;
+    navigator.clipboard.writeText(postUrl);
+    this.showOptionsMenu = false;
   }
 }

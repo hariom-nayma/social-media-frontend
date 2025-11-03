@@ -28,10 +28,10 @@
         </div>
         <div class="header-actions">
           <button title="more options" class="icon-btn" (click)="showOptionsMenu = !showOptionsMenu">
-            <i class="fa-solid fa-ellipsis"></i>
+            <lucide-icon name="more-horizontal"></lucide-icon>
           </button>
           <button title="close" class="close-btn" (click)="closeDialog()">
-            <i class="fa-solid fa-xmark"></i>
+            <lucide-icon name="x"></lucide-icon>
           </button>
         </div>
       </div>
@@ -61,15 +61,12 @@
       <div class="post-actions">
         <div class="action-buttons">
           <button title="like" class="icon-btn" (click)="likePost()">
-            <i
-              [ngClass]="
-                post1?.likedByCurrentUser
-                  ? 'fa-solid fa-heart liked'
-                  : 'fa-regular fa-heart'
-              "
-            ></i>
+            <lucide-icon name="heart"
+              [style.fill]="post1?.likedByCurrentUser ? '#ed4956' : 'none'"
+              [style.color]="post1?.likedByCurrentUser ? '#ed4956' : 'currentColor'"
+            ></lucide-icon>
           </button>
-          <i class="fa-regular fa-comment"></i>
+          <lucide-icon name="message-circle"></lucide-icon>
         </div>
         <span class="likes">{{ post1?.likeCount }} likes</span>
       </div>
@@ -95,13 +92,10 @@
 
               <div class="comment-actions">
                 <button title="like" (click)="toggleCommentLike(comment)" class="icon-btn">
-                  <i
-                    [ngClass]="
-                      comment.isLiked
-                        ? 'fa-solid fa-heart liked'
-                        : 'fa-regular fa-heart'
-                    "
-                  ></i>
+                  <lucide-icon name="heart"
+                    [style.fill]="comment.isLiked ? '#ed4956' : 'none'"
+                    [style.color]="comment.isLiked ? '#ed4956' : 'currentColor'"
+                  ></lucide-icon>
                 </button>
                 <span class="likes-count"
                   >{{ comment.likesCount || 0 }}</span

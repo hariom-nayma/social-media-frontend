@@ -17,6 +17,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UserService } from '../../../core/services/user.service';
 import { Router } from '@angular/router';
 import { UserDTO } from '../../../core/models/user.model';
+import { LucideAngularModule } from 'lucide-angular';
 
 
 interface CommentDisplayDTO extends CommentDTO {
@@ -29,7 +30,7 @@ interface CommentDisplayDTO extends CommentDTO {
   templateUrl: './post-details-dialog.component.html',
   styleUrls: ['./post-details-dialog.component.css'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule],
 })
 export class PostDetailsDialogComponent implements OnInit {
   @Input() postId!: string;

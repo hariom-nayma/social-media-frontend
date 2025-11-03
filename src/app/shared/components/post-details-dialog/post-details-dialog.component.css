@@ -1,16 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css');
 
+/* ===== Base ===== */
 * {
   font-family: 'Inter', sans-serif;
+  box-sizing: border-box;
 }
 
 .dialog-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.85);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   display: flex;
@@ -26,8 +26,8 @@
   overflow: hidden;
   width: 900px;
   height: 600px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  animation: popIn 0.3s ease-in-out;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.25);
+  animation: popIn 0.25s ease-in-out;
 }
 
 @keyframes popIn {
@@ -41,8 +41,9 @@
   }
 }
 
+/* ===== LEFT: Post Image ===== */
 .post-section {
-  flex: 1;
+  flex: 1.2;
   background-color: #000;
   display: flex;
   justify-content: center;
@@ -55,15 +56,18 @@
   object-fit: contain;
 }
 
+/* ===== RIGHT: Comments Section ===== */
 .comments-section {
   flex: 1;
   display: flex;
   flex-direction: column;
   background-color: #fff;
-  padding: 15px 20px;
+  padding: 15px 18px;
   position: relative;
+  color: #111;
 }
 
+/* Header */
 .post-header {
   display: flex;
   justify-content: space-between;
@@ -78,8 +82,8 @@
 }
 
 .user-avatar {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -87,49 +91,71 @@
 .user-details .name {
   font-weight: 600;
   margin: 0;
+  color: #000;
 }
 
 .username {
-  font-size: 0.9em;
-  color: #666;
+  font-size: 0.85rem;
+  color: #777;
   margin: 0;
 }
 
-.close-btn {
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-size: 1.2rem;
-  color: #333;
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
+.icon-btn,
+.close-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: #333;
+  transition: color 0.2s ease;
+}
+
+.icon-btn:hover,
+.close-btn:hover {
+  color: #000;
+}
+
+/* ===== Post Content ===== */
 .post-content {
   font-size: 0.95rem;
   color: #222;
-  margin-bottom: 10px;
+  margin: 12px 0;
+  line-height: 1.4;
 }
 
 .post-actions {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-bottom: 10px;
+  gap: 6px;
+  margin-bottom: 12px;
 }
 
 .action-buttons {
   display: flex;
-  gap: 12px;
-  font-size: 1.3rem;
+  align-items: center;
+  gap: 14px;
+  font-size: 1.4rem;
 }
 
-.like-btn {
-  background: none;
-  border: none;
+.action-buttons i {
   cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+  color: #333;
 }
 
-.liked {
-  color: #ed4956;
+.action-buttons i:hover {
+  transform: scale(1.1);
+  color: #000;
+}
+
+.fa-heart.liked {
+  color: #ed4956 !important;
   animation: pop 0.2s ease-in-out;
 }
 
@@ -142,12 +168,16 @@
 .likes {
   font-size: 0.85rem;
   color: #555;
+  font-weight: 500;
 }
 
+/* ===== Comments ===== */
 .comments-list {
   flex-grow: 1;
   overflow-y: auto;
   padding-right: 6px;
+  margin-top: 10px;
+  scrollbar-width: thin;
 }
 
 .comment-item {
@@ -170,6 +200,7 @@
 .comment-username {
   font-size: 0.9rem;
   font-weight: 600;
+  color: #111;
   margin: 0;
 }
 
@@ -181,20 +212,27 @@
 
 .comment-actions {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   align-items: center;
   font-size: 0.8rem;
-}
-
-.icon-btn, .reply-btn {
-  border: none;
-  background: transparent;
-  cursor: pointer;
   color: #777;
 }
 
-.icon-btn i.liked {
+.comment-actions .icon-btn i {
+  color: #777;
+}
+
+.comment-actions .icon-btn i.liked {
   color: #ed4956;
+}
+
+.reply-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #0095f6;
+  font-weight: 500;
+  padding: 0;
 }
 
 .replies {
@@ -210,32 +248,46 @@
   padding: 0;
 }
 
+/* ===== Comment Input ===== */
 .comment-form {
   display: flex;
+  align-items: center;
   border-top: 1px solid #eee;
   padding-top: 10px;
+  gap: 8px;
 }
 
 .comment-form input {
   flex: 1;
-  padding: 8px 12px;
-  border: none;
-  outline: none;
-  background-color: #fafafa;
+  padding: 10px 14px;
+  border: 1px solid #eee;
   border-radius: 20px;
+  background: #fafafa;
   font-size: 0.9rem;
+  outline: none;
+}
+
+.comment-form input:focus {
+  background: #fff;
+  border-color: #ccc;
 }
 
 .comment-form button {
-  background: none;
   border: none;
+  background: none;
   color: #0095f6;
   font-weight: 600;
-  margin-left: 8px;
+  font-size: 0.9rem;
   cursor: pointer;
+  transition: color 0.2s;
 }
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
 
+.comment-form button:disabled {
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+/* ===== Replying Banner ===== */
 .replying-banner {
   background: #f0f4ff;
   border-radius: 6px;
@@ -260,23 +312,10 @@
   cursor: pointer;
 }
 
-.likes-count {
-  font-size: 0.8rem;
-  color: #777;
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
+/* ===== Options Menu ===== */
 .options-menu-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
@@ -288,11 +327,12 @@
   background: #fff;
   border-radius: 12px;
   overflow: hidden;
-  min-width: 250px;
+  min-width: 260px;
   animation: popIn 0.2s ease-in-out;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
 }
 
-.options-menu .option-item {
+.option-item {
   display: block;
   width: 100%;
   padding: 12px 16px;
@@ -302,13 +342,56 @@
   font-size: 0.95rem;
   cursor: pointer;
   border-bottom: 1px solid #efefef;
+  color: #333;
+  transition: background 0.2s;
 }
 
-.options-menu .option-item:last-child {
+.option-item:last-child {
   border-bottom: none;
 }
 
-.options-menu .option-item.destructive {
+.option-item:hover {
+  background: #f5f5f5;
+}
+
+.option-item.destructive {
   color: #ed4956;
-  font-weight: bold;
+  font-weight: 600;
+}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .dialog-content {
+    flex-direction: column;
+    width: 95%;
+    height: 90%;
+  }
+
+  .post-section {
+    flex: none;
+    height: 60%;
+  }
+
+  .comments-section {
+    flex: 1;
+    height: 40%;
+    padding: 12px;
+  }
+
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+  }
 }
