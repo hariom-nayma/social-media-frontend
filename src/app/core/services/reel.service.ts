@@ -13,10 +13,11 @@ export class ReelService {
 
   constructor(private http: HttpClient) { }
 
-  createReel(video: File, caption: string): Observable<ApiResponse<ReelDTO>> {
+  createReel(video: File, caption: string, isPrivate: boolean): Observable<ApiResponse<ReelDTO>> {
     const formData = new FormData();
     formData.append('video', video);
     formData.append('caption', caption);
+    formData.append('isPrivate', isPrivate.toString());
     return this.http.post<ApiResponse<ReelDTO>>(`${this.apiUrl}`, formData);
   }
 
@@ -33,11 +34,7 @@ export class ReelService {
   }
 
   likeReel(reelId: string): Observable<ApiResponse<ReelDTO>> {
-    return this.http.post<ApiResponse<ReelDTO>>(`${this.apiUrl}/${reelId}/like`, {});
-  }
-
-  unlikeReel(reelId: string): Observable<ApiResponse<ReelDTO>> {
-    return this.http.post<ApiResponse<ReelDTO>>(`${this.apiUrl}/${reelId}/unlike`, {});
+    return this.http.post<ApiResponse<ReelDTO>>(`${this.apiUrl}/${reelId}/toggle-like`, {});
   }
 
   reshareReel(reelId: string): Observable<ApiResponse<ReelDTO>> {

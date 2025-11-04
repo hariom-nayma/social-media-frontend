@@ -1,41 +1,81 @@
-<div class="container mx-auto p-4">
-  <h2 class="text-3xl font-bold mb-6 text-gray-800">Reels</h2>
+<div class="reel-container" *ngIf="!loading && !error" aria-live="polite">
+  <div *ngFor="let reel of reels; let i = index" class="reel">
+    <!-- Top progress (small thin indicator like Reels) -->
+    <div class="top-progress">
+      <div class="progress-bar"></div>
+    </div>
 
-  <div *ngIf="loading" class="text-center text-gray-600">
-    Loading reels...
-  </div>
+    <div class="video-wrapper" (click)="togglePlayPause(i)">
+      <video
+        #videoEl
+        class="reel-video"
+        [src]="reel.mediaVideoUrl"
+        loop
+        muted
+        playsinline
+        preload="metadata"
+        (dblclick)="$event.stopPropagation(); onVideoDoubleTap(i)"
+        title="Reel video"
+      ></video>
 
-  <div *ngIf="error" class="text-center text-red-500">
-    {{ error }}
-  </div>
+      <!-- center heart pop -->
+      <div class="heart-pop" *ngIf="heartVisible[i]">❤</div>
+    </div>
 
-  <div *ngIf="!loading && !error && reels.length === 0" class="text-center text-gray-600">
-    No reels available yet.
-  </div>
+    <!-- Overlay gradient -->
+    <div class="overlay"></div>
 
-  <div *ngIf="!loading && !error && reels.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-    <div *ngFor="let reel of reels" class="bg-white rounded-lg shadow-md overflow-hidden">
-      <video [src]="reel.mediaVideoUrl" controls class="w-full h-64 object-cover"></video>
-      <div class="p-4">
-        <div class="flex items-center mb-3">
-          <img [src]="reel.reelUser.profileImage || 'https://via.placeholder.com/150'" alt="{{ reel.reelUser.username }}" class="w-8 h-8 rounded-full object-cover mr-2">
-          <span class="font-semibold text-gray-800">{{ reel.reelUser.username }}</span>
-        </div>
-        <p class="text-gray-700 mb-3">{{ reel.caption }}</p>
-        <div class="flex items-center justify-between text-gray-500 text-sm">
-          <div class="flex items-center space-x-3">
-            <button (click)="likeReel(reel.id)" class="flex items-center space-x-1 focus:outline-none">
-              <svg class="w-5 h-5" [class.text-red-500]="reel.likedByCurrentUser" [attr.fill]="reel.likedByCurrentUser ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-              <span>{{ reel.likeCount }}</span>
-            </button>
-            <button (click)="reshareReel(reel.id)" class="flex items-center space-x-1 focus:outline-none">
-              <svg class="w-5 h-5" [class.text-blue-500]="reel.sharedByCurrentUser" [attr.fill]="reel.sharedByCurrentUser ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.516 3.832a3 3 0 00.617-2.485l-1.27-2.785m-1.27 2.785A3 3 0 1115 9c0 .482-.114.938-.316 1.342m0-2.684l-6.516-3.832a3 3 0 00-.617 2.485l1.27 2.785m1.27-2.785A3 3 0 119 12c0-.482.114-.938.316-1.342M12 12h.01"></path></svg>
-              <span>{{ reel.shareCount }}</span>
-            </button>
-          </div>
-          <span>{{ reel.createdAt | date:'shortDate' }}</span>
+    <!-- Left bottom info -->
+    <div class="reel-info">
+      <div class="user">
+        <img
+          alt="profileImage"
+          [src]="reel.reelUser?.profileImage || profilePlaceholder()"
+        />
+        <div class="meta">
+          <div class="username">@{{ reel.reelUser?.username }}</div>
+          <div class="music">🎵 {{ reel.caption || 'Original audio' }}</div>
         </div>
       </div>
+      <p class="caption" *ngIf="reel.caption">{{ reel.caption }}</p>
+    </div>
+
+    <!-- Right action buttons -->
+    <div class="actions" role="group" aria-label="reel actions">
+      <button class="icon-btn like-btn" title="Like" (click)="likeReel(reel, i)">
+        <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+             [attr.fill]="reel.likedByMe ? 'currentColor' : 'none'" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+        </svg>
+        <span class="count">{{ reel.likeCount || 0 }}</span>
+      </button>
+
+      <button class="icon-btn" title="Comments" (click)="commentReel(reel)">
+        <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+        </svg>
+        <span class="count">{{ reel.commentCount || 0 }}</span>
+      </button>
+
+      <button class="icon-btn" title="Reshare" (click)="reshareReel(reel)">
+        <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.516 3.832a3 3 0 00.617-2.485l-1.27-2.785m-1.27 2.785A3 3 0 1115 9c0 .482-.114.938-.316 1.342"/>
+        </svg>
+        <span class="count">{{ reel.reshareCount || 0 }}</span>
+      </button>
+
+      <button class="icon-btn" title="Share" (click)="shareReel(reel)">
+        <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7M12 3v13M7 8l5-5 5 5"/>
+        </svg>
+      </button>
     </div>
   </div>
 </div>
+
+<div *ngIf="loading" class="loading-screen">Loading Reels...</div>
+<div *ngIf="error" class="error-screen">{{ error }}</div>

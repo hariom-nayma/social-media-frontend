@@ -22,4 +22,6 @@ export interface ReelDTO {
   updatedAt: string; // Using string for LocalDateTime from backend
   likedByCurrentUser: boolean;
   sharedByCurrentUser: boolean;
+  likedByMe: boolean;
+  resharedByMe: boolean;
 }

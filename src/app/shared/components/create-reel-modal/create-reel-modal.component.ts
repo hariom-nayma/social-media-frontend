@@ -55,38 +55,20 @@ import { ToastService } from '../../../core/services/toast.service';
           </div>
 
           <!-- Video preview -->
-          <div *ngIf="videoPreviewUrl" class="video-preview">
-            <video
-              [src]="videoPreviewUrl"
-              controls
-              class="preview-video"
-            ></video>
-          </div>
-
-          <!-- Upload progress -->
-          <mat-progress-bar
-            *ngIf="uploading"
-            mode="determinate"
-            [value]="progress"
-            color="primary"
-          ></mat-progress-bar>
-
-          <!-- Actions -->
-          <button
-            mat-raised-button
-            color="primary"
-            type="submit"
-            [disabled]="!selectedFile || !caption || uploading"
-          >
-            {{ uploading ? 'Uploading...' : 'Upload Reel' }}
-          </button>
+        <div *ngIf="videoPreviewUrl" class="mb-4 flex justify-center">
+          <video [src]="videoPreviewUrl" controls class="max-w-full max-h-60 object-contain border rounded"></video>
+        </div>
+        <div class="mb-4 flex items-center">
+          <input type="checkbox" id="isPrivate" [(ngModel)]="isPrivate" name="isPrivate" class="mr-2">
+          <label for="isPrivate">Make Reel Private (only followers can see)</label>
+        </div>
+        <button mat-raised-button color="primary" type="submit" [disabled]="!selectedFile || !caption">Upload Reel</button>
 
           <button
             mat-button
             color="warn"
             type="button"
             (click)="closeModal()"
-            [disabled]="uploading"
           >
             Cancel
           </button>
@@ -191,9 +173,7 @@ export class CreateReelModalComponent {
   caption: string = '';
   selectedFile: File | null = null;
   videoPreviewUrl: string | ArrayBuffer | null = null;
-
-  progress = 0;
-  uploading = false;
+  isPrivate: boolean = false; // New property for public/private option
 
   private reelService = inject(ReelService);
   private toastService = inject(ToastService);
@@ -203,34 +183,31 @@ export class CreateReelModalComponent {
     if (input.files && input.files.length > 0) {
       this.selectedFile = input.files[0];
       const reader = new FileReader();
-      reader.onload = () => (this.videoPreviewUrl = reader.result);
+      reader.onload = () => {
+        this.videoPreviewUrl = reader.result;
+      };
       reader.readAsDataURL(this.selectedFile);
+    } else {
+      this.selectedFile = null;
+      this.videoPreviewUrl = null;
     }
   }
 
   createReel(): void {
-    if (!this.selectedFile || !this.caption) {
-      this.toastService.show('Please select a video and add a caption.', 'error');
-      return;
-    }
-
-    this.uploading = true;
-    this.reelService.createReel(this.selectedFile, this.caption).subscribe({
-      next: (event :  any) => {
-        if (event.type === 1 && event.total) {
-          this.progress = Math.round((event.loaded / event.total) * 100);
-        } else if (event.body) {
-          this.toastService.show('Reel uploaded successfully!', 'success');
-          this.uploading = false;
+    if (this.selectedFile && this.caption) {
+      this.reelService.createReel(this.selectedFile, this.caption, this.isPrivate).subscribe({
+        next: (response) => {
+          this.toastService.show('Reel created successfully!', 'success');
           this.closeModal();
+        },
+        error: (err) => {
+          this.toastService.show('Failed to create reel.', 'error');
+          console.error('Error creating reel:', err);
         }
-      },
-      error: (err) => {
-        this.toastService.show('Failed to upload reel.', 'error');
-        console.error(err);
-        this.uploading = false;
-      }
-    });
+      });
+    } else {
+      this.toastService.show('Please select a video and add a caption.', 'error');
+    }
   }
 
   closeModal(): void {
