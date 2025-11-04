@@ -1,0 +1,38 @@
+/* reels-list.component.css */
+
+.reel-card {
+  transition: transform 0.2s ease-in-out;
+}
+
+.reel-card:hover {
+  transform: translateY(-5px);
+}
+
+.reel-video {
+  background-color: black;
+}
+
+.reel-user-info {
+  display: flex;
+  align-items: center;
+}
+
+.reel-user-info img {
+  border: 1px solid #e0e0e0;
+}
+
+.reel-actions button {
+  color: #6b7280; /* gray-500 */
+}
+
+.reel-actions button:hover {
+  color: #1d4ed8; /* blue-700 */
+}
+
+.reel-actions svg.text-red-500 {
+  fill: currentColor;
+}
+
+.reel-actions svg.text-blue-500 {
+  fill: currentColor;
+}

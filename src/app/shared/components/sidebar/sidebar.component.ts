@@ -5,16 +5,19 @@ import { CreatePostModalComponent } from "../create-post-modal/create-post-modal
 import { AuthService } from '../../../core/services/auth.service';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { SettingsDialogComponent } from '../../../features/settings/settings-dialog/settings-dialog.component';
+import { CreateOptionsDialogComponent } from "../create-options-dialog/create-options-dialog.component";
+import { CreateReelModalComponent } from "../create-reel-modal/create-reel-modal.component";
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterModule, CreatePostModalComponent, MatDialogModule],
+  imports: [CommonModule, RouterModule, CreatePostModalComponent, MatDialogModule, CreateOptionsDialogComponent, CreateReelModalComponent],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent {
   showCreatePostModal = false;
+  showCreateReelModal = false;
   showMoreOptions = false;
 
   authService = inject(AuthService);
@@ -22,11 +25,26 @@ export class SidebarComponent {
   dialog = inject(MatDialog);
 
   openCreatePostModal() {
-    this.showCreatePostModal = true;
+    const dialogRef = this.dialog.open(CreateOptionsDialogComponent, {
+      width: '400px',
+      panelClass: 'create-options-dialog-container'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'post') {
+        this.showCreatePostModal = true;
+      } else if (result === 'reel') {
+        this.showCreateReelModal = true;
+      }
+    });
   }
 
   closeCreatePostModal() {
     this.showCreatePostModal = false;
+  }
+
+  closeCreateReelModal() {
+    this.showCreateReelModal = false;
   }
 
   toggleMoreOptions() {

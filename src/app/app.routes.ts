@@ -43,6 +43,10 @@ export const routes: Routes = [
             {
                 path: 'conversations',
                 loadComponent: () => import('./features/chat/conversations/conversations.component').then(m => m.ConversationsComponent)
+            },
+            {
+                path: 'reels',
+                loadComponent: () => import('./features/reels/reels-list/reels-list.component').then(m => m.ReelsListComponent)
             }
           ]
     },

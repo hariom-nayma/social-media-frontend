@@ -1,0 +1,41 @@
+<div class="container mx-auto p-4">
+  <h2 class="text-3xl font-bold mb-6 text-gray-800">Reels</h2>
+
+  <div *ngIf="loading" class="text-center text-gray-600">
+    Loading reels...
+  </div>
+
+  <div *ngIf="error" class="text-center text-red-500">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error && reels.length === 0" class="text-center text-gray-600">
+    No reels available yet.
+  </div>
+
+  <div *ngIf="!loading && !error && reels.length > 0" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div *ngFor="let reel of reels" class="bg-white rounded-lg shadow-md overflow-hidden">
+      <video [src]="reel.mediaVideoUrl" controls class="w-full h-64 object-cover"></video>
+      <div class="p-4">
+        <div class="flex items-center mb-3">
+          <img [src]="reel.reelUser.profileImage || 'https://via.placeholder.com/150'" alt="{{ reel.reelUser.username }}" class="w-8 h-8 rounded-full object-cover mr-2">
+          <span class="font-semibold text-gray-800">{{ reel.reelUser.username }}</span>
+        </div>
+        <p class="text-gray-700 mb-3">{{ reel.caption }}</p>
+        <div class="flex items-center justify-between text-gray-500 text-sm">
+          <div class="flex items-center space-x-3">
+            <button (click)="likeReel(reel.id)" class="flex items-center space-x-1 focus:outline-none">
+              <svg class="w-5 h-5" [class.text-red-500]="reel.likedByCurrentUser" [attr.fill]="reel.likedByCurrentUser ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+              <span>{{ reel.likeCount }}</span>
+            </button>
+            <button (click)="reshareReel(reel.id)" class="flex items-center space-x-1 focus:outline-none">
+              <svg class="w-5 h-5" [class.text-blue-500]="reel.sharedByCurrentUser" [attr.fill]="reel.sharedByCurrentUser ? 'currentColor' : 'none'" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.516 3.832a3 3 0 00.617-2.485l-1.27-2.785m-1.27 2.785A3 3 0 1115 9c0 .482-.114.938-.316 1.342m0-2.684l-6.516-3.832a3 3 0 00-.617 2.485l1.27 2.785m1.27-2.785A3 3 0 119 12c0-.482.114-.938.316-1.342M12 12h.01"></path></svg>
+              <span>{{ reel.shareCount }}</span>
+            </button>
+          </div>
+          <span>{{ reel.createdAt | date:'shortDate' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
