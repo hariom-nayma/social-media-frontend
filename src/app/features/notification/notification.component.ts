@@ -1,31 +1,46 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../core/services/notification.service';
 import { Notification } from '../../core/models/notification.model';
 import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { PostDetailsDialogComponent } from '../../shared/components/post-details-dialog/post-details-dialog.component';
 
 @Component({
   selector: 'app-notification',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatDialogModule],
   templateUrl: './notification.component.html',
   styleUrls: ['./notification.component.css']
 })
-export class NotificationComponent implements OnInit, OnDestroy {
+export class NotificationComponent implements OnInit {
   notifications$!: Observable<Notification[]>;
 
-  constructor(private notificationService: NotificationService) { }
+  constructor(
+    private notificationService: NotificationService,
+    private dialog: MatDialog,
+    public router: Router
+  ) {}
 
   ngOnInit(): void {
     this.notifications$ = this.notificationService.notifications$;
-    this.notifications$.subscribe(notifications => {
-      console.log('NotificationComponent: Received notifications:', notifications);
-    });
     this.notificationService.fetchRecent();
   }
 
-  ngOnDestroy(): void {
-    // No need to disconnect here anymore
+  handleNotificationClick(notification: Notification): void {
+    this.markAsRead(notification);
+
+    if (notification.type === 'LIKE' || notification.type === 'COMMENT') {
+      if (notification.postId) {
+        this.dialog.open(PostDetailsDialogComponent, {
+          width: '500px',
+          data: { postId: notification.postId }
+        });
+      }
+    } else if (notification.type === 'FOLLOW' && notification.senderUsername) {
+      this.router.navigate(['/profile', notification.senderUsername]);
+    }
   }
 
   markAsRead(notification: Notification): void {
@@ -36,16 +51,12 @@ export class NotificationComponent implements OnInit, OnDestroy {
     }
   }
 
-  getNotificationIcon(type: string): string {
+  getIcon(type: string): string {
     switch (type) {
-      case 'LIKE':
-        return 'fas fa-heart';
-      case 'COMMENT':
-        return 'fas fa-comment';
-      case 'FOLLOW':
-        return 'fas fa-user-plus';
-      default:
-        return 'fas fa-bell';
+      case 'LIKE': return '❤️';
+      case 'COMMENT': return '💬';
+      case 'FOLLOW': return '👤';
+      default: return '🔔';
     }
   }
 }

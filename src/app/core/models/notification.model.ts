@@ -7,4 +7,8 @@ export interface Notification {
     read: boolean;
     createdAt: Date;
     payload: string;
+    senderId : string;
+    senderUsername?: string;
+    senderProfileImage?: string;
+    postId?: string;
 }

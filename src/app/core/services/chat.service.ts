@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, Observable, Subject, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, Subject, throwError, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import SockJS from 'sockjs-client';
 import * as Stomp from 'stompjs';
 import { environment } from '../../../environments/environment';
@@ -142,6 +143,23 @@ export class ChatService {
   getUserConversations(): Observable<ConversationListDTO[]> {
     return this.http.get<ConversationListDTO[]>(`${environment.apiUrl}/chat/conversations`);
   }
+
+  // Method to get conversation ID between two users
+  getConversationId(userId1: string, userId2: string): Observable<string | null> {
+    return this.getUserConversations().pipe(
+      map(conversations => {
+        const conversation = conversations.find(conv =>
+          (conv.otherUserId === userId2)
+        );
+        return conversation ? conversation.conversationId : null;
+      }),
+      catchError(error => {
+        console.error('Error fetching conversations:', error);
+        return of(null);
+      })
+    );
+  }
+
 
 
 }

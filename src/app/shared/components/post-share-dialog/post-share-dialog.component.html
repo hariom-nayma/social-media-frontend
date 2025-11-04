@@ -1,0 +1,61 @@
+<h2 mat-dialog-title class="text-2xl font-bold mb-6 text-gray-800">Share Post</h2>
+
+<mat-dialog-content class="mat-typography px-4">
+  <div class="mb-6">
+    <h3 class="text-lg font-semibold mb-3 text-gray-700">Share with your followers:</h3>
+    <div class="max-h-60 overflow-y-auto border border-gray-300 rounded-lg p-3 shadow-sm">
+      <div *ngIf="followingUsers.length === 0" class="text-gray-500 text-center py-4">
+        You are not following anyone yet.
+      </div>
+      <div *ngFor="let user of followingUsers" class="flex items-center justify-between py-2 border-b border-gray-200 last:border-b-0">
+        <div class="flex items-center space-x-3">
+          <img class="w-10 h-10 rounded-full object-cover border border-gray-200" [src]="user.profileImageUrl || 'https://via.placeholder.com/150'" alt="User Profile">
+          <span class="font-medium text-gray-800">{{ user.username }}</span>
+        </div>
+        <input title="checkbox" type="checkbox" [checked]="selectedUsers.includes(user.id)" (change)="toggleUserSelection(user.id)"
+               class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500 cursor-pointer">
+      </div>
+    </div>
+    <button (click)="sendToSelectedUsers()" class="mt-5 w-full px-5 py-2.5 text-base font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition ease-in-out duration-150">
+      Send to Selected
+    </button>
+  </div>
+
+  <div class="mt-8">
+    <h3 class="text-lg font-semibold mb-3 text-gray-700">More Options:</h3>
+    <div class="grid grid-cols-2 gap-4">
+      <button (click)="copyLink()" class="flex items-center justify-center px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition ease-in-out duration-150 border border-gray-200">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
+          <path d="M15 8a2 2 0 10-3.983.02L9.617 10.387l-1.395-1.395A2 2 0 106 5a2 2 0 00-1.983 2.02L3.617 8.387l1.395 1.395A2 2 0 109 15a2 2 0 001.983-2.02l1.395-1.395A2 2 0 1015 8z" />
+        </svg>
+        Copy Link
+      </button>
+      <button (click)="shareToWhatsApp()" class="flex items-center justify-center px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition ease-in-out duration-150 border border-gray-200">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" class="h-5 w-5 mr-2">
+        WhatsApp
+      </button>
+      <button (click)="shareToTelegram()" class="flex items-center justify-center px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition ease-in-out duration-150 border border-gray-200">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram" class="h-5 w-5 mr-2">
+        Telegram
+      </button>
+      <button (click)="shareToTwitter()" class="flex items-center justify-center px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition ease-in-out duration-150 border border-gray-200">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Twitter-logo.svg" alt="Twitter" class="h-5 w-5 mr-2">
+        X (Twitter)
+      </button>
+      <button (click)="shareToFacebook()" class="flex items-center justify-center px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition ease-in-out duration-150 border border-gray-200">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook" class="h-5 w-5 mr-2">
+        Facebook
+      </button>
+      <button (click)="shareToOthers()" class="flex items-center justify-center px-4 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition ease-in-out duration-150 border border-gray-200">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+        </svg>
+        Others
+      </button>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="px-4 py-3 border-t border-gray-200 bg-gray-50">
+  <button mat-button (click)="onNoClick()" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition ease-in-out duration-150">Cancel</button>
+</mat-dialog-actions>

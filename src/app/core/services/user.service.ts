@@ -74,12 +74,12 @@ export class UserService {
     return this.http.get<ApiResponse<FollowRequestDTO[]>>(`${this.apiUrl}/follow-requests`);
   }
 
-  acceptFollowRequest(requestId: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/follow-requests/${requestId}/accept`, {});
+  acceptFollowRequest(userId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/follow-requests/${userId}/accept`, {});
   }
 
-  declineFollowRequest(requestId: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/follow-requests/${requestId}/decline`, {});
+  declineFollowRequest(userId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/follow-requests/${userId}/decline`, {});
   }
 
   getFollowers(username: string): Observable<ApiResponse<UserDTO[]>> {

@@ -5,11 +5,13 @@ import { PostService } from '../../../core/services/post.service';
 import { RouterModule, Router } from '@angular/router';
 import { UserService } from '../../../core/services/user.service';
 import { UserDTO } from '../../../core/models/user.model';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { PostShareDialogComponent } from '../post-share-dialog/post-share-dialog.component';
 
 @Component({
   selector: 'app-post-card',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, MatDialogModule],
   templateUrl: './post-card.component.html',
   styleUrls: ['./post-card.component.css']
 })
@@ -20,6 +22,7 @@ export class PostCardComponent implements OnInit {
   private postService = inject(PostService);
   private userService = inject(UserService);
   private router = inject(Router);
+  private dialog = inject(MatDialog);
 
   showLikeAnimation = false;
   showOptionsMenu = false;
@@ -62,7 +65,11 @@ export class PostCardComponent implements OnInit {
 
   onShare(event: Event): void {
     event.stopPropagation();
-    console.log('Share clicked:', this.post.id);
+    const postUrl = `${window.location.origin}/post/${this.post.id}`;
+    this.dialog.open(PostShareDialogComponent, {
+      width: '500px',
+      data: { postId: this.post.id, postUrl: postUrl }
+    });
   }
 
   onSave(event: Event): void {

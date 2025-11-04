@@ -1,22 +1,62 @@
-<div class="notification-container">
-  <div class="notification-header">
+<div class="notif-wrapper">
+  <div class="notif-header">
     <h2>Notifications</h2>
   </div>
-  <div class="notification-list">
-    <div *ngIf="(notifications$ | async)?.length === 0" class="no-notifications">
-      <p>No notifications yet.</p>
-    </div>
-    <div *ngFor="let notification of (notifications$ | async)" class="notification-item" [class.unread]="!notification.read" (click)="markAsRead(notification)">
-      <div class="notification-icon">
 
-        
-        <i [class]="getNotificationIcon(notification.type)"></i>
+  <div *ngIf="(notifications$ | async)?.length; else noNotifications" class="notif-list">
+    <div
+      *ngFor="let n of (notifications$ | async)"
+      class="notif-card"
+      [class.unread]="!n.read"
+      (click)="handleNotificationClick(n)"
+    >
+      <div class="notif-avatar">
+        <img [src]="n.senderProfileImage || 'https://via.placeholder.com/100'" alt="profile" />
+        <span *ngIf="!n.read" class="notif-dot"></span>
       </div>
-      <div class="notification-content">
-        <p class="notification-message">{{ notification.message }}</p>
-        <span class="notification-time">{{ notification.createdAt | date:'short' }}</span>
+
+      <div class="notif-body">
+        <p>
+          <span
+            class="notif-user"
+            (click)="$event.stopPropagation(); router.navigate(['/profile', n.senderUsername])"
+            >@{{ n.senderUsername }}</span
+          >
+          {{ n.message }}
+        </p>
+        <small>{{ n.createdAt | date: 'short' }}</small>
+      </div>
+
+      <div class="notif-icon">
+        {{ getIcon(n.type) }}
       </div>
     </div>
   </div>
-</div>
 
+  <ng-template #noNotifications>
+    <div class="no-notifs">
+      <svg
+        class="no-icon"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 
+          14.158V11a6.002 6.002 0 
+          00-4-5.659V5a2 2 0 10-4 
+          0v.341C7.67 6.165 6 8.388 
+          6 11v3.159c0 .538-.214 
+          1.055-.595 1.436L4 17h5m6 
+          0v1a3 3 0 11-6 0v-1m6 0H9"
+        />
+      </svg>
+      <h3>No new notifications</h3>
+      <p>You’re all caught up — check back later!</p>
+    </div>
+  </ng-template>
+</div>
