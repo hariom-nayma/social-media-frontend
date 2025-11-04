@@ -149,11 +149,20 @@
   background: #000;
 }
 
+.post-img-wrapper {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%; /* 1:1 Aspect Ratio */
+}
+
 .post-img {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  aspect-ratio: 1/1;
   transition: transform 0.3s ease;
 }
 
@@ -161,12 +170,34 @@
   transform: scale(1.05);
 }
 
+.play-button-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.3); /* Semi-transparent overlay */
+  opacity: 1; /* Visible by default */
+  transition: opacity 0.3s ease;
+}
+
+.post-thumbnail:hover .play-button-overlay {
+  opacity: 0; /* Hide on hover */
+}
+
+.play-icon {
+  /* font-size: 48px; Adjusted play icon size */
+  color: #fff;
+  opacity: 0.9;
+  font-family: 'Material Icons'; /* Explicitly set font family */
+}
+
 .post-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.6); /* Darker overlay for better contrast */
   color: #fff;
-  opacity: 0;
+  opacity: 0; /* Hidden by default */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -177,7 +208,7 @@
 }
 
 .post-thumbnail:hover .post-overlay {
-  opacity: 1;
+  opacity: 1; /* Show on hover */
 }
 
 .post-overlay-item {

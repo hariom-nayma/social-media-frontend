@@ -1,0 +1,96 @@
+<div class="dialog-overlay" (click)="closeDialog()">
+  <div class="dialog-content" (click)="$event.stopPropagation()">
+    <!-- LEFT: VIDEO -->
+    <div class="reel-section">
+      <video
+        *ngIf="reel?.mediaVideoUrl"
+        [src]="reel?.mediaVideoUrl"
+        controls
+        class="reel-video"
+      ></video>
+    </div>
+
+    <!-- RIGHT: COMMENTS -->
+    <div class="comments-section">
+      <div class="post-header">
+        <div class="user-info">
+          <img
+            [src]="
+              reel?.mediaVideoUrl
+            "
+            class="user-avatar"
+            alt="user"
+          />
+          <div class="user-details">
+            <p class="name">{{ reel?.reelUser?.firstName }} {{ reel?.reelUser?.lastName }}</p>
+            <p class="username">@{{ reel?.reelUser?.username }}</p>
+          </div>
+        </div>
+        <div class="header-actions">
+          <!-- <button title="more options" class="icon-btn" (click)="showOptionsMenu = !showOptionsMenu">
+            <lucide-icon name="more-horizontal"></lucide-icon>
+          </button> -->
+          <button title="close" class="close-btn" (click)="closeDialog()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <p class="post-content">{{ reel?.caption }}</p>
+
+      <div class="post-actions">
+        <div class="action-buttons">
+          <button title="like" class="icon-btn" (click)="likeReel()">
+            <mat-icon [color]="reel?.likedByMe ? 'warn' : 'basic'">favorite</mat-icon>
+          </button>
+          <button title="comment" class="icon-btn">
+            <mat-icon>comment</mat-icon>
+          </button>
+          <button title="reshare" class="icon-btn" (click)="reshareReel()">
+            <mat-icon [color]="reel?.resharedByMe ? 'primary' : 'basic'">share</mat-icon>
+          </button>
+        </div>
+        <span class="likes">{{ reel?.likeCount }} likes</span>
+        <span class="comments-count">{{ reel?.commentCount }} comments</span>
+        <span class="reshare-count">{{ reel?.reshareCount }} reshares</span>
+      </div>
+
+      <div class="comments-list">
+        <div *ngIf="comments.length === 0" class="text-gray-500">No comments yet.</div>
+                    <div *ngFor="let comment of comments" class="comment-item">
+                      <img
+                        [src]="
+                          comment.userProfileImage ||
+                          'https://i.pravatar.cc/150?u=' + comment.userId
+                        "
+                        class="comment-avatar"
+                        alt="profile"
+                      />
+                      <div class="comment-body">
+                        <p class="comment-username"><strong>{{ comment.firstName }} {{ comment.lastName }}</strong></p>
+                        <p class="comment-text">{{ comment.text }}</p>
+        
+                        <div class="comment-actions">
+                          <button
+                            *ngIf="comment.userId === currentUserId"
+                            class="reply-btn"
+                            (click)="deleteComment(comment.id)"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    </div>      </div>
+
+      <div class="comment-form">
+        <input
+          type="text"
+          placeholder="Add a comment..."
+          [(ngModel)]="newCommentText"
+          (keyup.enter)="addComment()"
+        />
+        <button type="submit" (click)="addComment()" [disabled]="!newCommentText">Post</button>
+      </div>
+    </div>
+  </div>
+</div>

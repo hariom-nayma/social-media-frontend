@@ -1,9 +1,11 @@
 export interface CommentDTO {
   id: string;
-  content: string;
+  text: string;
   userId: string;
   username: string;
-  profileImageUrl?: string;
+  firstName?: string;
+  lastName?: string;
+  userProfileImage?: string;
   createdAt?: string;
   updatedAt?: string;
   likesCount?: number;

@@ -10,11 +10,15 @@ import { PostDetailsDialogComponent } from '../../../shared/components/post-deta
 import { PostService } from '../../../core/services/post.service';
 import { FeedPostResponseDTO } from '../../../core/models/post.model';
 import { UserService } from '../../../core/services/user.service';
+import { ReelService } from '../../../core/services/reel.service';
+import { ReelDTO } from '../../../core/models/reel.model';
+import { ReelDetailsDialogComponent } from '../../../shared/components/reel-details-dialog/reel-details-dialog.component';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-view-profile',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatIconModule],
   templateUrl: './view-profile.component.html',
   styleUrl: './view-profile.component.css'
 })
@@ -24,14 +28,16 @@ export class ViewProfileComponent implements OnInit {
   username: string | null = null;
   isOwnProfile: boolean = false;
   savedPosts: FeedPostResponseDTO[] = [];
-  activeTab: 'posts' | 'saved' = 'posts';
+  userReels: ReelDTO[] = [];
+  activeTab: 'posts' | 'saved' | 'reels' = 'posts';
 
   constructor(
     private route: ActivatedRoute,
     private userService: UserService,
     private dialog: MatDialog,
     private authService: AuthService,
-    private postService: PostService
+    private postService: PostService,
+    private reelService: ReelService
   ) {}
 
   ngOnInit(): void {
@@ -41,6 +47,7 @@ export class ViewProfileComponent implements OnInit {
         this.userService.getUserProfileByUsername(this.username).subscribe(response => {
           this.userProfile = { ...response.data!, isFollowing: response.data?.following || false, isRequested: response.data?.requested || false };
           this.checkIfOwnProfile();
+          this.loadUserReels();
         });
       }
       else{
@@ -50,6 +57,7 @@ export class ViewProfileComponent implements OnInit {
           if (this.isOwnProfile) {
             this.loadSavedPosts();
           }
+          this.loadUserReels();
         });
       }
     });
@@ -74,10 +82,28 @@ export class ViewProfileComponent implements OnInit {
     });
   }
 
-  selectTab(tab: 'posts' | 'saved'): void {
+  loadUserReels(): void {
+    const usernameToFetch = this.username || this.userProfile?.username;
+    if (usernameToFetch) {
+      this.reelService.getReelsByUser(usernameToFetch).subscribe(response => {
+        console.log('Reels API Response:', response);
+        if (response.data && Array.isArray(response.data)) {
+          this.userReels = response.data;
+          console.log('User Reels loaded:', this.userReels);
+        } else {
+          this.userReels = [];
+          console.log('User Reels is empty or not an array.');
+        }
+      });
+    }
+  }
+
+  selectTab(tab: 'posts' | 'saved' | 'reels'): void {
     this.activeTab = tab;
     if (tab === 'saved' && this.savedPosts.length === 0) {
       this.loadSavedPosts();
+    } else if (tab === 'reels' && this.userReels.length === 0) {
+      this.loadUserReels();
     }
   }
 
@@ -116,6 +142,19 @@ export class ViewProfileComponent implements OnInit {
       data: { postId: postId },
       disableClose: false,
       panelClass: 'post-details-dialog-panel'
+    });
+
+    dialogRef.backdropClick().subscribe(() => {
+      dialogRef.close();
+    });
+  }
+
+  openReelDetailsDialog(reelId: string): void {
+    const dialogRef = this.dialog.open(ReelDetailsDialogComponent, {
+      width: '800px',
+      data: { reelId: reelId },
+      disableClose: false,
+      panelClass: 'reel-details-dialog-panel'
     });
 
     dialogRef.backdropClick().subscribe(() => {

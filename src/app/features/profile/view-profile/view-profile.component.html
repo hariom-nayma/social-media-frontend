@@ -68,8 +68,8 @@
     </div>
   </div>
 
-  <!-- Tabs for Posts and Saved Posts -->
-  <div class="profile-tabs" *ngIf="isOwnProfile">
+  <!-- Tabs for Posts, Saved Posts, and Reels -->
+  <div class="profile-tabs">
     <button
       class="tab-button"
       [class.active]="activeTab === 'posts'"
@@ -81,8 +81,16 @@
       class="tab-button"
       [class.active]="activeTab === 'saved'"
       (click)="selectTab('saved')"
+      *ngIf="isOwnProfile"
     >
       Saved
+    </button>
+    <button
+      class="tab-button"
+      [class.active]="activeTab === 'reels'"
+      (click)="selectTab('reels')"
+    >
+      Reels
     </button>
   </div>
 
@@ -154,5 +162,43 @@
     class="no-posts"
   >
     <p>No saved posts yet</p>
+  </div>
+
+  <!-- Reels Grid -->
+  <div
+    class="profile-posts-grid"
+    *ngIf="activeTab === 'reels' && userReels.length"
+  >
+    <div
+      class="post-thumbnail"
+      *ngFor="let reel of userReels"
+      (click)="openReelDetailsDialog(reel.id)" 
+    >
+      <div class="post-img-wrapper">
+        <video
+          [src]="reel.mediaVideoUrl"
+          class="post-img"
+        ></video>
+        <div class="play-button-overlay">
+          <mat-icon class="play-icon">play_arrow</mat-icon>
+        </div>
+      </div>
+      <div class="post-overlay">
+        <div class="post-overlay-item">
+          <i class="fas fa-heart"></i> {{ reel.likeCount }}
+        </div>
+        <div class="post-overlay-item">
+          <i class="fas fa-comment"></i> {{ reel.commentCount }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    *ngIf="activeTab === 'reels' && !userReels.length"
+    class="no-posts p-8 bg-gray-50 rounded-lg shadow-inner mt-8"
+  >
+    <p class="text-lg font-medium text-gray-600">No reels yet</p>
+    <p class="text-sm text-gray-500 mt-2">Start creating and sharing your reels!</p>
   </div>
 </div>

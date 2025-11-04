@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ReelDTO } from '../models/reel.model';
 import { ApiResponse } from '../models/api-response.model';
+import { CommentDTO } from '../models/comment.model';
 
 @Injectable({
   providedIn: 'root'
@@ -39,5 +40,21 @@ export class ReelService {
 
   reshareReel(reelId: string): Observable<ApiResponse<ReelDTO>> {
     return this.http.post<ApiResponse<ReelDTO>>(`${this.apiUrl}/${reelId}/reshare`, {});
+  }
+
+  getReelsByUser(username: string): Observable<ApiResponse<ReelDTO[]>> {
+    return this.http.get<ApiResponse<ReelDTO[]>>(`${this.apiUrl}/user/${username}`);
+  }
+
+  addCommentToReel(reelId: string, text: string): Observable<ApiResponse<CommentDTO>> {
+    return this.http.post<ApiResponse<CommentDTO>>(`${this.apiUrl}/${reelId}/comments`, { text });
+  }
+
+  getCommentsForReel(reelId: string): Observable<ApiResponse<CommentDTO[]>> {
+    return this.http.get<ApiResponse<CommentDTO[]>>(`${this.apiUrl}/${reelId}/comments`);
+  }
+
+  deleteCommentFromReel(reelId: string, commentId: string): Observable<ApiResponse<string>> {
+    return this.http.delete<ApiResponse<string>>(`${this.apiUrl}/${reelId}/comments/${commentId}`);
   }
 }
