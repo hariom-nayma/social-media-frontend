@@ -170,10 +170,10 @@ import { ToastService } from '../../../core/services/toast.service';
 export class CreateReelModalComponent {
   @Output() closeModalEvent = new EventEmitter<void>();
 
-  caption: string = '';
+  caption = '';
   selectedFile: File | null = null;
   videoPreviewUrl: string | ArrayBuffer | null = null;
-  isPrivate: boolean = false; // New property for public/private option
+  isPrivate = false; // New property for public/private option
 
   private reelService = inject(ReelService);
   private toastService = inject(ToastService);

@@ -50,7 +50,7 @@ export class FollowersDialogComponent implements OnInit {
     this.loadUsers();
   }
 
-  searchQuery: string = '';
+  searchQuery = '';
 filteredUsers: (UserDTO & { isFollowing: boolean; isRequested: boolean })[] = [];
 
 loadUsers(): void {

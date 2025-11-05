@@ -27,8 +27,8 @@ export class StoryBarComponent implements OnInit {
   groupedStories: { username: string, profileImageUrl: string, stories: StoryDTO[], viewedByMe: boolean }[] = [];
   stories: StoryDTO[] = [];
   myStories: StoryDTO[] = [];
-  hasMyStories: boolean = false;
-  myStoriesLoading: boolean = true; // Add loading flag
+  hasMyStories = false;
+  myStoriesLoading = true; // Add loading flag
 
   ngOnInit(): void {
     this.userService.myMiniProfile().subscribe({

@@ -27,7 +27,7 @@ export class PostService {
     return this.http.get<ApiResponse<FeedPostResponseDTO>>(`${this.base}/${postId}`);
   }
 
-  getCommentsByPost(postId: string, userId: string, page: number = 0, size: number = 10): Observable<ApiResponse<CommentDTO[]>> {
+  getCommentsByPost(postId: string, userId: string, page = 0, size = 10): Observable<ApiResponse<CommentDTO[]>> {
     return this.http.get<ApiResponse<CommentDTO[]>>(`${this.base}/${postId}/comments?userId=${userId}&page=${page}&size=${size}`);
   }
 

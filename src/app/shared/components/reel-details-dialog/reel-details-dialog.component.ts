@@ -31,7 +31,7 @@ import { MatIconModule } from '@angular/material/icon';
 export class ReelDetailsDialogComponent implements OnInit {
   reel: ReelDTO | undefined;
   comments: CommentDTO[] = [];
-  newCommentText: string = '';
+  newCommentText = '';
   currentUserId: string | null = null;
 
   private reelService = inject(ReelService);

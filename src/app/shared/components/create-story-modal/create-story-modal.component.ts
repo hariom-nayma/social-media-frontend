@@ -19,8 +19,8 @@ export class CreateStoryModalComponent {
   private dialogRef = inject(MatDialogRef<CreateStoryModalComponent>);
   private storyService = inject(StoryService);
 
-  contentUrl: string = '';
-  caption: string = '';
+  contentUrl = '';
+  caption = '';
   selectedFile: File | null = null;
 
   onFileSelected(event: any): void {

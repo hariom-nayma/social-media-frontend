@@ -21,11 +21,11 @@ export class MyStoryDialogComponent implements OnInit, OnDestroy {
   private userService = inject(UserService);
 
   stories: StoryDTO[] = [];
-  currentStoryIndex: number = 0;
+  currentStoryIndex = 0;
   currentStory: StoryDTO | null = null;
   likes: UserDTO[] = [];
   views: UserDTO[] = [];
-  currentStoryProgress: number = 0;
+  currentStoryProgress = 0;
   progressInterval: any;
   private viewedStories = new Set<number>(); // To track viewed stories
 

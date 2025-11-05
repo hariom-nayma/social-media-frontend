@@ -26,7 +26,7 @@ export class ViewProfileComponent implements OnInit {
 
   userProfile: (UserDTO & { isFollowing: boolean; isRequested: boolean }) | undefined;
   username: string | null = null;
-  isOwnProfile: boolean = false;
+  isOwnProfile = false;
   savedPosts: FeedPostResponseDTO[] = [];
   userReels: ReelDTO[] = [];
   activeTab: 'posts' | 'saved' | 'reels' = 'posts';

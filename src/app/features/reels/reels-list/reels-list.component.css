@@ -1,56 +1,94 @@
-:host {
-  display: block;
-  height: 100vh;
-  width: 100%;
-  background: #000;
-  color: #fff;
+/* ===== root + theme switch ===== */
+:host { display: block; width: 100%; height: 100vh; }
+.reels-root { width: 100%; height: 100vh; overflow: hidden; }
+
+/* default (dark) theme variables */
+.reels-root {
+  --bg: #000000;
+  --text: #ffffff;
+  --muted: rgba(255,255,255,0.7);
+  --pill-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 }
 
-/* container with snap */
+/* white theme override - add .white-theme to .reels-root to enable */
+.reels-root.white-theme {
+  --bg: #ffffff;
+  --text: #111827;
+  --muted: rgba(0,0,0,0.6);
+  --pill-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* container with vertical snap */
 .reel-container {
   height: 100vh;
   width: 100%;
   overflow-y: auto;
   scroll-snap-type: y mandatory;
   -webkit-overflow-scrolling: touch;
-  background: #000;
+  display: block;
 }
 
-/* single reel fills viewport */
+/* each reel occupies viewport and centers the 9:16 pill */
 .reel {
   position: relative;
   height: 100vh;
   scroll-snap-align: start;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
   user-select: none;
   -webkit-user-select: none;
 }
 
-/* top progress thin bar */
+/* REEL INNER - 9:16 pillarbox area */
+.reel-inner {
+  position: relative;
+  width: min(100vw, calc(100vh * 9 / 16));
+  height: calc( (min(100vw, calc(100vh * 9 / 16))) * 16 / 9 );
+  max-height: 100vh;
+  background: var(--bg);
+  border-radius: var(--pill-radius);
+  overflow: hidden;
+  box-shadow: 0 18px 40px rgba(2,6,23,0.55);
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+/* top progress centered above pill */
 .top-progress {
   position: absolute;
   top: 12px;
-  left: 12px;
-  right: 12px;
-  height: 3px;
-  z-index: 6;
-  background: rgba(255,255,255,0.08);
-  border-radius: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(min(100vw, calc(100vh * 9 / 16)) - 24px);
+  height: 4px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 99px;
+  z-index: 40;
   overflow: hidden;
 }
 .top-progress .progress-bar {
-  width: 28%;
+  width: 0%;
   height: 100%;
   background: linear-gradient(90deg, #ff2d55, #ff7a00);
-  transition: width 0.25s linear;
+  transition: width 0.15s linear;
 }
 
-/* video fit */
+/* VIDEO wrapper fills pill */
 .video-wrapper {
   width: 100%;
   height: 100%;
   position: relative;
+  background: #000;
 }
+
+/* video scales to cover 9:16 area just like Instagram (cropped if needed) */
 .reel-video {
   width: 100%;
   height: 100%;
@@ -59,17 +97,17 @@
   background: #000;
 }
 
-/* center heart pop on double-tap */
+/* heart pop center */
 .heart-pop {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%) scale(0.8);
   font-size: 64px;
-  z-index: 5;
+  z-index: 60;
   pointer-events: none;
   animation: heart-pop 0.6s cubic-bezier(.2,.9,.2,1);
-  text-shadow: 0 6px 20px rgba(0,0,0,0.6);
+  text-shadow: 0 6px 18px rgba(0,0,0,0.45);
   color: #ff2d55;
 }
 @keyframes heart-pop {
@@ -79,72 +117,59 @@
   100% { transform: translate(-50%, -50%) scale(0.95); opacity: 0; }
 }
 
-/* overlay gradient bottom for readability */
+/* overlay gradient for text readability */
 .overlay {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   height: 40%;
-  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.75) 60%, rgba(0,0,0,0.95) 100%);
-  z-index: 2;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 60%, rgba(0,0,0,0.9) 100%);
+  z-index: 50;
+  pointer-events: none;
 }
 
-/* bottom-left reel info (user, caption, music) */
+/* when white theme is active, use a subtle lighter overlay */
+.reels-root.white-theme .overlay {
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(0,0,0,0.04) 60%, rgba(0,0,0,0.08) 100%);
+}
+
+/* profile + caption block */
 .reel-info {
   position: absolute;
-  bottom: 28px;
+  bottom: 24px;
   left: 16px;
-  color: #fff;
-  z-index: 3;
-  max-width: 66%;
-  line-height: 1.15;
+  z-index: 55;
+  color: var(--text);
+  max-width: calc(100% - 140px);
+  line-height: 1.12;
+  pointer-events: none; /* clicks pass through to video by default */
 }
-.reel-info .user {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.reel-info img {
+.reel-info .user { display: flex; align-items: center; gap: 10px; pointer-events: auto; }
+.profile-img {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.12);
   object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.12);
 }
-.reel-info .meta {
-  display: flex;
-  flex-direction: column;
-}
-.reel-info .username {
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-.reel-info .music {
-  font-size: 0.85rem;
-  opacity: 0.85;
-  margin-top: 2px;
-}
-.caption {
-  margin-top: 8px;
-  font-size: 0.95rem;
-  opacity: 0.95;
-  white-space: normal;
-  word-break: break-word;
-}
+.reel-info .username { font-weight: 700; font-size: 0.95rem; color: var(--text); }
+.reel-info .music { font-size: 0.85rem; opacity: 0.9; margin-top: 2px; color: var(--muted); }
+.caption { margin-top: 8px; font-size: 0.95rem; color: var(--text); opacity: 0.95; word-break: break-word; }
 
-/* actions column on right */
+/* action column pinned on right inside the pill */
 .actions {
   position: absolute;
   right: 12px;
-  bottom: 120px;
+  bottom: 110px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
-  z-index: 4;
-  transform: translateZ(0);
+  gap: 16px;
+  z-index: 56;
 }
+
+/* generic icon button */
 .icon-btn {
   background: rgba(0,0,0,0.28);
   border: none;
@@ -156,55 +181,73 @@
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  color: #fff;
+  color: var(--text);
   cursor: pointer;
-  transition: transform 160ms ease, background 160ms;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+  transition: transform 160ms ease, background 160ms, box-shadow 160ms;
+  box-shadow: 0 10px 26px rgba(2,6,23,0.45);
+  pointer-events: auto;
+}
+.reels-root.white-theme .icon-btn {
+  background: rgba(255,255,255,0.9);
+  color: var(--text);
+  box-shadow: 0 6px 18px rgba(2,6,23,0.06);
 }
 .icon-btn:hover { transform: translateY(-6px); background: rgba(255,255,255,0.04); }
-.icon-btn .icon {
-  width: 28px;
-  height: 28px;
-  stroke-width: 1.5;
-  display: block;
-}
-.icon-btn .count {
-  font-size: 0.8rem;
-  margin-top: 6px;
-  opacity: 0.95;
-}
+.icon-btn .icon { width: 28px; height: 28px; display: block; }
+.icon-btn .count { font-size: 0.8rem; margin-top: 6px; opacity: 0.95; color: var(--muted); }
 
-/* like button colored when liked */
-.icon-btn.like-btn[title="Like"].pop {
-  transform: scale(1.08);
-}
-.icon-btn.like-btn .icon[fill="currentColor"] {
+/* liked state: color fill */
+.icon-btn.like-btn svg[fill="currentColor"] {
   color: #ff2d55;
   fill: #ff2d55;
   stroke: none;
-  filter: drop-shadow(0 5px 18px rgba(255,45,85,0.18));
+  filter: drop-shadow(0 4px 16px rgba(255,45,85,0.18));
 }
 
-/* small pop effect class applied from TS (pop) */
-.icon-btn.pop {
-  transform: scale(1.12) !important;
-}
+/* small pop animation class toggle (applied from TS) */
+.icon-btn.pop { transform: scale(1.12) !important; }
 
-/* loading & error screens */
-.loading-screen,
-.error-screen {
+/* mute button on top-left of pill */
+.mute-btn {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 58;
+  background: rgba(0,0,0,0.28);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text);
+}
+.reels-root.white-theme .mute-btn { background: rgba(255,255,255,0.9); color: var(--text); }
+.mute-icon { width: 20px; height: 20px; }
+
+/* loading & error screens (full viewport) */
+.loading-screen, .error-screen {
   height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--text);
   font-size: 1.15rem;
-  background: #000;
+  background: var(--bg);
 }
 
-/* responsive tweaks */
-@media (max-width: 420px) {
+/* responsive behavior: on phone portrait make pill full-bleed */
+@media (max-width: 520px) {
+  .reel-inner {
+    width: 100vw;
+    height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .top-progress { width: calc(100vw - 24px); }
+  .reel-info { bottom: 26px; left: 12px; max-width: calc(100% - 110px); }
+  .actions { right: 10px; bottom: 100px; gap: 12px; }
   .icon-btn { width: 52px; height: 52px; border-radius: 12px; }
-  .reel-info { max-width: 62%; bottom: 24px; left: 12px; }
-  .actions { right: 10px; bottom: 110px; gap: 14px; }
 }

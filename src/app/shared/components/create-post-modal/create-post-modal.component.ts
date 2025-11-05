@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractContro
 import { PostService } from '../../../core/services/post.service';
 import { CommonModule } from '@angular/common';
 
-export const contentOrMediaRequired: ValidatorFn = (control: AbstractControl): { [key: string]: any } | null => {
+export const contentOrMediaRequired: ValidatorFn = (control: AbstractControl): Record<string, any> | null => {
   const content = control.get('content');
   const media = control.get('media');
 

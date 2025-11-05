@@ -47,6 +47,14 @@ export const routes: Routes = [
             {
                 path: 'reels',
                 loadComponent: () => import('./features/reels/reels-list/reels-list.component').then(m => m.ReelsListComponent)
+            },
+            {
+                path: 'payment-success',
+                loadComponent: () => import('./features/payment/payment-success.component').then(m => m.PaymentSuccessComponent)
+            },
+            {
+                path: 'payment-cancelled',
+                loadComponent: () => import('./features/payment/payment-cancelled.component').then(m => m.PaymentCancelledComponent)
             }
           ]
     },

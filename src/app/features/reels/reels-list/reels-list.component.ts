@@ -12,6 +12,8 @@ import { CommonModule } from '@angular/common';
 import { ReelService } from '../../../core/services/reel.service';
 import { ReelDTO } from '../../../core/models/reel.model';
 import { Subscription } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog'; // Import MatDialog
+import { ReelDetailsDialogComponent } from '../../../shared/components/reel-details-dialog/reel-details-dialog.component'; // Import ReelDetailsDialogComponent
 
 @Component({
   selector: 'app-reels-feed',
@@ -36,7 +38,7 @@ export class ReelsListComponent implements OnInit, AfterViewInit, OnDestroy {
   // For showing heart pop on double-tap; we maintain a small local state array
   heartVisible: boolean[] = [];
 
-  constructor(private reelService: ReelService, private renderer: Renderer2) {}
+  constructor(private reelService: ReelService, private renderer: Renderer2, private dialog: MatDialog) {} // Inject MatDialog
 
   ngOnInit(): void {
     this.loadReels();
@@ -184,7 +186,10 @@ export class ReelsListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   commentReel(reel: ReelDTO): void {
-    console.log(`Open comments for reel ${reel.id}`);
+    this.dialog.open(ReelDetailsDialogComponent, {
+      width: '500px', // Adjust width as needed
+      data: { reelId: reel.id }
+    });
   }
 
   shareReel(reel: ReelDTO): void {

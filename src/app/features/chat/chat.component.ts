@@ -29,23 +29,23 @@ toggleTheme(): void {
 }
 
   messages: Message[] = [];
-  newMessageContent: string = '';
+  newMessageContent = '';
   currentUser: UserDTO | null = null;
   recipientUser: UserDTO | null = null;
   conversationId: string | null = null;
-  isRecipientTyping: boolean = false;
-  isRecipientOnline: boolean = false;
+  isRecipientTyping = false;
+  isRecipientOnline = false;
   availableEmojis: string[] = ['👍', '❤️', '😂', '😢', '😡', '🔥', '👏', '🎉'];
 
   // UI state
   isDark = false;
   showInputEmojiPicker = false;
 
-  currentPage: number = 0;
-  pageSize: number = 20;
-  hasMoreMessages: boolean = true;
-  isLoadingMessages: boolean = false;
-  private shouldScrollToBottom: boolean = true;
+  currentPage = 0;
+  pageSize = 20;
+  hasMoreMessages = true;
+  isLoadingMessages = false;
+  private shouldScrollToBottom = true;
 
   private subscriptions: Subscription = new Subscription();
 

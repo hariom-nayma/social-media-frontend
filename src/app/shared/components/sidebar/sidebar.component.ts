@@ -7,11 +7,12 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { SettingsDialogComponent } from '../../../features/settings/settings-dialog/settings-dialog.component';
 import { CreateOptionsDialogComponent } from "../create-options-dialog/create-options-dialog.component";
 import { CreateReelModalComponent } from "../create-reel-modal/create-reel-modal.component";
+import { SubscriptionDialogComponent } from "../subscription-dialog/subscription-dialog.component";
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterModule, CreatePostModalComponent, MatDialogModule, CreateOptionsDialogComponent, CreateReelModalComponent],
+  imports: [CommonModule, RouterModule, CreatePostModalComponent, MatDialogModule, CreateOptionsDialogComponent, CreateReelModalComponent, SubscriptionDialogComponent],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css']
 })
@@ -62,5 +63,11 @@ export class SidebarComponent {
   logout() {
     this.authService.logout();
     this.router.navigate(['/auth/login']);
+  }
+
+  openSubscriptionDialog() {
+    this.dialog.open(SubscriptionDialogComponent, {
+      width: '500px',
+    });
   }
 }
