@@ -25,6 +25,8 @@ export interface UserDTO {
   isOnline?: boolean;
   premiumUser?: boolean;
   blockedByMe?: boolean;
+  phoneNumberVerified?: boolean;
+  twoFactorEnabled?: boolean;
 }
 
 export interface UpdateProfileRequest {

@@ -1,4 +1,12 @@
-<div>
+<div class="account-settings-container">
   <h3>Account Settings</h3>
   <p>Manage your account information here.</p>
+
+  <div class="setting-item">
+    <span>Private Account</span>
+    <label class="switch">
+      <input title="Toggle private account" type="checkbox" [checked]="isPrivate" (change)="onPrivacyToggle()">
+      <span class="slider round"></span>
+    </label>
+  </div>
 </div>

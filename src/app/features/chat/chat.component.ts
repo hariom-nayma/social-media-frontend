@@ -37,6 +37,7 @@ toggleTheme(): void {
   recipientUser: UserDTO | null = null;
   isRecipientTyping = false;
   isRecipientOnline = false;
+  isBlockedByViewer = false; 
   availableEmojis: string[] = ['👍', '❤️', '😂', '😢', '😡', '🔥', '👏', '🎉'];
 
   // UI state
@@ -81,12 +82,26 @@ toggleTheme(): void {
         }
         return of(null); // Return an observable of null if no conversationId or recipientUsername
       })
-    ).subscribe(response => {
+    ).subscribe({
+      
+     next: response => {
+      
       if (response && response.data) {
         this.recipientUser = response.data;
         this.isRecipientOnline = this.recipientUser.isOnline ?? false;
       }
-    }));
+    },
+    error: err => {
+            if (err.status === 400 && err.error?.message?.includes('blocked by this user')) {
+              this.isBlockedByViewer = true;
+              this.recipientUser = null; // Clear profile data
+            } else {
+              console.error('Error fetching user profile:', err);
+              // Handle other errors as needed
+            }
+          }}
+  
+  ));
   }
 
   ngAfterViewChecked(): void {

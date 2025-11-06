@@ -1,4 +1,4 @@
-<div class="chat-wrapper" [class.dark-mode]="isDarkMode">
+<div *ngIf="!isBlockedByViewer" class="chat-wrapper" [class.dark-mode]="isDarkMode">
   <!-- HEADER -->
   <div class="chat-header">
     <div class="recipient-info" *ngIf="recipientUser">
@@ -105,3 +105,7 @@
     <button (click)="sendMessage()">➤</button>
   </div>
 </div>
+ <div *ngIf="isBlockedByViewer" class="blocked-profile-message">
+    <p>Unable to open this chat.</p>
+    <p>You are blocked by this user.</p>
+  </div>

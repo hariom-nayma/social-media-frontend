@@ -109,4 +109,8 @@ export class UserService {
   unblockUser(userId: string): Observable<ApiResponse<string>> {
     return this.http.post<ApiResponse<string>>(`${this.apiUrl}/${userId}/unblock`, {});
   }
+
+  toggleAccountPrivacy(): Observable<ApiResponse<UserDTO>> {
+    return this.http.put<ApiResponse<UserDTO>>(`${this.apiUrl}/me/toggle-privacy`, {});
+  }
 }

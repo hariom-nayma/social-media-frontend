@@ -32,6 +32,7 @@ export class ViewProfileComponent implements OnInit {
   username: string | null = null;
   isOwnProfile = false;
   showMoreOptions = false; // New property
+  isBlockedByViewer = false; // New property to indicate if the current viewer is blocked by this user
   savedPosts: FeedPostResponseDTO[] = [];
   userReels: ReelDTO[] = [];
   activeTab: 'posts' | 'saved' | 'reels' = 'posts';
@@ -51,10 +52,22 @@ export class ViewProfileComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       this.username = params.get('username');
       if (this.username) {
-        this.userService.getUserProfileByUsername(this.username).subscribe(response => {
-          this.userProfile = { ...response.data!, isFollowing: response.data?.following || false, isRequested: response.data?.requested || false, isBlockedByMe: response.data?.blockedByMe || false };
-          this.checkIfOwnProfile();
-          this.loadUserReels();
+        this.userService.getUserProfileByUsername(this.username).subscribe({
+          next: response => {
+            this.userProfile = { ...response.data!, isFollowing: response.data?.following || false, isRequested: response.data?.requested || false, isBlockedByMe: response.data?.blockedByMe || false };
+            this.checkIfOwnProfile();
+            this.loadUserReels();
+            this.isBlockedByViewer = false; // Ensure this is false if profile loads successfully
+          },
+          error: err => {
+            if (err.status === 400 && err.error?.message?.includes('blocked by this user')) {
+              this.isBlockedByViewer = true;
+              this.userProfile = undefined; // Clear profile data
+            } else {
+              console.error('Error fetching user profile:', err);
+              // Handle other errors as needed
+            }
+          }
         });
       }
       else{
@@ -178,14 +191,14 @@ export class ViewProfileComponent implements OnInit {
   toggleFollow(): void {
     if (!this.userProfile) return;
 
-    if (this.userProfile.private) {
-      if (!this.userProfile.isRequested) {
+    if (this.userProfile.isPrivate) {
+      if (!this.userProfile.requested) {
         this.userService.sendFollowRequest(this.userProfile.id).subscribe(() => {
-          if (this.userProfile) this.userProfile.isRequested = true;
+          if (this.userProfile) this.userProfile.requested = true;
         });
       } else {
         this.userService.removeFollowRequest(this.userProfile.id).subscribe(() => {
-          if (this.userProfile) this.userProfile.isRequested = false;
+          if (this.userProfile) this.userProfile.requested = false;
         });
       }
     } else {
@@ -198,7 +211,13 @@ export class ViewProfileComponent implements OnInit {
           if (this.userProfile) this.userProfile.isFollowing = true;
         });
       }
+
     }
+     if (this.userProfile.isFollowing) {
+        this.userService.unfollowUser(this.userProfile.id).subscribe(() => {
+          if (this.userProfile) this.userProfile.isFollowing = false;
+        });
+      }
   }
 
   openChat(): void {

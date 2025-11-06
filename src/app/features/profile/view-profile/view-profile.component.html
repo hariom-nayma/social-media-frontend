@@ -35,66 +35,32 @@
       </div>
       <div class="profile-bio">{{ userProfile.bio }}</div>
     </div>
-
-      <div class="profile-actions">
-          <button
-            *ngIf="isOwnProfile"
-            (click)="openUpdateProfileDialog()"
-            class="btn edit-btn"
-          >
-            Edit Profile
-          </button>
-
-          <ng-container *ngIf="!isOwnProfile && userProfile">
-            <button
-              class="btn follow-btn"
-              (click)="toggleFollow()"
-              *ngIf="!userProfile.private"
-            >
-              {{ userProfile.isFollowing ? 'Unfollow' : 'Follow' }}
-            </button>
-            <button
-              class="btn message-btn"
-              (click)="openChat()"
-            >
-              Message
+    <div class="actions">
+      
+      <button *ngIf="isOwnProfile" class="btn edit" (click)="openUpdateProfileDialog()">Edit Profile</button>
+      
+          <ng-container *ngIf="!isOwnProfile">
+            <button class="btn primary" (click)="toggleFollow()">
+              {{ userProfile.isFollowing ? 'Following' : userProfile.isPrivate && !userProfile.requested ? 'Follow' : userProfile.isPrivate && userProfile.requested? 'Requested' : 'Follow' }}
             </button>
 
-            <button
-              class="btn follow-btn"
-              (click)="toggleFollow()"
-              *ngIf="userProfile.private && !userProfile.isRequested"
-            >
-              Request
-            </button>
-
-            <button
-              class="btn requested-btn"
-              disabled
-              *ngIf="userProfile.private && userProfile.isRequested"
-            >
-              Request Sent
-            </button>
+            <button *ngIf="!userProfile.isPrivate || userProfile.isFollowing" class="btn secondary" (click)="openChat()">Message</button>
           </ng-container>
 
-          <div class="more-options-container">
-            <button title="more" class="btn more-options-btn" (click)="toggleMoreOptions()">
-              <i class="fas fa-ellipsis-h"></i>
-            </button>
-            <div class="more-options-menu" *ngIf="showMoreOptions">
-              <button
-                *ngIf="!isOwnProfile"
-                class="menu-item"
-                (click)="toggleBlockUser()"
-              >
-                {{ userProfile.isBlockedByMe ? 'Unblock' : 'Block' }}
-              </button>
-              <button class="menu-item" (click)="copyProfileUrl()">Copy Profile URL</button>
-              <button class="menu-item" (click)="toggleMoreOptions()">Cancel</button>
+          <button class="icon-btn" (click)="toggleMoreOptions()">
+            ⋮
+          </button>
+
+          <!-- Options Dropdown -->
+          <div class="dropdown" *ngIf="showMoreOptions">
+            <div class="dropdown-item" (click)="copyProfileUrl()">Copy profile link</div>
+            <div class="dropdown-item danger" *ngIf="!isOwnProfile" (click)="toggleBlockUser()">
+              {{ userProfile.isBlockedByMe ? 'Unblock user' : 'Block user' }}
             </div>
+            <div class="dropdown-item" (click)="toggleMoreOptions()">Cancel</div>
           </div>
         </div>
-  </div>
+      </div>
 
   
 
@@ -153,10 +119,16 @@
   </div>
 
   <div
-    *ngIf="activeTab === 'posts' && !userProfile.posts?.length"
+    *ngIf="activeTab === 'posts' && !userProfile.posts?.length && !userProfile.isPrivate "
     class="no-posts"
   >
     <p>No posts yet</p>
+  </div>
+
+
+  <div *ngIf="userProfile.isPrivate && !userProfile.isFollowing && !isOwnProfile" class="private-account no-posts" >
+<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 48 48" width="144px" height="144px" baseProfile="basic"><path fill="#0060fd" d="M30,18v4c0,1.654,1.346,3,3,3h2c1.654,0,3-1.346,3-3v-4H30z" opacity=".1"/><path fill="#0060fd" d="M30.5,18v4c0,1.379,1.121,2.5,2.5,2.5h2c1.379,0,2.5-1.121,2.5-2.5v-4H30.5z" opacity=".2"/><path fill="#0060fd" d="M31,18v4c0,1.103,0.897,2,2,2h2c1.103,0,2-0.897,2-2v-4H31z" opacity=".3"/><path fill="#0060fd" d="M31.5,18v4c0,0.828,0.672,1.5,1.5,1.5h2c0.828,0,1.5-0.672,1.5-1.5v-4H31.5z" opacity=".4"/><path fill="#0060fd" d="M32,18v4c0,0.552,0.448,1,1,1h2c0.552,0,1-0.448,1-1v-4H32z" opacity=".8"/><path fill="#0060fd" d="M10,18v4c0,1.654,1.346,3,3,3h2c1.654,0,3-1.346,3-3v-4H10z" opacity=".1"/><path fill="#0060fd" d="M10.5,18v4c0,1.379,1.121,2.5,2.5,2.5h2c1.379,0,2.5-1.121,2.5-2.5v-4H10.5z" opacity=".2"/><path fill="#0060fd" d="M11,18v4c0,1.103,0.897,2,2,2h2c1.103,0,2-0.897,2-2v-4H11z" opacity=".3"/><path fill="#0060fd" d="M11.5,18v4c0,0.828,0.672,1.5,1.5,1.5h2c0.828,0,1.5-0.672,1.5-1.5v-4H11.5z" opacity=".4"/><path fill="#0060fd" d="M12,18v4c0,0.552,0.448,1,1,1h2c0.552,0,1-0.448,1-1v-4H12z" opacity=".8"/><linearGradient id="aBsDE_ySxJjZM2g4l05fda" x1="24" x2="24" y1="-1.109" y2="18.891" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#97f8ff"/><stop offset=".125" stop-color="#8ef3ff"/><stop offset=".328" stop-color="#76e4fe"/><stop offset=".584" stop-color="#4eccfe"/><stop offset=".88" stop-color="#18abfc"/><stop offset="1" stop-color="#009cfc"/></linearGradient><path fill="url(#aBsDE_ySxJjZM2g4l05fda)" d="M35,23h-2c-0.552,0-1-0.448-1-1l0-6.717c0-4.257-3.205-7.98-7.452-8.264	C19.89,6.706,16,10.408,16,15v7c0,0.552-0.448,1-1,1h-2c-0.552,0-1-0.448-1-1l0-6.649c0-6.245,4.626-11.712,10.844-12.297	C29.979,2.383,36,8.001,36,15v7C36,22.552,35.552,23,35,23z"/><g><rect width="4" height="4" x="12" y="16" fill="#2e8efe" opacity=".1"/><rect width="4" height="3.6" x="12" y="16.4" fill="#2e8efe" opacity=".2"/><rect width="4" height="3.2" x="12" y="16.8" fill="#2e8efe" opacity=".3"/><rect width="4" height="2.8" x="12" y="17.2" fill="#2e8efe" opacity=".4"/><rect width="4" height="2.4" x="12" y="17.6" fill="#2e8efe" opacity=".5"/></g><g><rect width="4" height="4" x="32" y="16" fill="#2e8efe" opacity=".1"/><rect width="4" height="3.6" x="32" y="16.4" fill="#2e8efe" opacity=".2"/><rect width="4" height="3.2" x="32" y="16.8" fill="#2e8efe" opacity=".3"/><rect width="4" height="2.8" x="32" y="17.2" fill="#2e8efe" opacity=".4"/><rect width="4" height="2.4" x="32" y="17.6" fill="#2e8efe" opacity=".5"/></g><g><path fill="#2e8efe" d="M12,18v4c0,0.552,0.448,1,1,1h2c0.552,0,1-0.448,1-1v-4H12z"/><path fill="#2e8efe" d="M32,18v4c0,0.552,0.448,1,1,1h2c0.552,0,1-0.448,1-1v-4H32z"/></g><linearGradient id="aBsDE_ySxJjZM2g4l05fdb" x1="24" x2="24" y1="21.261" y2="42.521" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#daa6ff" stop-opacity=".6"/><stop offset="1" stop-color="#dca6ff" stop-opacity=".4"/></linearGradient><path fill="url(#aBsDE_ySxJjZM2g4l05fdb)" d="M38,18H10c-1.105,0-2,0.895-2,2v9	c0,9.389,6.611,16,16,16s16-6.611,16-16v-9C40,18.895,39.105,18,38,18z M25.129,31.776L26,37h-4l0.871-5.224	C21.774,31.33,21,30.257,21,29c0-1.657,1.343-3,3-3s3,1.343,3,3C27,30.257,26.226,31.33,25.129,31.776z"/><linearGradient id="aBsDE_ySxJjZM2g4l05fdc" x1="24" x2="24" y1="15.848" y2="31.803" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#eed9ff" stop-opacity=".2"/><stop offset="1" stop-color="#daa6ff" stop-opacity=".6"/></linearGradient><path fill="url(#aBsDE_ySxJjZM2g4l05fdc)" d="M38,18.5c0.827,0,1.5,0.673,1.5,1.5v9	c0,9.126-6.374,15.5-15.5,15.5S8.5,38.126,8.5,29v-9c0-0.827,0.673-1.5,1.5-1.5H38 M22.316,32.065l-0.809,4.853L21.41,37.5H22h4	h0.59l-0.097-0.582l-0.809-4.853C26.799,31.455,27.5,30.292,27.5,29c0-1.93-1.57-3.5-3.5-3.5s-3.5,1.57-3.5,3.5	C20.5,30.292,21.201,31.455,22.316,32.065 M38,18H10c-1.105,0-2,0.895-2,2v9c0,9.389,6.611,16,16,16s16-6.611,16-16v-9	C40,18.895,39.105,18,38,18L38,18z M22,37l0.871-5.224C21.774,31.33,21,30.257,21,29c0-1.657,1.343-3,3-3s3,1.343,3,3	c0,1.257-0.774,2.33-1.871,2.776L26,37H22L22,37z"/></svg>    <p>This profile is private.</p>
+    <p> Follow this user to see their posts.</p>
   </div>
 
   <!-- Saved Posts Grid -->
@@ -231,4 +203,9 @@
     <p class="text-lg font-medium text-gray-600">No reels yet</p>
     <p class="text-sm text-gray-500 mt-2">Start creating and sharing your reels!</p>
   </div>
+
+</div>
+<div *ngIf="isBlockedByViewer" class="blocked-profile-message">
+ <p>Unable to show this user's profile.</p>
+ <p>You are blocked by this user.</p>
 </div>
