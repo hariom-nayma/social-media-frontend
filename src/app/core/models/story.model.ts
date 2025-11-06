@@ -10,4 +10,5 @@ export interface StoryDTO {
   profileImageUrl: string;
   likedByme: boolean;
   viewedByMe: boolean;
+  premiumUser?: boolean;
 }

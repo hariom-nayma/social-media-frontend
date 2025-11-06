@@ -23,6 +23,8 @@ export interface UserDTO {
   following?: boolean;
   requested?: boolean;
   isOnline?: boolean;
+  premiumUser?: boolean;
+  blockedByMe?: boolean;
 }
 
 export interface UpdateProfileRequest {

@@ -8,4 +8,5 @@ export interface SuggestionUserDTO {
   followMe: boolean;
   private: boolean;
   requested: boolean;
+  premiumUser?: boolean;
 }

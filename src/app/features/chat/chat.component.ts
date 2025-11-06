@@ -1,8 +1,8 @@
-import { Component, OnInit, OnDestroy, inject, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ViewChild, ElementRef, AfterViewChecked, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Subscription, combineLatest } from 'rxjs';
+import { Subscription, combineLatest, of } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { ChatService } from '../../core/services/chat.service';
 import { UserService } from '../../core/services/user.service';
@@ -19,6 +19,9 @@ import { UserDTO } from '../../core/models/user.model';
 export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
 
+  @Input() conversationId: string | null = null;
+  @Input() recipientUsername: string | null = null;
+
   private chatService = inject(ChatService);
   private userService = inject(UserService);
   private route = inject(ActivatedRoute);
@@ -32,7 +35,6 @@ toggleTheme(): void {
   newMessageContent = '';
   currentUser: UserDTO | null = null;
   recipientUser: UserDTO | null = null;
-  conversationId: string | null = null;
   isRecipientTyping = false;
   isRecipientOnline = false;
   availableEmojis: string[] = ['👍', '❤️', '😂', '😢', '😡', '🔥', '👏', '🎉'];
@@ -56,24 +58,28 @@ toggleTheme(): void {
 
     this.subscriptions.add(combineLatest([
       this.userService.getMyProfile().pipe(filter(response => response.data !== null)),
-      this.route.paramMap.pipe(filter(params => params.has('conversationId') || params.has('username')))
+      this.route.paramMap // Use paramMap directly for reactive updates
     ]).pipe(
       switchMap(([currentUserResponse, params]) => {
         this.currentUser = currentUserResponse.data!;
-        this.conversationId = params.get('conversationId');
-        const recipientUsername = params.get('username');
+
+        // Prioritize @Input values, then fall back to route params
+        const currentConversationId = this.conversationId || params.get('conversationId');
+        const currentRecipientUsername = this.recipientUsername || params.get('username');
 
         // connect websocket once we have current user
         this.chatService.connect(this.currentUser.id);
         this.subscribeToChatEvents();
 
-        if (this.conversationId) {
+        if (currentConversationId) {
+          this.conversationId = currentConversationId;
           this.loadMessages(0, this.pageSize);
           return this.userService.getUserProfileByConversationId(this.conversationId);
-        } else if (recipientUsername) {
-          return this.userService.getUserProfileByUsername(recipientUsername);
+        } else if (currentRecipientUsername) {
+          this.recipientUsername = currentRecipientUsername;
+          return this.userService.getUserProfileByUsername(this.recipientUsername);
         }
-        return []; // nothing
+        return of(null); // Return an observable of null if no conversationId or recipientUsername
       })
     ).subscribe(response => {
       if (response && response.data) {

@@ -1,0 +1,56 @@
+<div class="search-dialog-overlay">
+
+  <div>
+    <img src="/assets/gifs/searchUser.gif" alt="Search User" />
+  </div>
+  <div class="search-dialog-box">
+    <div class="search-header">
+      <div class="search-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none"
+             viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+                d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"/>
+        </svg>
+      </div>
+      <input
+        type="text"
+        [formControl]="searchControl"
+        placeholder="Search users by name or username..."
+        class="search-input"
+        autofocus
+      />
+      <button class="close-btn" (click)="closeDialog()">×</button>
+    </div>
+
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="loading-spinner"></div>
+    </div>
+
+    <div *ngIf="!isLoading && searchResults.length > 0" class="results-list">
+      <a
+        *ngFor="let user of searchResults"
+        [routerLink]="['/profile', user.username]"
+        (click)="goToProfile(user.username)"
+        class="result-item"
+      >
+        <img
+          [src]="user.profileImage || 'https://i.pravatar.cc/150?u=' + user.username"
+          alt="Profile"
+          class="user-avatar"
+        />
+        <div class="user-details">
+          <div class="user-username">
+            {{ user.username }}
+                  <svg *ngIf="user?.premiumUser" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="14px" height="14px"><polygon fill="#42a5f5" points="29.62,3 33.053,8.308 39.367,8.624 39.686,14.937 44.997,18.367 42.116,23.995 45,29.62 39.692,33.053 39.376,39.367 33.063,39.686 29.633,44.997 24.005,42.116 18.38,45 14.947,39.692 8.633,39.376 8.314,33.063 3.003,29.633 5.884,24.005 3,18.38 8.308,14.947 8.624,8.633 14.937,8.314 18.367,3.003 23.995,5.884"/><polygon fill="#fff" points="21.396,31.255 14.899,24.76 17.021,22.639 21.428,27.046 30.996,17.772 33.084,19.926"/></svg>
+
+          </div>
+          <div class="user-name">{{ user.firstName }} {{ user.lastName }}</div>
+        </div>
+      </a>
+    </div>
+
+    <div *ngIf="!isLoading && searchResults.length === 0 && searchControl.value" class="no-results">
+      <p>No users found for "<strong>{{ searchControl.value }}</strong>"</p>
+    </div>
+  </div>
+</div>

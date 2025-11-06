@@ -66,6 +66,8 @@
 .username {
   font-weight: bold;
   font-size: 1.05em;
+  display: flex;
+  align-items: center;
 }
 
 .status {

@@ -10,43 +10,12 @@
 
     <div class="profile-info">
       <div class="profile-info-header">
-        <div class="profile-username">@{{ userProfile.username }}</div>
+                <div class="profile-username">
+                  @{{ userProfile.username }}
+                  <svg *ngIf="userProfile.premiumUser" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="20px" height="20px"><polygon fill="#42a5f5" points="29.62,3 33.053,8.308 39.367,8.624 39.686,14.937 44.997,18.367 42.116,23.995 45,29.62 39.692,33.053 39.376,39.367 33.063,39.686 29.633,44.997 24.005,42.116 18.38,45 14.947,39.692 8.633,39.376 8.314,33.063 3.003,29.633 5.884,24.005 3,18.38 8.308,14.947 8.624,8.633 14.937,8.314 18.367,3.003 23.995,5.884"/><polygon fill="#fff" points="21.396,31.255 14.899,24.76 17.021,22.639 21.428,27.046 30.996,17.772 33.084,19.926"/></svg>
+                </div>
 
-        <div class="profile-actions">
-          <button
-            *ngIf="isOwnProfile"
-            (click)="openUpdateProfileDialog()"
-            class="btn edit-btn"
-          >
-            Edit Profile
-          </button>
-
-          <ng-container *ngIf="!isOwnProfile && userProfile">
-            <button
-              class="btn follow-btn"
-              (click)="toggleFollow()"
-              *ngIf="!userProfile.private"
-            >
-              {{ userProfile.isFollowing ? 'Unfollow' : 'Follow' }}
-            </button>
-
-            <button
-              class="btn follow-btn"
-              (click)="toggleFollow()"
-              *ngIf="userProfile.private && !userProfile.isRequested"
-            >
-              Request
-            </button>
-
-            <button
-              class="btn requested-btn"
-              disabled
-              *ngIf="userProfile.private && userProfile.isRequested"
-            >
-              Request Sent
-            </button>
-          </ng-container>
-        </div>
+      
       </div>
 
       <div class="profile-stats">
@@ -66,7 +35,68 @@
       </div>
       <div class="profile-bio">{{ userProfile.bio }}</div>
     </div>
+
+      <div class="profile-actions">
+          <button
+            *ngIf="isOwnProfile"
+            (click)="openUpdateProfileDialog()"
+            class="btn edit-btn"
+          >
+            Edit Profile
+          </button>
+
+          <ng-container *ngIf="!isOwnProfile && userProfile">
+            <button
+              class="btn follow-btn"
+              (click)="toggleFollow()"
+              *ngIf="!userProfile.private"
+            >
+              {{ userProfile.isFollowing ? 'Unfollow' : 'Follow' }}
+            </button>
+            <button
+              class="btn message-btn"
+              (click)="openChat()"
+            >
+              Message
+            </button>
+
+            <button
+              class="btn follow-btn"
+              (click)="toggleFollow()"
+              *ngIf="userProfile.private && !userProfile.isRequested"
+            >
+              Request
+            </button>
+
+            <button
+              class="btn requested-btn"
+              disabled
+              *ngIf="userProfile.private && userProfile.isRequested"
+            >
+              Request Sent
+            </button>
+          </ng-container>
+
+          <div class="more-options-container">
+            <button title="more" class="btn more-options-btn" (click)="toggleMoreOptions()">
+              <i class="fas fa-ellipsis-h"></i>
+            </button>
+            <div class="more-options-menu" *ngIf="showMoreOptions">
+              <button
+                *ngIf="!isOwnProfile"
+                class="menu-item"
+                (click)="toggleBlockUser()"
+              >
+                {{ userProfile.isBlockedByMe ? 'Unblock' : 'Block' }}
+              </button>
+              <button class="menu-item" (click)="copyProfileUrl()">Copy Profile URL</button>
+              <button class="menu-item" (click)="toggleMoreOptions()">Cancel</button>
+            </div>
+          </div>
+        </div>
   </div>
+
+  
 
   <!-- Tabs for Posts, Saved Posts, and Reels -->
   <div class="profile-tabs">

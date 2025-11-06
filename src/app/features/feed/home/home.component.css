@@ -117,6 +117,8 @@ app-story-bar {
 .suggestion-info .username {
   font-weight: 600;
   font-size: 13px;
+  display: flex;
+  align-items: center;
 }
 
 .suggestion-info .mutual {

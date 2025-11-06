@@ -6,6 +6,7 @@ export interface ReelUserDTO {
   firstName: string;
   lastName: string;
   profileImage?: string;
+  premiumUser?: boolean;
   following?: boolean; // Indicates if the current user is following this reel user
 }
 

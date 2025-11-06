@@ -14,6 +14,8 @@ export interface PostDTO {
   archived: boolean;
   userId?: string;
   following?: boolean;
+    profileImageUrl?: string;
+    premiumUser?: boolean;
 }
 
 export interface FeedPostResponseDTO {
@@ -33,6 +35,12 @@ export interface FeedPostResponseDTO {
   comments: CommentDTO[];
   following?: boolean;
   archived: boolean;
+  user: {
+    id: string;
+    username: string;
+    profileImageUrl?: string;
+    premiumUser?: boolean;
+  };
 }
 
 export interface CreatePostRequest {

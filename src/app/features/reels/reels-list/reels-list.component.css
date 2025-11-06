@@ -88,6 +88,7 @@
   background: #000;
 }
 
+
 /* video scales to cover 9:16 area just like Instagram (cropped if needed) */
 .reel-video {
   width: 100%;
@@ -153,7 +154,7 @@
   object-fit: cover;
   border: 2px solid rgba(255,255,255,0.12);
 }
-.reel-info .username { font-weight: 700; font-size: 0.95rem; color: var(--text); }
+.reel-info .username { font-weight: 700; font-size: 0.95rem; color: #ffffff; }
 .reel-info .music { font-size: 0.85rem; opacity: 0.9; margin-top: 2px; color: var(--muted); }
 .caption { margin-top: 8px; font-size: 0.95rem; color: var(--text); opacity: 0.95; word-break: break-word; }
 

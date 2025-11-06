@@ -40,6 +40,8 @@
 .profile-username {
   font-size: 22px;
   font-weight: 600;
+  display: flex;
+  align-items: center;
 }
 
 /* ---------- Buttons ---------- */
@@ -255,3 +257,4 @@
     gap: 2px;
   }
 }
+

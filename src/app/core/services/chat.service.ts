@@ -6,6 +6,7 @@ import * as Stomp from 'stompjs';
 import { environment } from '../../../environments/environment';
 import { ChatMessageDto, Message, TypingDTO, PresenceDTO, ConversationListDTO } from '../models/chat.model';
 import { HttpClient } from '@angular/common/http';
+import { ApiResponse } from '../models/api-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -158,6 +159,10 @@ export class ChatService {
         return of(null);
       })
     );
+  }
+
+  findConversationId(targetUsername: string): Observable<ApiResponse<string>> {
+    return this.http.get<ApiResponse<string>>(`${environment.apiUrl}/chat/conversation/find`, { params: { targetUsername } });
   }
 
 

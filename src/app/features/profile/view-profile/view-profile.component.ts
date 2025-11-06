@@ -14,6 +14,10 @@ import { ReelService } from '../../../core/services/reel.service';
 import { ReelDTO } from '../../../core/models/reel.model';
 import { ReelDetailsDialogComponent } from '../../../shared/components/reel-details-dialog/reel-details-dialog.component';
 import { MatIconModule } from '@angular/material/icon';
+import { ChatService } from '../../../core/services/chat.service';
+import { Router } from '@angular/router';
+import { ChatComponent } from '../../chat/chat.component';
+import { ChatDialogComponent } from '../../../shared/components/chat-dialog/chat-dialog';
 
 @Component({
   selector: 'app-view-profile',
@@ -24,9 +28,10 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class ViewProfileComponent implements OnInit {
 
-  userProfile: (UserDTO & { isFollowing: boolean; isRequested: boolean }) | undefined;
+  userProfile: (UserDTO & { isFollowing: boolean; isRequested: boolean; isBlockedByMe: boolean }) | undefined;
   username: string | null = null;
   isOwnProfile = false;
+  showMoreOptions = false; // New property
   savedPosts: FeedPostResponseDTO[] = [];
   userReels: ReelDTO[] = [];
   activeTab: 'posts' | 'saved' | 'reels' = 'posts';
@@ -37,7 +42,9 @@ export class ViewProfileComponent implements OnInit {
     private dialog: MatDialog,
     private authService: AuthService,
     private postService: PostService,
-    private reelService: ReelService
+    private reelService: ReelService,
+    private chatService: ChatService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -45,14 +52,14 @@ export class ViewProfileComponent implements OnInit {
       this.username = params.get('username');
       if (this.username) {
         this.userService.getUserProfileByUsername(this.username).subscribe(response => {
-          this.userProfile = { ...response.data!, isFollowing: response.data?.following || false, isRequested: response.data?.requested || false };
+          this.userProfile = { ...response.data!, isFollowing: response.data?.following || false, isRequested: response.data?.requested || false, isBlockedByMe: response.data?.blockedByMe || false };
           this.checkIfOwnProfile();
           this.loadUserReels();
         });
       }
       else{
         this.userService.getMyProfile().subscribe(response => {
-          this.userProfile = { ...response.data!, isFollowing: response.data?.following || false, isRequested: response.data?.requested || false };
+          this.userProfile = { ...response.data!, isFollowing: response.data?.following || false, isRequested: response.data?.requested || false, isBlockedByMe: response.data?.blockedByMe || false };
           this.isOwnProfile = true;
           if (this.isOwnProfile) {
             this.loadSavedPosts();
@@ -90,7 +97,8 @@ export class ViewProfileComponent implements OnInit {
         if (response.data && Array.isArray(response.data)) {
           this.userReels = response.data;
           console.log('User Reels loaded:', this.userReels);
-        } else {
+        }
+        else {
           this.userReels = [];
           console.log('User Reels is empty or not an array.');
         }
@@ -102,7 +110,8 @@ export class ViewProfileComponent implements OnInit {
     this.activeTab = tab;
     if (tab === 'saved' && this.savedPosts.length === 0) {
       this.loadSavedPosts();
-    } else if (tab === 'reels' && this.userReels.length === 0) {
+    }
+    else if (tab === 'reels' && this.userReels.length === 0) {
       this.loadUserReels();
     }
   }
@@ -162,6 +171,10 @@ export class ViewProfileComponent implements OnInit {
     });
   }
 
+  toggleMoreOptions(): void {
+    this.showMoreOptions = !this.showMoreOptions;
+  }
+
   toggleFollow(): void {
     if (!this.userProfile) return;
 
@@ -186,6 +199,67 @@ export class ViewProfileComponent implements OnInit {
         });
       }
     }
+  }
+
+  openChat(): void {
+    if (!this.userProfile) return;
+
+    this.chatService.findConversationId(this.userProfile.username).subscribe(
+      (response: any) => {
+        const conversationId = response.data || null;
+        this.dialog.open(ChatDialogComponent, {
+          width: '800px',
+          height: '600px',
+          panelClass: 'chat-dialog-container',
+          data: {
+            conversationId: conversationId,
+            recipientUsername: this.userProfile?.username
+          }
+        });
+      },
+      (error: any) => {
+        console.error('Error finding conversation ID:', error);
+        // Optionally, show an error message to the user
+      }
+    );
+  }
+
+  toggleBlockUser(): void {
+    if (!this.userProfile) return;
+
+    if (this.userProfile.isBlockedByMe) {
+      this.userService.unblockUser(this.userProfile.id).subscribe(() => {
+        if (this.userProfile) {
+          this.userProfile.isBlockedByMe = false;
+          // Optionally, show a success toast
+          // this.toastService.showSuccess('User unblocked successfully');
+        }
+      });
+    } else {
+      this.userService.blockUser(this.userProfile.id).subscribe(() => {
+        if (this.userProfile) {
+          this.userProfile.isBlockedByMe = true;
+          // Optionally, show a success toast
+          // this.toastService.showSuccess('User blocked successfully');
+        }
+      });
+    }
+    this.showMoreOptions = false; // Close the menu
+  }
+
+  copyProfileUrl(): void {
+    if (this.userProfile) {
+      const profileUrl = window.location.href;
+      navigator.clipboard.writeText(profileUrl).then(() => {
+        // Optionally, show a success toast
+        // this.toastService.showSuccess('Profile URL copied to clipboard!');
+      }).catch(err => {
+        console.error('Failed to copy URL:', err);
+        // Optionally, show an error toast
+        // this.toastService.showError('Failed to copy URL');
+      });
+    }
+    this.showMoreOptions = false; // Close the menu
   }
 
   // loadUserProfile(): void {

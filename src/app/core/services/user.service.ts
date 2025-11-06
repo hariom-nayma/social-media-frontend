@@ -101,4 +101,12 @@ export class UserService {
   getUserProfileByConversationId(conversationId: string): Observable<ApiResponse<UserDTO>> {
     return this.http.get<ApiResponse<UserDTO>>(`${this.profileApi}/conversation/${conversationId}`);
   }
+
+  blockUser(userId: string): Observable<ApiResponse<string>> {
+    return this.http.post<ApiResponse<string>>(`${this.apiUrl}/${userId}/block`, {});
+  }
+
+  unblockUser(userId: string): Observable<ApiResponse<string>> {
+    return this.http.post<ApiResponse<string>>(`${this.apiUrl}/${userId}/unblock`, {});
+  }
 }

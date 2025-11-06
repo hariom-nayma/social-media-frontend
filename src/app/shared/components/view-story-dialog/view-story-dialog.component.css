@@ -55,6 +55,11 @@
   margin-right: 8px;
 }
 
+.user-info span {
+  display: flex;
+  align-items: center;
+}
+
 .close-btn {
   background: none;
   border: none;

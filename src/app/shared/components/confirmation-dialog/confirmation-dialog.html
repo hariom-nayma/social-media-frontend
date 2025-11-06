@@ -1,0 +1,10 @@
+<div class="dialog-overlay" (click)="onCancel()">
+  <div class="dialog-content" (click)="$event.stopPropagation()">
+    <h2>Confirm Logout</h2>
+    <p>Are you sure you want to log out?</p>
+    <div class="dialog-actions">
+      <button (click)="onConfirm()">Yes</button>
+      <button (click)="onCancel()">No</button>
+    </div>
+  </div>
+</div>

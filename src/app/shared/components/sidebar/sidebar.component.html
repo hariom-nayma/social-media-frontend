@@ -9,7 +9,7 @@
       <i class="fas fa-home"></i>
       <span>Home</span>
     </a>
-    <a routerLink="/search" class="sidebar-item" routerLinkActive="active">
+    <a (click)="openSearchDialog()" class="sidebar-item">
       <i class="fas fa-search"></i>
       <span>Search</span>
     </a>
@@ -37,7 +37,7 @@
       <i class="far fa-user-circle"></i>
       <span>Profile</span>
     </a>
-    <a (click)="openSubscriptionDialog()" class="sidebar-item">
+    <a (click)="openSubscriptionDialog()" class="sidebar-item" *ngIf="!currentUser?.premiumUser">
       <i class="fas fa-gem"></i>
       <span>Buy Subscription</span>
     </a>
