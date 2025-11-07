@@ -1,0 +1,18 @@
+<div class="two-factor-login-container">
+  <div class="two-factor-login-card">
+    <h2>Two-Factor Authentication</h2>
+    <p>An OTP has been sent to your phone number ending in {{ phoneNumberLastFourDigits }}.</p>
+
+    <form (ngSubmit)="verifyOtp()">
+      <div class="form-group">
+        <label for="otp">Enter OTP</label>
+        <input type="text" id="otp" [(ngModel)]="otp" name="otp" required />
+      </div>
+
+      <button type="submit" [disabled]="!otp">Verify OTP</button>
+    </form>
+
+    <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+    <p class="resend-otp" (click)="resendOtp()">Resend OTP</p>
+  </div>
+</div>

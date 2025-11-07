@@ -1,0 +1,35 @@
+<div class="two-factor-settings-container">
+  <h3>Two-Step Verification</h3>
+  <p>Secure your account with an extra layer of security.</p>
+
+  <div class="setting-section">
+    <h4>Phone Number Verification</h4>
+    <div *ngIf="!currentUser?.phoneNumberVerified">
+      <p>Verify your phone number to enable 2FA.</p>
+      <div class="input-group">
+        <input type="text" placeholder="Enter Phone Number" [(ngModel)]="phoneNumber" />
+        <button (click)="sendOtp()" [disabled]="!phoneNumber || otpSent">Send OTP</button>
+      </div>
+      <div class="input-group" *ngIf="otpSent">
+        <input type="text" placeholder="Enter OTP" [(ngModel)]="otp" />
+        <button (click)="verifyOtp()" [disabled]="!otp">Verify OTP</button>
+      </div>
+      <p *ngIf="otpMessage" class="message">{{ otpMessage }}</p>
+    </div>
+    <div *ngIf="currentUser?.phoneNumberVerified" class="verified-status">
+      <p>&#10004; Phone number verified!</p>
+    </div>
+  </div>
+
+  <div class="setting-section" *ngIf="currentUser?.phoneNumberVerified">
+    <h4>Two-Factor Authentication</h4>
+    <div class="toggle-group">
+      <span>Enable 2FA</span>
+      <label class="switch">
+        <input type="checkbox" [checked]="currentUser?.twoFactorEnabled" (change)="toggleTwoFactor()" />
+        <span class="slider round"></span>
+      </label>
+    </div>
+    <p *ngIf="twoFactorMessage" class="message">{{ twoFactorMessage }}</p>
+  </div>
+</div>

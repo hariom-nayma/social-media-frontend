@@ -27,6 +27,7 @@ export interface UserDTO {
   blockedByMe?: boolean;
   phoneNumberVerified?: boolean;
   twoFactorEnabled?: boolean;
+  phoneNumber?: string;
 }
 
 export interface UpdateProfileRequest {

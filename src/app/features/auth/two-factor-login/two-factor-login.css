@@ -1,0 +1,101 @@
+.two-factor-login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f0f2f5, #e0e4e8);
+  font-family: 'Inter', sans-serif;
+  padding: 20px;
+}
+
+.two-factor-login-card {
+  background: #fff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+.two-factor-login-card h2 {
+  font-size: 28px;
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.two-factor-login-card p {
+  font-size: 15px;
+  color: #666;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.form-group input[type="text"] {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input[type="text"]:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.two-factor-login-card button {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.two-factor-login-card button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.two-factor-login-card button:disabled {
+  background-color: #a8d8ff;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 14px;
+  margin-top: 15px;
+}
+
+.resend-otp {
+  color: #007bff;
+  font-size: 14px;
+  margin-top: 20px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.resend-otp:hover {
+  color: #0056b3;
+}

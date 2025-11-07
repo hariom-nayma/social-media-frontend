@@ -113,4 +113,20 @@ export class UserService {
   toggleAccountPrivacy(): Observable<ApiResponse<UserDTO>> {
     return this.http.put<ApiResponse<UserDTO>>(`${this.apiUrl}/me/toggle-privacy`, {});
   }
+
+  sendPhoneNumberVerificationOtp(phoneNumber: string): Observable<ApiResponse<string>> {
+    return this.http.post<ApiResponse<string>>(`${this.apiUrl}/me/phone/send-otp`, {}, { params: { phoneNumber } });
+  }
+
+  verifyPhoneNumber(phoneNumber: string, otp: string): Observable<ApiResponse<string>> {
+    return this.http.post<ApiResponse<string>>(`${this.apiUrl}/me/phone/verify`, {}, { params: { phoneNumber, otp } });
+  }
+
+  activateTwoFactorAuthentication(): Observable<ApiResponse<string>> {
+    return this.http.post<ApiResponse<string>>(`${this.apiUrl}/me/2fa/activate`, {});
+  }
+
+  deactivateTwoFactorAuthentication(): Observable<ApiResponse<string>> {
+    return this.http.post<ApiResponse<string>>(`${this.apiUrl}/me/2fa/deactivate`, {});
+  }
 }

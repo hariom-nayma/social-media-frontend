@@ -27,20 +27,30 @@ export class LoginComponent implements OnInit {
   }
 
   submit(): void {
-  if (this.loginForm.invalid) return;
+    if (this.loginForm.invalid) return;
 
-  this.loading = true;
-  this.errorMessage = '';
+    this.loading = true;
+    this.errorMessage = '';
 
-  this.auth.login(this.loginForm.value).subscribe({
-    next: () => {
-      this.router.navigate(['/home']);
-    },
-    error: (err) => {
-      this.errorMessage = err.error?.message || 'Invalid email or password';
-      this.loading = false;
-    },
-  });
-}
+    this.auth.login(this.loginForm.value).subscribe({
+      next: (response) => {
+        if (response.data?.twoFactorRequired) {
+          this.router.navigate(['/auth/two-factor-login'], {
+            queryParams: {
+              phoneNumber: response.data.phoneNumber,
+              email: this.loginForm.value.email,
+              password: this.loginForm.value.password
+            }
+          });
+        } else {
+          this.router.navigate(['/home']);
+        }
+      },
+      error: (err) => {
+        this.errorMessage = err.error?.message || 'Invalid email or password';
+        this.loading = false;
+      },
+    });
+  }
 
 }

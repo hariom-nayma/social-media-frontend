@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { AuthResponse, RegisterRequest, VerifyOtpRequest } from '../models/auth.model';
+import { AuthResponse, RegisterRequest, VerifyOtpRequest, LoginResponse } from '../models/auth.model'; // Added LoginResponse
 import { ApiResponse } from '../models/api-response.model';
 
 interface LoginRequest {
@@ -20,8 +20,20 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  login(credentials: LoginRequest): Observable<ApiResponse<AuthResponse>> {
-    return this.http.post<ApiResponse<AuthResponse>>(`${this.apiUrl}/login`, credentials).pipe(
+  login(credentials: LoginRequest): Observable<ApiResponse<LoginResponse>> { // Changed return type to LoginResponse
+    return this.http.post<ApiResponse<LoginResponse>>(`${this.apiUrl}/login`, credentials).pipe(
+      tap(res => {
+        if (res.data && !res.data.twoFactorRequired) { // Only set tokens if 2FA is not required
+          localStorage.setItem('accessToken', res.data.accessToken!);
+          localStorage.setItem('refreshToken', res.data.refreshToken!);
+          this._isLoggedIn.next(true);
+        }
+      })
+    );
+  }
+
+  loginWithOtp(credentials: LoginRequest, otp: string): Observable<ApiResponse<AuthResponse>> {
+    return this.http.post<ApiResponse<AuthResponse>>(`${this.apiUrl}/login-otp`, credentials, { params: { otp } }).pipe(
       tap(res => {
         if (res.data) {
           localStorage.setItem('accessToken', res.data.accessToken);

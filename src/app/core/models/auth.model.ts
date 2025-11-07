@@ -1,3 +1,10 @@
+export interface LoginResponse {
+  accessToken: string | null;
+  refreshToken: string | null;
+  twoFactorRequired: boolean;
+  phoneNumber?: string; // Only if twoFactorRequired is true
+}
+
 export interface AuthResponse {
   accessToken: string;
   refreshToken: string;
