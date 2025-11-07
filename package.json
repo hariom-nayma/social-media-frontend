@@ -29,9 +29,11 @@
     "lucide-angular": "^0.552.0",
     "ng-lazyload-image": "^9.1.3",
     "rxjs": "~7.8.1",
+    "socket.io-client": "^4.8.1",
     "sockjs-client": "^1.6.1",
     "stompjs": "^2.3.3",
     "tslib": "^2.6.2",
+    "uuid": "^13.0.0",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {

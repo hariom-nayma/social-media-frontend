@@ -1,0 +1,52 @@
+.call-screen {
+  position: relative;
+  background: #000;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+video.remote {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+video.local {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  width: 200px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+}
+
+.controls {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background: rgba(255,255,255,0.4);
+}
+
+button.end {
+  background: #e74c3c;
+}

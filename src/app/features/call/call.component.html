@@ -1,0 +1,11 @@
+<div class="call-screen">
+  <video #remoteVideo autoplay playsinline class="remote"></video>
+  <video #localVideo autoplay muted playsinline class="local"></video>
+
+  <div class="controls">
+    <button (click)="toggleMute()">Mute</button>
+    <button (click)="toggleVideo()">Camera</button>
+    <button (click)="shareScreen()">Share Screen</button>
+    <button class="end" (click)="hangup()">End</button>
+  </div>
+</div>

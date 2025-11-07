@@ -15,7 +15,10 @@ import { PostDetailsDialogComponent } from '../../shared/components/post-details
 import { ReelService } from '../../core/services/reel.service';
 import { ReelDTO } from '../../core/models/reel.model';
 import { ReelDetailsDialogComponent } from '../../shared/components/reel-details-dialog/reel-details-dialog.component';
+import { CallService } from '../../core/services/call.service';
+import { CallComponent } from '../call/call.component';
 import { PostService } from '../../core/services/post.service';
+import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog';
 
 @Component({
   selector: 'app-chat',
@@ -36,6 +39,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   private reelService = inject(ReelService);
   private dialog = inject(MatDialog);
   private router = inject(Router);
+  private callService = inject(CallService);
   private route = inject(ActivatedRoute);
 isDarkMode = false;
 
@@ -115,6 +119,24 @@ toggleTheme(): void {
           }}
   
   ));
+    this.subscriptions.add(this.callService.incomingCall$.subscribe(offer => {
+      if (offer) {
+        const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+          data: { message: `Incoming call from ${offer.from}. Do you want to accept?` }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            this.dialog.open(CallComponent, {
+              width: '100vw',
+              height: '100vh',
+              maxWidth: '100vw',
+              data: { offer: offer }
+            });
+          }
+        });
+      }
+    }));
   }
 
   ngAfterViewChecked(): void {
@@ -123,7 +145,6 @@ toggleTheme(): void {
       this.shouldScrollToBottom = false;
     }
   }
-
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
     this.chatService.disconnect();
@@ -329,6 +350,17 @@ toggleTheme(): void {
       });
     } else if (message.messageType === MessageType.PROFILE_LINK && message.user) {
       this.router.navigate(['/profile', message.user.username]);
+    }
+  }
+
+  startCall(): void {
+    if (this.recipientUser) {
+      this.dialog.open(CallComponent, {
+        width: '100vw',
+        height: '100vh',
+        maxWidth: '100vw',
+        data: { targetUserId: this.recipientUser.id }
+      });
     }
   }
 
