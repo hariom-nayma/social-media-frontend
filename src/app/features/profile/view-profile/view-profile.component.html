@@ -53,6 +53,7 @@
 
           <!-- Options Dropdown -->
           <div class="dropdown" *ngIf="showMoreOptions">
+            <div class="dropdown-item" (click)="shareProfile()">Share</div>
             <div class="dropdown-item" (click)="copyProfileUrl()">Copy profile link</div>
             <div class="dropdown-item danger" *ngIf="!isOwnProfile" (click)="toggleBlockUser()">
               {{ userProfile.isBlockedByMe ? 'Unblock user' : 'Block user' }}

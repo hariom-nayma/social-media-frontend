@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, inject, ViewChild, ElementRef, AfterViewChecked, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Subscription, combineLatest, of, Observable, forkJoin } from 'rxjs';
 import { filter, switchMap, tap, map, catchError } from 'rxjs/operators';
@@ -35,6 +35,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   private postService = inject(PostService);
   private reelService = inject(ReelService);
   private dialog = inject(MatDialog);
+  private router = inject(Router);
   private route = inject(ActivatedRoute);
 isDarkMode = false;
 
@@ -326,6 +327,8 @@ toggleTheme(): void {
         width: '80vw',
         maxWidth: '900px'
       });
+    } else if (message.messageType === MessageType.PROFILE_LINK && message.user) {
+      this.router.navigate(['/profile', message.user.username]);
     }
   }
 
@@ -339,6 +342,11 @@ toggleTheme(): void {
       return this.reelService.getReelById(message.content).pipe(
         map(response => ({ ...message, reel: response.data })),
         catchError(() => of({ ...message, reel: undefined }))
+      );
+    } else if (message.messageType === MessageType.PROFILE_LINK) {
+      return this.userService.getUserProfileByUsername(message.content).pipe(
+        map(response => ({ ...message, user: response.data })),
+        catchError(() => of({ ...message, user: undefined }))
       );
     } else {
       return of(message);

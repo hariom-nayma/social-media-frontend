@@ -19,8 +19,8 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
-  getProfileById(userId: string): Observable<UserDTO> {
-    return this.http.get<UserDTO>(`${this.profileApi}/${userId}`);
+  getProfileByUsername(username: string): Observable<UserDTO> {
+    return this.http.get<UserDTO>(`${this.profileApi}/${username}`);
   }
 
   getUserProfileByUsername(username: string): Observable<ApiResponse<UserDTO>> {

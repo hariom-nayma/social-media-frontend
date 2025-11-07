@@ -314,3 +314,21 @@
   max-width: 200px;
   border-radius: 8px;
 }
+
+.user-preview {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-left: 3px solid var(--bubble-sent);
+  padding: 10px;
+}
+
+.user-preview img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.user-preview p {
+  margin: 0;
+}

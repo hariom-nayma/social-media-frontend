@@ -18,6 +18,7 @@ import { ChatService } from '../../../core/services/chat.service';
 import { Router } from '@angular/router';
 import { ChatComponent } from '../../chat/chat.component';
 import { ChatDialogComponent } from '../../../shared/components/chat-dialog/chat-dialog';
+import { ShareDialogComponent } from '../../../shared/components/share-dialog/share-dialog.component';
 
 @Component({
   selector: 'app-view-profile',
@@ -276,6 +277,16 @@ export class ViewProfileComponent implements OnInit {
         console.error('Failed to copy URL:', err);
         // Optionally, show an error toast
         // this.toastService.showError('Failed to copy URL');
+      });
+    }
+    this.showMoreOptions = false; // Close the menu
+  }
+
+  shareProfile(): void {
+    if (this.userProfile) {
+      this.dialog.open(ShareDialogComponent, {
+        width: '500px',
+        data: { shareType: 'profile', shareId: this.userProfile.username }
       });
     }
     this.showMoreOptions = false; // Close the menu
