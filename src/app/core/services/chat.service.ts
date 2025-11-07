@@ -36,7 +36,7 @@ export class ChatService {
     }
 
     console.log(`Attempting to connect to WebSocket for user: ${userId}`);
-    const socket = new SockJS(`http://localhost:8080/ws?token=${jwtToken}`);
+    const socket = new SockJS(`https://10.175.2.151:8080/ws?token=${jwtToken}`);
     this.stompClient = Stomp.over(socket);
 
     this.stompClient.connect({}, () => {

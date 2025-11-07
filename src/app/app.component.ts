@@ -5,6 +5,9 @@ import { ToastComponent } from './shared/components/toast/toast.component';
 import { AuthService } from './core/services/auth.service';
 import { CallService } from './core/services/call.service';
 import { UserService } from './core/services/user.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationDialogComponent } from './shared/components/confirmation-dialog/confirmation-dialog';
+import { CallComponent } from './features/call/call.component';
 
 @Component({
   selector: 'app-root',
@@ -19,7 +22,8 @@ export class AppComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private callService: CallService,
-    private userService: UserService
+    private userService: UserService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -30,8 +34,27 @@ export class AppComponent implements OnInit {
           if (user) {
             const token = this.authService.getAccessToken();
             if (token) {
-              this.callService.connect(token, user.id);
+              this.callService.connect(token, user.username);
             }
+          }
+        });
+      }
+    });
+
+    this.callService.incomingCall$.subscribe(offer => {
+      if (offer) {
+        const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+          data: { message: `Incoming call from ${offer.from}. Do you want to accept?` }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            this.dialog.open(CallComponent, {
+              width: '100vw',
+              height: '100vh',
+              maxWidth: '100vw',
+              data: { offer: offer }
+            });
           }
         });
       }

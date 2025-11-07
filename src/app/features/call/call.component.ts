@@ -22,13 +22,13 @@ export class CallComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    console.log('CallComponent: ngOnInit called');
     this.callService.remoteStream$.subscribe(stream => {
       this.remoteStream = stream;
       if (stream && this.remoteVideo?.nativeElement) {
         this.remoteVideo.nativeElement.srcObject = stream;
       }
     });
-
     if (this.data.targetUserId) {
       this.startCall(this.data.targetUserId);
     } else if (this.data.offer) {
@@ -63,6 +63,7 @@ export class CallComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    console.log('CallComponent: ngOnDestroy called');
     this.callService.hangup();
   }
 }

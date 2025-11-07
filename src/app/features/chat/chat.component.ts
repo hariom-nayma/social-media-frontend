@@ -70,6 +70,7 @@ toggleTheme(): void {
   private subscriptions: Subscription = new Subscription();
 
   ngOnInit(): void {
+    console.log('ChatComponent: ngOnInit started.');
     // read theme
     const stored = localStorage.getItem('chatTheme');
     this.isDark = stored === 'dark';
@@ -119,24 +120,6 @@ toggleTheme(): void {
           }}
   
   ));
-    this.subscriptions.add(this.callService.incomingCall$.subscribe(offer => {
-      if (offer) {
-        const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-          data: { message: `Incoming call from ${offer.from}. Do you want to accept?` }
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-          if (result) {
-            this.dialog.open(CallComponent, {
-              width: '100vw',
-              height: '100vh',
-              maxWidth: '100vw',
-              data: { offer: offer }
-            });
-          }
-        });
-      }
-    }));
   }
 
   ngAfterViewChecked(): void {
@@ -359,7 +342,7 @@ toggleTheme(): void {
         width: '100vw',
         height: '100vh',
         maxWidth: '100vw',
-        data: { targetUserId: this.recipientUser.id }
+        data: { targetUserId: this.recipientUser.username }
       });
     }
   }
