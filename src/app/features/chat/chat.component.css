@@ -288,3 +288,16 @@
 .blocked-profile-message p {
   margin: 10px 0;
 }
+
+.post-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-left: 3px solid var(--bubble-sent);
+  padding-left: 10px;
+}
+
+.post-preview img {
+  max-width: 100px;
+  border-radius: 8px;
+}

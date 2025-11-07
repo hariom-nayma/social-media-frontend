@@ -18,6 +18,7 @@ export class ChatService {
   private presenceSubject: Subject<PresenceDTO> = new Subject<PresenceDTO>();
   private messagesSeenSubject: Subject<Message> = new Subject<Message>();
   private messageReactionsSubject: Subject<Message> = new Subject<Message>();
+  public isConnected = false;
 
   public messages$: Observable<Message> = this.messageSubject.asObservable();
   public typingStatus$: Observable<TypingDTO> = this.typingSubject.asObservable();
@@ -40,6 +41,7 @@ export class ChatService {
 
     this.stompClient.connect({}, () => {
       console.log('WebSocket connected successfully.');
+      this.isConnected = true;
 
       // Subscribe to private messages
       this.stompClient?.subscribe(`/user/${userId}/queue/messages`, (message) => {
@@ -91,6 +93,7 @@ export class ChatService {
     if (this.stompClient && this.stompClient.connected) {
       this.stompClient.disconnect(() => {
         console.log('Disconnected from WebSocket');
+        this.isConnected = false;
       });
     }
   }

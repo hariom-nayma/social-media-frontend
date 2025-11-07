@@ -1,0 +1,13 @@
+.share-dialog-container {
+  width: 400px;
+  max-width: 100%;
+}
+
+.mat-dialog-content {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.mat-dialog-actions {
+  justify-content: flex-end;
+}

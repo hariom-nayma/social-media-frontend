@@ -1,3 +1,4 @@
+import { MessageType } from './enums.model';
 import { UserDTO } from './user.model';
 
 export interface ChatMessageDto {
@@ -6,6 +7,7 @@ export interface ChatMessageDto {
   recipientId: string;
   content: string;
   timestamp: Date;
+  messageType: MessageType;
 }
 
 export interface TypingDTO {
@@ -36,6 +38,7 @@ export interface Message {
   seenAt: Date;
   reactions: MessageReaction[];
   showEmojiPicker?: boolean; // Frontend specific property
+  messageType: MessageType;
 }
 
 export interface PresenceDTO {

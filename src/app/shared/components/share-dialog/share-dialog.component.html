@@ -1,0 +1,16 @@
+<div class="share-dialog-container">
+  <h2 class="mat-dialog-title">Share {{ shareType }}</h2>
+  <div class="mat-dialog-content">
+    <mat-list>
+      <mat-list-item *ngFor="let follower of followers">
+        <mat-checkbox (change)="onUserSelectionChange(follower.userId, $event.checked)">
+          {{ follower.username }}
+        </mat-checkbox>
+      </mat-list-item>
+    </mat-list>
+  </div>
+  <div class="mat-dialog-actions">
+    <button mat-button (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="primary" (click)="onShare()" [disabled]="selectedUsers.length === 0">Share</button>
+  </div>
+</div>

@@ -6,7 +6,7 @@ import { RouterModule, Router } from '@angular/router';
 import { UserService } from '../../../core/services/user.service';
 import { UserDTO } from '../../../core/models/user.model';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { PostShareDialogComponent } from '../post-share-dialog/post-share-dialog.component';
+import { ShareDialogComponent } from '../share-dialog/share-dialog.component';
 
 @Component({
   selector: 'app-post-card',
@@ -65,10 +65,9 @@ export class PostCardComponent implements OnInit {
 
   onShare(event: Event): void {
     event.stopPropagation();
-    const postUrl = `${window.location.origin}/post/${this.post.id}`;
-    this.dialog.open(PostShareDialogComponent, {
+    this.dialog.open(ShareDialogComponent, {
       width: '500px',
-      data: { postId: this.post.id, postUrl: postUrl }
+      data: { shareType: 'post', shareId: this.post.id }
     });
   }
 

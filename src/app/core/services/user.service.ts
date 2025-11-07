@@ -10,6 +10,7 @@ import { FollowRequestDTO } from '../models/follow-request.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
+  
   private apiUrl = `${environment.apiUrl}/users`;
   private profileApi = `${environment.apiUrl}/profile`;
 
@@ -84,6 +85,10 @@ export class UserService {
 
   getFollowers(username: string): Observable<ApiResponse<UserDTO[]>> {
     return this.http.get<ApiResponse<UserDTO[]>>(`${this.apiUrl}/${username}/followers`);
+  }
+
+  getCurrentUserFollowers(): Observable<ApiResponse<UserDTO[]>> {
+    return this.http.get<ApiResponse<UserDTO[]>>(`${this.apiUrl}/followers`);
   }
 
   getFollowing(username: string): Observable<ApiResponse<UserDTO[]>> {

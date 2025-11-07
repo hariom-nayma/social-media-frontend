@@ -13,7 +13,8 @@ import { ReelService } from '../../../core/services/reel.service';
 import { ReelDTO } from '../../../core/models/reel.model';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog'; // Import MatDialog
-import { ReelDetailsDialogComponent } from '../../../shared/components/reel-details-dialog/reel-details-dialog.component'; // Import ReelDetailsDialogComponent
+import { ShareDialogComponent } from '../../../shared/components/share-dialog/share-dialog.component';
+import { ReelDetailsDialogComponent } from '../../../shared/components/reel-details-dialog/reel-details-dialog.component';
 
 @Component({
   selector: 'app-reels-feed',
@@ -193,21 +194,10 @@ export class ReelsListComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   shareReel(reel: ReelDTO): void {
-    if (navigator.share) {
-      navigator.share({
-        title: 'Check out this reel!',
-        text: reel.caption || '',
-        url: reel.mediaVideoUrl
-      }).catch(() => {});
-    } else {
-      // fallback - copy link
-      try {
-        navigator.clipboard?.writeText(reel.mediaVideoUrl || '');
-        alert('Link copied to clipboard');
-      } catch {
-        // ignore
-      }
-    }
+    this.dialog.open(ShareDialogComponent, {
+      width: '500px',
+      data: { shareType: 'reel', shareId: reel.id }
+    });
   }
 
   onVideoDoubleTap(index: number): void {

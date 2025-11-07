@@ -14,3 +14,12 @@ export enum NotificationType {
   COMMENT = 'COMMENT',
   FOLLOW = 'FOLLOW'
 }
+
+export enum MessageType {
+  TEXT = 'TEXT',
+  IMAGE = 'IMAGE',
+  EMOJI = 'EMOJI',
+  POST_LINK = 'POST_LINK',
+  REEL_LINK = 'REEL_LINK',
+  PROFILE_LINK = 'PROFILE_LINK'
+}

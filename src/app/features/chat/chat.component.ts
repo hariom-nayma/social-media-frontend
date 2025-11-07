@@ -2,12 +2,17 @@ import { Component, OnInit, OnDestroy, inject, ViewChild, ElementRef, AfterViewC
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Subscription, combineLatest, of } from 'rxjs';
-import { filter, switchMap, tap } from 'rxjs/operators';
+import { Subscription, combineLatest, of, Observable, forkJoin } from 'rxjs';
+import { filter, switchMap, tap, map, catchError } from 'rxjs/operators';
 import { ChatService } from '../../core/services/chat.service';
 import { UserService } from '../../core/services/user.service';
 import { ChatMessageDto, Message, TypingDTO } from '../../core/models/chat.model';
 import { UserDTO } from '../../core/models/user.model';
+import { MessageType } from '../../core/models/enums.model';
+import { EnrichedMessage } from '../../core/models/enriched-message.model'; 
+import { MatDialog } from '@angular/material/dialog';
+import { PostDetailsDialogComponent } from '../../shared/components/post-details-dialog/post-details-dialog.component';
+import { PostService } from '../../core/services/post.service';
 
 @Component({
   selector: 'app-chat',
@@ -24,6 +29,8 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   private chatService = inject(ChatService);
   private userService = inject(UserService);
+  private postService = inject(PostService);
+  private dialog = inject(MatDialog);
   private route = inject(ActivatedRoute);
 isDarkMode = false;
 
@@ -31,7 +38,7 @@ toggleTheme(): void {
   this.isDarkMode = !this.isDarkMode;
 }
 
-  messages: Message[] = [];
+  messages: EnrichedMessage[] = [];
   newMessageContent = '';
   currentUser: UserDTO | null = null;
   recipientUser: UserDTO | null = null;
@@ -39,6 +46,7 @@ toggleTheme(): void {
   isRecipientOnline = false;
   isBlockedByViewer = false; 
   availableEmojis: string[] = ['👍', '❤️', '😂', '😢', '😡', '🔥', '👏', '🎉'];
+  MessageType = MessageType;
 
   // UI state
   isDark = false;
@@ -122,24 +130,26 @@ toggleTheme(): void {
   // }
 
   private subscribeToChatEvents(): void {
-    this.subscriptions.add(this.chatService.messages$.subscribe(msg => {
-      if (!this.conversationId && msg.conversationId) {
-        this.conversationId = msg.conversationId;
+    this.subscriptions.add(this.chatService.messages$.pipe(
+      switchMap(message => this.enrichMessage(message))
+    ).subscribe(enrichedMessage => {
+      if (!this.conversationId && enrichedMessage.conversationId) {
+        this.conversationId = enrichedMessage.conversationId;
       }
-      console.log('New message received from WebSocket:', msg);
-      const optimisticMessageIndex = this.messages.findIndex(m => m.id.startsWith('temp-') && m.content === msg.content);
+      console.log('New message received from WebSocket:', enrichedMessage);
+      const optimisticMessageIndex = this.messages.findIndex(m => m.id.startsWith('temp-') && m.content === enrichedMessage.content);
 
       if (optimisticMessageIndex !== -1) {
         const newMessages = [...this.messages];
-        newMessages[optimisticMessageIndex] = { ...msg, showEmojiPicker: false, reactions: msg.reactions ?? [] };
+        newMessages[optimisticMessageIndex] = { ...enrichedMessage, showEmojiPicker: false, reactions: enrichedMessage.reactions ?? [] };
         this.messages = newMessages;
       } else {
-        this.messages = [...this.messages, { ...msg, showEmojiPicker: false, reactions: msg.reactions ?? [] }];
+        this.messages = [...this.messages, { ...enrichedMessage, showEmojiPicker: false, reactions: enrichedMessage.reactions ?? [] }];
       }
 
       this.shouldScrollToBottom = true;
-      if (msg.senderId !== this.currentUser!.id && !msg.seen) {
-        this.chatService.markMessageAsSeen(msg.id);
+      if (enrichedMessage.senderId !== this.currentUser!.id && !enrichedMessage.seen) {
+        this.chatService.markMessageAsSeen(enrichedMessage.id);
       }
     }));
 
@@ -175,21 +185,27 @@ toggleTheme(): void {
     if (this.conversationId && this.hasMoreMessages && !this.isLoadingMessages) {
       this.isLoadingMessages = true;
       this.chatService.getMessages(this.conversationId, page, size).pipe(
-        tap(response => {
-          const normalized = response.content.map((m: any) => ({ ...m, showEmojiPicker: false, reactions: m.reactions ?? [] })).reverse();
+        switchMap(response => {
+          const messages: Message[] = response.content.map((m: any) => ({ ...m, showEmojiPicker: false, reactions: m.reactions ?? [] })).reverse();
+          const enrichedMessages$: Observable<EnrichedMessage>[] = messages.map((m: Message) => this.enrichMessage(m));
+          return forkJoin(enrichedMessages$).pipe(
+            map((enrichedMessages: EnrichedMessage[]) => ({ enrichedMessages, last: response.last }))
+          );
+        }),
+        tap(({ enrichedMessages, last }) => {
           if (page === 0) {
-            this.messages = normalized;
+            this.messages = enrichedMessages;
             this.shouldScrollToBottom = true;
           } else {
             const oldScrollHeight = this.messagesContainer.nativeElement.scrollHeight;
-            this.messages = [...normalized, ...this.messages];
+            this.messages = [...enrichedMessages, ...this.messages];
             // We need to wait for the view to update before we can adjust the scroll position
             setTimeout(() => {
               const newScrollHeight = this.messagesContainer.nativeElement.scrollHeight;
               this.messagesContainer.nativeElement.scrollTop = newScrollHeight - oldScrollHeight;
             }, 0);
           }
-          this.hasMoreMessages = !response.last;
+          this.hasMoreMessages = !last;
           this.currentPage = page;
           this.isLoadingMessages = false;
 
@@ -211,7 +227,8 @@ toggleTheme(): void {
         senderId: this.currentUser.id,
         recipientId: this.recipientUser.id,
         content: this.newMessageContent.trim(),
-        timestamp: new Date()
+        timestamp: new Date(),
+        messageType: MessageType.TEXT
       };
       this.chatService.sendMessage(chatMessage);
       this.newMessageContent = '';
@@ -290,5 +307,26 @@ toggleTheme(): void {
     try {
       this.messagesContainer.nativeElement.scrollTop = this.messagesContainer.nativeElement.scrollHeight;
     } catch (err) { }
+  }
+
+  onMessageClick(message: EnrichedMessage): void {
+    if (message.messageType === MessageType.POST_LINK && message.post) {
+      this.dialog.open(PostDetailsDialogComponent, {
+        data: { postId: message.post.id },
+        width: '80vw',
+        maxWidth: '900px'
+      });
+    }
+  }
+
+  private enrichMessage(message: Message): Observable<EnrichedMessage> {
+    if (message.messageType === MessageType.POST_LINK) {
+      return this.postService.getPostById(message.content).pipe(
+        map(response => ({ ...message, post: response.data })),
+        catchError(() => of({ ...message, post: undefined }))
+      );
+    } else {
+      return of(message);
+    }
   }
 }

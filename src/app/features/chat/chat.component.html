@@ -46,7 +46,20 @@
           {{ msg.senderFirstName }} {{ msg.senderLastName }}
         </div>
 
-        <div class="content">{{ msg.content }}</div>
+        <div class="content" (click)="onMessageClick(msg)">
+          <ng-container [ngSwitch]="msg.messageType">
+            <ng-container *ngSwitchCase="MessageType.POST_LINK">
+              <div *ngIf="msg.post" class="post-preview">
+                <i> {{ msg.senderUsername }} sent a post </i>
+                <img [src]="msg.post.mediaUrl" alt="Post image">
+                <p>{{ msg.post.content }}</p>
+              </div>
+            </ng-container>
+            <ng-container *ngSwitchDefault>
+              {{ msg.content }}
+            </ng-container>
+          </ng-container>
+        </div>
 
         <!-- Reactions -->
         <div class="reactions" *ngIf="msg.reactions?.length">

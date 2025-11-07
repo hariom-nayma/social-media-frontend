@@ -9,6 +9,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { ChatService } from '../../../core/services/chat.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { UserService } from '../../../core/services/user.service';
+import { MessageType } from '../../../core/models/enums.model';
 
 
 @Component({
@@ -76,7 +77,9 @@ export class PostShareDialogComponent implements OnInit {
             senderId: this.currentUserId!,
             recipientId: recipientId,
             content: messageContent,
-            timestamp: new Date()
+            timestamp: new Date(),
+            messageType: MessageType.POST_LINK,
+           
           };
           this.chatService.sendMessage(chatMessage);
           this.toastService.show(`Post shared with ${recipientId}!`, 'success');
