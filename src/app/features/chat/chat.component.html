@@ -50,9 +50,16 @@
           <ng-container [ngSwitch]="msg.messageType">
             <ng-container *ngSwitchCase="MessageType.POST_LINK">
               <div *ngIf="msg.post" class="post-preview">
-                <i> {{ msg.senderUsername }} sent a post </i>
+                <i>{{ msg.senderUsername }} sent a post</i>
                 <img [src]="msg.post.mediaUrl" alt="Post image">
                 <p>{{ msg.post.content }}</p>
+              </div>
+            </ng-container>
+            <ng-container *ngSwitchCase="MessageType.REEL_LINK">
+              <div *ngIf="msg.reel" class="reel-preview">
+                <i>{{ msg.senderUsername }} sent a reel</i>
+                <video [src]="msg.reel.mediaVideoUrl" alt="Reel video" autoplay muted loop controlsList="nodownload nofullscreen noremoteplayback"></video>
+                <!-- <p>{{ msg.reel.caption }}</p> -->
               </div>
             </ng-container>
             <ng-container *ngSwitchDefault>

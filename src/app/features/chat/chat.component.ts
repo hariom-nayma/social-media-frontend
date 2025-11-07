@@ -12,6 +12,9 @@ import { MessageType } from '../../core/models/enums.model';
 import { EnrichedMessage } from '../../core/models/enriched-message.model'; 
 import { MatDialog } from '@angular/material/dialog';
 import { PostDetailsDialogComponent } from '../../shared/components/post-details-dialog/post-details-dialog.component';
+import { ReelService } from '../../core/services/reel.service';
+import { ReelDTO } from '../../core/models/reel.model';
+import { ReelDetailsDialogComponent } from '../../shared/components/reel-details-dialog/reel-details-dialog.component';
 import { PostService } from '../../core/services/post.service';
 
 @Component({
@@ -30,6 +33,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   private chatService = inject(ChatService);
   private userService = inject(UserService);
   private postService = inject(PostService);
+  private reelService = inject(ReelService);
   private dialog = inject(MatDialog);
   private route = inject(ActivatedRoute);
 isDarkMode = false;
@@ -316,6 +320,12 @@ toggleTheme(): void {
         width: '80vw',
         maxWidth: '900px'
       });
+    } else if (message.messageType === MessageType.REEL_LINK && message.reel) {
+      this.dialog.open(ReelDetailsDialogComponent, {
+        data: { reelId: message.reel.id },
+        width: '80vw',
+        maxWidth: '900px'
+      });
     }
   }
 
@@ -324,6 +334,11 @@ toggleTheme(): void {
       return this.postService.getPostById(message.content).pipe(
         map(response => ({ ...message, post: response.data })),
         catchError(() => of({ ...message, post: undefined }))
+      );
+    } else if (message.messageType === MessageType.REEL_LINK) {
+      return this.reelService.getReelById(message.content).pipe(
+        map(response => ({ ...message, reel: response.data })),
+        catchError(() => of({ ...message, reel: undefined }))
       );
     } else {
       return of(message);
