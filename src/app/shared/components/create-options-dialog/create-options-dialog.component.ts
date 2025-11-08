@@ -22,6 +22,7 @@ import { MatButtonModule } from '@angular/material/button';
   styles: [`
     .mat-dialog-container {
       padding: 20px;
+      z-index: 1000; /* Ensure dialog is on top */
     }
     .mat-dialog-title {
       margin-bottom: 20px;

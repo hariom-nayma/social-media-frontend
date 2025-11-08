@@ -101,12 +101,27 @@
                   >{{ comment.likesCount || 0 }}</span
                >
                 <button
+                  class="reply-btn"
+                  (click)="generateAutoReply(comment)"
+                  [disabled]="comment.isGeneratingReply"
+                >
+                  <span *ngIf="!comment.isGeneratingReply">AI Reply</span>
+                  <span *ngIf="comment.isGeneratingReply">Generating...</span>
+                </button>
+                <button
                   *ngIf="!comment.parentCommentId"
                   class="reply-btn"
                   (click)="openReplyForm(comment)"
                 >
                   Reply
                 </button>
+              </div>
+
+              <div *ngIf="comment.generatedReplies && comment.generatedReplies.length > 0" class="ai-replies">
+                <p><strong>AI Generated Replies:</strong></p>
+                <ul>
+                  <li *ngFor="let reply of comment.generatedReplies">{{ reply }}</li>
+                </ul>
               </div>
 
               <div *ngIf="comment.replies?.size" class="replies">
@@ -150,6 +165,10 @@
           placeholder="Add a comment..."
           formControlName="text"
         />
+        <button type="button" (click)="generateAutoComment()" [disabled]="isGeneratingComment">
+          <span *ngIf="!isGeneratingComment">AI Comment</span>
+          <span *ngIf="isGeneratingComment">Generating...</span>
+        </button>
         <button type="submit" [disabled]="commentForm.invalid">Post</button>
       </form>
     </div>

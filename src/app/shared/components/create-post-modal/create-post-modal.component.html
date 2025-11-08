@@ -12,6 +12,18 @@
             <textarea class="textarea" placeholder="What's on your mind?" formControlName="content"></textarea>
           </div>
         </div>
+
+        <div class="field is-grouped">
+          <p class="control is-expanded">
+            <input class="input" type="text" placeholder="Prompt for AI caption" [(ngModel)]="aiCaptionPrompt" [ngModelOptions]="{standalone: true}">
+          </p>
+          <p class="control">
+            <button class="button is-info" (click)="generateAutoCaption()" [disabled]="isGeneratingCaption">
+              <span *ngIf="!isGeneratingCaption">Generate AI Caption</span>
+              <span *ngIf="isGeneratingCaption">Generating...</span>
+            </button>
+          </p>
+        </div>
         <div class="field">
           <div class="file is-boxed">
             <label class="file-label">

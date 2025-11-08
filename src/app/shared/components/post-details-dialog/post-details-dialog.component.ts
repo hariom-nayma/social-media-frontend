@@ -18,11 +18,15 @@ import { UserService } from '../../../core/services/user.service';
 import { Router } from '@angular/router';
 import { UserDTO } from '../../../core/models/user.model';
 import { LucideAngularModule } from 'lucide-angular';
+import { AiService } from '../../../core/services/ai.service';
+import { ToastService } from '../../../core/services/toast.service';
 
 
 interface CommentDisplayDTO extends CommentDTO {
   isLiked?: boolean;
   showReplies?: boolean;
+  isGeneratingReply?: boolean;
+  generatedReplies?: string[];
 }
 
 @Component({
@@ -40,6 +44,8 @@ export class PostDetailsDialogComponent implements OnInit {
   private postService = inject(PostService);
   private fb = inject(FormBuilder);
   private userService = inject(UserService);
+  private aiService = inject(AiService);
+  private toastService = inject(ToastService);
 
   post: FeedPostResponseDTO | null = null;
   comments: CommentDisplayDTO[] = [];
@@ -50,6 +56,7 @@ export class PostDetailsDialogComponent implements OnInit {
   replyingToUsername: string | null = null;
   showOptionsMenu = false;
   currentUser: UserDTO | null = null;
+  isGeneratingComment = false;
 
   constructor(
     @Optional() @Inject(MAT_DIALOG_DATA) public dialogData: { postId: string },
@@ -64,6 +71,25 @@ export class PostDetailsDialogComponent implements OnInit {
     this.loadPostDetails();
     this.loadComments();
     this.userService.currentUser$.subscribe(user => this.currentUser = user);
+  }
+
+  generateAutoComment() {
+    if (!this.post?.content) {
+      this.toastService.show('No post content available to generate comment.', 'error');
+      return;
+    }
+
+    this.isGeneratingComment = true;
+    this.aiService.autoComment(this.post.content).subscribe({
+      next: (response) => {
+        this.commentForm.controls['text'].setValue(response.comment);
+        this.isGeneratingComment = false;
+      },
+      error: (err) => {
+        this.toastService.show(err.error?.message || 'Failed to generate comment.', 'error');
+        this.isGeneratingComment = false;
+      }
+    });
   }
 
   loadPostDetails() {
@@ -161,6 +187,25 @@ export class PostDetailsDialogComponent implements OnInit {
 
   toggleRepliesVisibility(comment: CommentDisplayDTO) {
     comment.showReplies = !comment.showReplies;
+  }
+
+  generateAutoReply(comment: CommentDisplayDTO) {
+    if (!comment.text) {
+      this.toastService.show('No comment text available to generate replies.', 'error');
+      return;
+    }
+
+    comment.isGeneratingReply = true;
+    this.aiService.autoReply(comment.text).subscribe({
+      next: (response) => {
+        comment.generatedReplies = response.replies;
+        comment.isGeneratingReply = false;
+      },
+      error: (err) => {
+        this.toastService.show(err.error?.message || 'Failed to generate replies.', 'error');
+        comment.isGeneratingReply = false;
+      }
+    });
   }
 
   openReplyForm(comment: CommentDisplayDTO) {

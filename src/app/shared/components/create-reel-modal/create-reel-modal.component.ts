@@ -84,7 +84,7 @@ import { ToastService } from '../../../core/services/toast.service';
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.6);
-      z-index: 1000;
+      z-index: 9999;
       backdrop-filter: blur(2px);
       animation: fadeIn 0.2s ease-in-out;
     }

@@ -1,5 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit, Renderer2 } from '@angular/core';
+import { DOCUMENT, CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { CreatePostModalComponent } from "../create-post-modal/create-post-modal.component";
 import { AuthService } from '../../../core/services/auth.service';
@@ -25,16 +25,29 @@ export class SidebarComponent implements OnInit {
   showCreateReelModal = false;
   showMoreOptions = false;
   currentUser: UserDTO | null = null;
+  isExpanded = false;
 
   authService = inject(AuthService);
   router = inject(Router);
   dialog = inject(MatDialog);
   userService = inject(UserService);
+  renderer = inject(Renderer2);
+  document = inject(DOCUMENT);
 
   ngOnInit(): void {
     this.userService.currentUser$.subscribe(user => {
       this.currentUser = user;
     });
+  }
+
+  onMouseEnter() {
+    this.isExpanded = true;
+    this.renderer.setStyle(this.document.documentElement, '--sidebar-width', '244px');
+  }
+
+  onMouseLeave() {
+    this.isExpanded = false;
+    this.renderer.setStyle(this.document.documentElement, '--sidebar-width', '72px');
   }
 
   openCreatePostModal() {
@@ -89,6 +102,7 @@ export class SidebarComponent implements OnInit {
   openSubscriptionDialog() {
     this.dialog.open(SubscriptionDialogComponent, {
       width: '500px',
+      panelClass: 'golden-subscription-dialog-panel'
     });
   }
 

@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { UserService } from '../../../core/services/user.service';
 import { UserDTO } from '../../../core/models/user.model';
@@ -8,6 +8,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { AiService } from '../../../core/services/ai.service';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-update-profile',
@@ -21,18 +23,23 @@ import { MatIconModule } from '@angular/material/icon';
     MatInputModule,
     MatButtonModule,
     ReactiveFormsModule,
-    MatIconModule
+    MatIconModule,
+    FormsModule
   ]
 })
 export class UpdateProfileComponent implements OnInit {
   updateProfileForm: FormGroup;
   selectedFile: File | null = null;
+  aiBioPrompt: string = '';
+  isGeneratingBio: boolean = false;
 
   constructor(
     public dialogRef: MatDialogRef<UpdateProfileComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { user: UserDTO },
     private fb: FormBuilder,
-    private userService: UserService
+    private userService: UserService,
+    private aiService: AiService,
+    private toastService: ToastService
   ) {
     this.updateProfileForm = this.fb.group({
       firstName: ['', Validators.required],
@@ -51,6 +58,25 @@ export class UpdateProfileComponent implements OnInit {
     }
   }
 
+  generateAutoBio() {
+    if (!this.aiBioPrompt) {
+      this.toastService.show('Please enter a prompt for the AI bio.', 'error');
+      return;
+    }
+
+    this.isGeneratingBio = true;
+    this.aiService.autoBio(this.aiBioPrompt).subscribe({
+      next: (response) => {
+        this.updateProfileForm.controls['bio'].setValue(response.bio);
+        this.isGeneratingBio = false;
+      },
+      error: (err) => {
+        this.toastService.show(err.error?.message || 'Failed to generate bio.', 'error');
+        this.isGeneratingBio = false;
+      }
+    });
+  }
+
   onFileSelected(event: any): void {
     this.selectedFile = event.target.files[0];
   }
@@ -64,18 +90,17 @@ export class UpdateProfileComponent implements OnInit {
     }
   }
 
-onSave(): void {
-  if (this.updateProfileForm.valid) {
-    this.userService.updateProfile(this.updateProfileForm.value).subscribe(updatedUser => {
-      // Close and return updated user to parent component
-      this.dialogRef.close(updatedUser);
+  onSave(): void {
+    if (this.updateProfileForm.valid) {
+      this.userService.updateProfile(this.updateProfileForm.value).subscribe(updatedUser => {
+        // Close and return updated user to parent component
+        this.dialogRef.close(updatedUser);
 
-      // Optionally refresh after save
-      setTimeout(() => window.location.reload(), 10);
-    });
+        // Optionally refresh after save
+        setTimeout(() => window.location.reload(), 10);
+      });
+    }
   }
-}
-
 
   onCancel(): void {
     this.dialogRef.close();

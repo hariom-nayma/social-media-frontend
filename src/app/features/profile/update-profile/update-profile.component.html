@@ -52,6 +52,15 @@
       rows="3"
     ></textarea>
   </mat-form-field>
+
+  <mat-form-field appearance="outline" class="form-field">
+    <mat-label>AI Bio Prompt</mat-label>
+    <input matInput [(ngModel)]="aiBioPrompt" [ngModelOptions]="{standalone: true}" placeholder="e.g., 'a software engineer who loves open source'"/>
+  </mat-form-field>
+  <button mat-flat-button color="accent" (click)="generateAutoBio()" [disabled]="isGeneratingBio" class="ai-bio-button">
+    <span *ngIf="!isGeneratingBio">Generate AI Bio</span>
+    <span *ngIf="isGeneratingBio">Generating...</span>
+  </button>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end" class="dialog-actions">

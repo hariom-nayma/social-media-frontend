@@ -1,15 +1,4 @@
-.main-layout {
-  display: flex;
-}
-
-.content {
-  flex-grow: 1;
-  padding: 20px;
-}
-
-@media (max-width: 768px) {
-  .main-layout {
-    flex-dir/* 🌈 Clean responsive Instagram-style layout */
+/* 🌈 Clean responsive Instagram-style layout */
 .main-layout {
   display: flex;
   justify-content: center;
@@ -31,6 +20,8 @@
   padding: 24px 16px;
   min-height: 100vh;
   overflow-y: auto;
+  margin-left: var(--sidebar-width);
+  transition: margin-left 0.2s ease-in-out;
 }
 
 /* Hide scrollbar for aesthetic feed look */
@@ -53,6 +44,7 @@
   .content {
     width: 100%;
     padding: 12px;
+    margin-left: 0; /* No margin on mobile */
     margin-bottom: 70px; /* height of bottom nav */
   }
 
@@ -61,17 +53,5 @@
     bottom: 0;
     left: 0;
     width: 100%;
-  }
-}
-ection: column;
-  }
-
-  app-sidebar {
-    display: none;
-  }
-
-  .content {
-    padding: 10px;
-    margin-bottom: 60px; /* Height of the bottom navbar */
   }
 }
