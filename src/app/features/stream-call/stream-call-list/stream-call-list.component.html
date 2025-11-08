@@ -1,0 +1,12 @@
+<div class="user-list-container">
+  <h2>Users to Call</h2>
+  <ul class="user-list">
+    <li *ngFor="let user of users" class="user-item">
+      <div class="user-info">
+        <img [src]="user.profileImageUrl" alt="Profile picture of {{user.username}}" class="profile-picture">
+        <span>{{ user.username }}</span>
+      </div>
+      <button (click)="initiateCall(user)" class="call-button">Call</button>
+    </li>
+  </ul>
+</div>

@@ -49,6 +49,14 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/reels/reels-list/reels-list.component').then(m => m.ReelsListComponent)
             },
             {
+                path: 'stream-call-list',
+                loadComponent: () => import('./features/stream-call/stream-call-list/stream-call-list.component').then(m => m.StreamCallListComponent)
+            },
+            {
+                path: 'stream-call/:callId',
+                loadComponent: () => import('./features/stream-call/stream-call/stream-call.component').then(m => m.StreamCallComponent)
+            },
+            {
                 path: 'payment-success',
                 loadComponent: () => import('./features/payment/payment-success.component').then(m => m.PaymentSuccessComponent)
             },
