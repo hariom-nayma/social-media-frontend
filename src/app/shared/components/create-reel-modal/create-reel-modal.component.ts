@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ReelService } from '../../../core/services/reel.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { AiService } from '../../../core/services/ai.service';
 
 @Component({
   selector: 'app-create-reel-modal',
@@ -22,149 +23,235 @@ import { ToastService } from '../../../core/services/toast.service';
     MatProgressBarModule
   ],
   template: `
-    <div class="modal-wrapper">
-      <div class="modal-box">
-        <h2 class="title">🎥 Create New Reel</h2>
+  <div class="modal-wrapper">
+    <div class="modal-box">
+      <h2 class="title">🎥 Create New Reel</h2>
 
-        <form (ngSubmit)="createReel()" class="upload-form">
-          <!-- Caption -->
-          <mat-form-field appearance="outline" class="input-full">
-            <mat-label>Write a caption...</mat-label>
-            <textarea
-              matInput
-              [(ngModel)]="caption"
-              name="caption"
-              rows="3"
-              required
-            ></textarea>
+      <form (ngSubmit)="createReel()" class="upload-form">
+
+        <!-- ✏️ Caption -->
+        <mat-form-field appearance="outline" class="input-full ai-container" [class.loading]="isGeneratingCaption">
+          <mat-label>Write a caption...</mat-label>
+          <textarea matInput [(ngModel)]="caption" name="caption" rows="3" required [readonly]="isGeneratingCaption"></textarea>
+          <div *ngIf="isGeneratingCaption" class="shimmer"></div>
+        </mat-form-field>
+
+        <!-- 🤖 AI Caption -->
+        <div class="ai-row">
+          <mat-form-field appearance="outline" class="flex-grow">
+            <mat-label>Prompt for AI caption</mat-label>
+            <input matInput [(ngModel)]="aiCaptionPrompt" name="aiCaptionPrompt" />
           </mat-form-field>
-
-          <!-- File input -->
-          <div class="file-section">
-            <input
-              type="file"
-              id="videoFile"
-              (change)="onFileSelected($event)"
-              accept="video/*"
-              hidden
-            />
-            <label for="videoFile" class="upload-btn">
-              <span *ngIf="!selectedFile">📤 Choose Video</span>
-              <span *ngIf="selectedFile">{{ selectedFile.name }}</span>
-            </label>
-          </div>
-
-          <!-- Video preview -->
-        <div *ngIf="videoPreviewUrl" class="mb-4 flex justify-center">
-          <video [src]="videoPreviewUrl" controls class="max-w-full max-h-60 object-contain border rounded"></video>
-        </div>
-        <div class="mb-4 flex items-center">
-          <input type="checkbox" id="isPrivate" [(ngModel)]="isPrivate" name="isPrivate" class="mr-2">
-          <label for="isPrivate">Make Reel Private (only followers can see)</label>
-        </div>
-        <button mat-raised-button color="primary" type="submit" [disabled]="!selectedFile || !caption">Upload Reel</button>
-
-          <button
-            mat-button
-            color="warn"
-            type="button"
-            (click)="closeModal()"
-          >
-            Cancel
+          <button mat-raised-button color="accent" type="button" (click)="generateAutoCaption()" [disabled]="isGeneratingCaption">
+            <span *ngIf="!isGeneratingCaption">✨ AI Caption</span>
+            <span *ngIf="isGeneratingCaption">Magic...</span>
           </button>
-        </form>
-      </div>
+        </div>
+
+        <!-- 📂 File Input -->
+        <div class="file-section">
+          <input type="file" id="videoFile" (change)="onFileSelected($event)" accept="video/*" hidden />
+          <label for="videoFile" class="upload-btn">
+            <i class="fas fa-upload"></i>
+            <span *ngIf="!selectedFile">Choose Video</span>
+            <span *ngIf="selectedFile">{{ selectedFile.name }}</span>
+          </label>
+        </div>
+
+        <!-- 🎞️ Video Preview -->
+        <div *ngIf="videoPreviewUrl" class="video-preview">
+          <video [src]="videoPreviewUrl" controls muted playsinline></video>
+        </div>
+
+        <!-- 🔒 Privacy -->
+        <div class="private-toggle">
+          <input type="checkbox" id="isPrivate" [(ngModel)]="isPrivate" name="isPrivate" />
+          <label for="isPrivate">Private Reel (followers only)</label>
+        </div>
+
+        <!-- 🚀 Upload -->
+        <button mat-raised-button color="primary" type="submit"
+                class="upload-btn-main"
+                [class.loading]="isUploading"
+                [disabled]="!selectedFile || !caption || isGeneratingCaption || isUploading">
+          <span *ngIf="!isUploading">Upload Reel</span>
+          <span *ngIf="isUploading" class="loader"></span>
+        </button>
+
+        <button mat-button color="warn" type="button" (click)="closeModal()">Cancel</button>
+      </form>
     </div>
+  </div>
   `,
   styles: [`
-    .modal-wrapper {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.6);
-      z-index: 9999;
-      backdrop-filter: blur(2px);
-      animation: fadeIn 0.2s ease-in-out;
-    }
+  /* 🌌 Modal Layer */
+  .modal-wrapper {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(10,10,10,0.65);
+    z-index: 50000;
+    backdrop-filter: blur(8px);
+    animation: fadeIn 0.3s ease;
+  }
 
+  .modal-box {
+    background: var(--card-bg);
+    color: var(--text-primary);
+    width: 95%;
+    max-width: 500px;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 16px 50px rgba(0,0,0,0.4);
+    animation: slideUp 0.35s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; } to { opacity: 1; }
+  }
+  @keyframes slideUp {
+    from { transform: translateY(40px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .title {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+
+  .upload-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  /* 🧠 AI Caption shimmer */
+  .ai-container {
+    position: relative;
+  }
+  .ai-container.loading textarea {
+    color: transparent !important;
+  }
+  .shimmer {
+    position: absolute;
+    inset: 0;
+    border-radius: 6px;
+    background: linear-gradient(110deg, #f6f7f8 8%, #eaeaea 18%, #f6f7f8 33%);
+    background-size: 200% 100%;
+    animation: shimmerMove 1.2s infinite linear;
+  }
+  @keyframes shimmerMove {
+    from { background-position: -200% 0; }
+    to { background-position: 200% 0; }
+  }
+
+  /* 📂 File Button */
+  .upload-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--primary-color);
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.3s;
+  }
+  .upload-btn:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+  }
+
+  /* 🎞️ Video preview box */
+  .video-preview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--input-bg);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 0 12px rgba(0,0,0,0.25);
+    transition: transform 0.2s;
+    // aspect-ratio: 9/16;
+  }
+  .video-preview video {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+  }
+  .video-preview:hover {
+    transform: scale(1.01);
+  }
+
+  /* 🔒 Privacy */
+  .private-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+
+  /* 🚀 Upload Button */
+  .upload-btn-main {
+    position: relative;
+    width: 100%;
+    font-weight: 700;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  .upload-btn-main.loading {
+    pointer-events: none;
+    opacity: 0.9;
+  }
+  .loader {
+    width: 26px;
+    height: 26px;
+    border: 3px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    display: inline-block;
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .ai-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  /* 🌗 Dark Mode */
+  .dark-theme .modal-box {
+    background: rgba(30,41,59,0.92);
+    box-shadow: 0 16px 60px rgba(0,0,0,0.6);
+  }
+  .dark-theme .upload-btn {
+    background: #2563eb;
+  }
+  .dark-theme .video-preview {
+    border-color: rgba(255,255,255,0.08);
+  }
+
+  @media (max-width: 600px) {
     .modal-box {
-      background: #fff;
-      border-radius: 16px;
-      padding: 24px;
-      width: 95%;
-      max-width: 480px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-      animation: slideUp 0.25s ease-in-out;
-    }
-
-    .title {
-      text-align: center;
-      font-size: 1.4rem;
-      font-weight: 600;
-      margin-bottom: 16px;
-    }
-
-    .upload-form {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .input-full {
       width: 100%;
+      height: 100%;
+      border-radius: 0;
+      padding: 16px;
     }
-
-    .file-section {
-      text-align: center;
-    }
-
-    .upload-btn {
-      display: inline-block;
-      background: #0095f6;
-      color: white;
-      padding: 10px 16px;
-      border-radius: 6px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .upload-btn:hover {
-      background: #0078d7;
-    }
-
-    .video-preview {
-      display: flex;
-      justify-content: center;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 10px;
-      background: #fafafa;
-    }
-
-    .preview-video {
-      width: 100%;
-      max-height: 250px;
-      border-radius: 8px;
-      object-fit: contain;
-    }
-
-    button[type="submit"] {
-      width: 100%;
-      padding: 12px;
-      font-size: 1.05rem;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @keyframes slideUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
+  }
   `]
 })
 export class CreateReelModalComponent {
@@ -173,19 +260,21 @@ export class CreateReelModalComponent {
   caption = '';
   selectedFile: File | null = null;
   videoPreviewUrl: string | ArrayBuffer | null = null;
-  isPrivate = false; // New property for public/private option
+  isPrivate = false;
+  aiCaptionPrompt = '';
+  isGeneratingCaption = false;
+  isUploading = false;
 
   private reelService = inject(ReelService);
   private toastService = inject(ToastService);
+  private aiService = inject(AiService);
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
+    if (input.files?.length) {
       this.selectedFile = input.files[0];
       const reader = new FileReader();
-      reader.onload = () => {
-        this.videoPreviewUrl = reader.result;
-      };
+      reader.onload = () => this.videoPreviewUrl = reader.result;
       reader.readAsDataURL(this.selectedFile);
     } else {
       this.selectedFile = null;
@@ -193,21 +282,43 @@ export class CreateReelModalComponent {
     }
   }
 
-  createReel(): void {
-    if (this.selectedFile && this.caption) {
-      this.reelService.createReel(this.selectedFile, this.caption, this.isPrivate).subscribe({
-        next: (response) => {
-          this.toastService.show('Reel created successfully!', 'success');
-          this.closeModal();
-        },
-        error: (err) => {
-          this.toastService.show('Failed to create reel.', 'error');
-          console.error('Error creating reel:', err);
-        }
-      });
-    } else {
-      this.toastService.show('Please select a video and add a caption.', 'error');
+  generateAutoCaption(): void {
+    if (!this.aiCaptionPrompt) {
+      this.toastService.show('Please enter a prompt.', 'error');
+      return;
     }
+    this.isGeneratingCaption = true;
+    this.caption = '';
+
+    this.aiService.autoCaption(this.aiCaptionPrompt).subscribe({
+      next: res => {
+        this.caption = res.caption;
+        this.isGeneratingCaption = false;
+      },
+      error: err => {
+        this.toastService.show(err.error?.message || 'Failed to generate caption.', 'error');
+        this.isGeneratingCaption = false;
+      }
+    });
+  }
+
+  createReel(): void {
+    if (!this.selectedFile || !this.caption) {
+      this.toastService.show('Please select a video and enter a caption.', 'error');
+      return;
+    }
+    this.isUploading = true;
+    this.reelService.createReel(this.selectedFile, this.caption, this.isPrivate).subscribe({
+      next: () => {
+        this.toastService.show('Reel created successfully!', 'success');
+        this.isUploading = false;
+        this.closeModal();
+      },
+      error: () => {
+        this.toastService.show('Failed to create reel.', 'error');
+        this.isUploading = false;
+      }
+    });
   }
 
   closeModal(): void {

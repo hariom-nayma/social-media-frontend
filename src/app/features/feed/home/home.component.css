@@ -1,162 +1,270 @@
-/* 🌈 Instagram-like Feed Layout */
-.home-container {
+/* 🌐 Base Layout */
+.home-container.app-shell {
   display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 30px;
-  max-width: 960px;
+  grid-template-columns: 1fr 340px;
+  gap: 32px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding-top: 30px;
+  padding: 32px 20px;
+  align-items: start;
+  transition: background 0.35s ease, color 0.35s ease;
+
 }
 
-/* FEED SECTION */
+/* 📱 Feed Section */
 .feed-section {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
-/* STORY BAR */
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* 🧩 Post Card Animation */
+.post-card-entry {
+  transition: transform 250ms cubic-bezier(0.3, 0.85, 0.4, 1), box-shadow 250ms ease;
+  will-change: transform, box-shadow;
+}
+.post-card-entry:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+}
+
+/* 🌈 Empty Feed State */
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  background: var(--card-bg);
+  border-radius: 16px;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  box-shadow: var(--shadow);
+  transition: background 0.3s, color 0.3s;
+}
+
+/* 🧃 Story Bar */
 app-story-bar {
   position: sticky;
-  top: 0;
-  background-color: #fafafa;
-  padding: 12px 0;
-  z-index: 10;
+  top: 8px;
+  z-index: 30;
+  background: transparent;
+  padding: 8px 0;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
-/* SIDEBAR */
+/* 🧍‍♂️ Right Sidebar */
 .right-sidebar {
   position: sticky;
-  top: 40px;
+  top: 32px;
   height: fit-content;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
+/* 👤 Profile Section */
 .profile-section {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
+  gap: 12px;
+  background: var(--card-bg);
+  padding: 14px;
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  transition: background 0.3s, box-shadow 0.3s;
 }
 
 .profile-pic {
-  width: 54px;
-  height: 54px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   object-fit: cover;
-  margin-right: 10px;
+  border: 2px solid var(--border-color);
 }
 
 .profile-info {
-  flex-grow: 1;
+  flex: 1;
+  overflow: hidden;
 }
-
 .username {
-  font-weight: 600;
+  font-weight: 700;
   font-size: 14px;
+  color: var(--text-primary);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
-
 .fullname {
-  color: #8e8e8e;
   font-size: 13px;
+  color: var(--text-secondary);
 }
 
 .switch-btn {
-  border: none;
   background: transparent;
-  color: #0095f6;
+  border: none;
+  color: var(--primary-color);
   font-weight: 600;
+  font-size: 13px;
   cursor: pointer;
+  border-radius: 10px;
+  padding: 6px 10px;
+  transition: color 0.25s, transform 0.15s;
+}
+.switch-btn:hover {
+  color: var(--primary-hover);
+}
+.switch-btn:active {
+  transform: scale(0.96);
 }
 
-/* Suggestions */
+/* 💡 Suggestions Section */
 .suggestions {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
-  padding: 16px;
+  background: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 14px 16px;
+  transition: background 0.3s, box-shadow 0.3s;
 }
 
 .suggestions-header {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
+  align-items: center;
+  margin-bottom: 8px;
 }
 
 .suggestions-header div {
   font-weight: 600;
-  font-size: 13px;
-  color: #8e8e8e;
+  font-size: 14px;
+  color: var(--text-primary);
 }
 
-.suggestions-header a {
-  color: #262626;
-  text-decoration: none;
+.suggestions-header .see-all {
   font-size: 12px;
+  text-decoration: none;
+  color: var(--primary-color);
+  font-weight: 500;
+  transition: color 0.25s;
+}
+.suggestions-header .see-all:hover {
+  color: var(--primary-hover);
 }
 
+/* 🧑 Suggested User Row */
 .suggestion {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  padding: 8px 6px;
+  border-radius: 12px;
+  transition: background 0.2s, transform 0.2s;
+}
+.suggestion:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-1px);
 }
 
 .suggestion-left {
   display: flex;
   align-items: center;
+  gap: 10px;
+  border: none;
+  background: transparent;
+  padding: 0;
   cursor: pointer;
+  text-align: left;
 }
 
 .suggestion-img {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  margin-right: 10px;
+  object-fit: cover;
+  border: 2px solid var(--border-color);
 }
 
 .suggestion-info .username {
   font-weight: 600;
   font-size: 13px;
+  color: var(--text-primary);
   display: flex;
   align-items: center;
+  gap: 6px;
 }
 
-.suggestion-info .mutual {
-  color: #8e8e8e;
+.mutual {
   font-size: 12px;
+  color: var(--text-secondary);
 }
 
+/* 🔘 Follow Button */
 .follow-btn {
+  background: var(--primary-color);
+  color: #fff;
   border: none;
-  background: none;
+  border-radius: 999px;
+  padding: 6px 14px;
   font-weight: 600;
-  color: #0095f6;
   font-size: 13px;
   cursor: pointer;
+  transition: background 0.25s, transform 0.15s;
 }
-
 .follow-btn:hover {
-  color: #007acc;
+  background: var(--primary-hover);
+}
+.follow-btn:active {
+  transform: scale(0.96);
 }
 
-/* 📱 RESPONSIVENESS */
-@media (max-width: 768px) {
-  .home-container {
-    grid-template-columns: 1fr;
-    gap: 0;
-    padding: 0;
-  }
+.follow-btn.requested {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  cursor: default;
+}
 
+.follow-btn[disabled] {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* 🌗 Dark Mode Tweaks */
+.dark-theme .suggestion:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+.dark-theme .empty-state {
+  background: rgba(30, 41, 59, 0.8);
+  color: rgba(255, 255, 255, 0.7);
+}
+.dark-theme .profile-section,
+.dark-theme .suggestions {
+  background: rgba(30, 41, 59, 0.75);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+.dark-theme .follow-btn {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+/* 📱 Responsive Design */
+@media (max-width: 1024px) {
+  .home-container.app-shell {
+    grid-template-columns: 1fr 300px;
+    gap: 24px;
+  }
+}
+@media (max-width: 768px) {
+  .home-container.app-shell {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
   .right-sidebar {
     display: none;
-  }
-
-  app-story-bar {
-    position: static;
-    margin-bottom: 12px;
-  }
-
-  .feed-section {
-    gap: 12px;
   }
 }

@@ -12,20 +12,30 @@ import { UserService } from '../../../core/services/user.service';
 import { UserDTO } from '../../../core/models/user.model';
 import { SearchDialogComponent } from '../search-dialog/search-dialog.component';
 import { ConfirmationDialogComponent } from '../../../../app/shared/components/confirmation-dialog/confirmation-dialog';
+import { ModalService } from '../../../core/services/modal.service'; // Import ModalService
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterModule, CreatePostModalComponent, MatDialogModule, CreateOptionsDialogComponent, CreateReelModalComponent, SubscriptionDialogComponent, SearchDialogComponent, ConfirmationDialogComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    CreatePostModalComponent,
+    MatDialogModule,
+    CreateOptionsDialogComponent,
+    CreateReelModalComponent,
+    SubscriptionDialogComponent,
+    SearchDialogComponent,
+    ConfirmationDialogComponent
+  ],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent implements OnInit {
-  showCreatePostModal = false;
-  showCreateReelModal = false;
   showMoreOptions = false;
   currentUser: UserDTO | null = null;
   isExpanded = false;
+  isDarkMode = false;
 
   authService = inject(AuthService);
   router = inject(Router);
@@ -33,11 +43,16 @@ export class SidebarComponent implements OnInit {
   userService = inject(UserService);
   renderer = inject(Renderer2);
   document = inject(DOCUMENT);
+  modalService = inject(ModalService); // Inject ModalService
 
   ngOnInit(): void {
     this.userService.currentUser$.subscribe(user => {
       this.currentUser = user;
     });
+
+    const savedTheme = localStorage.getItem('theme');
+    this.isDarkMode = savedTheme === 'dark';
+    this.applyTheme();
   }
 
   onMouseEnter() {
@@ -58,20 +73,14 @@ export class SidebarComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result === 'post') {
-        this.showCreatePostModal = true;
+        this.modalService.openCreatePostModal(); // Use ModalService
       } else if (result === 'reel') {
-        this.showCreateReelModal = true;
+        this.modalService.openCreateReelModal(); // Use ModalService
       }
     });
   }
 
-  closeCreatePostModal() {
-    this.showCreatePostModal = false;
-  }
-
-  closeCreateReelModal() {
-    this.showCreateReelModal = false;
-  }
+  // Removed closeCreatePostModal() and closeCreateReelModal()
 
   toggleMoreOptions() {
     this.showMoreOptions = !this.showMoreOptions;
@@ -112,5 +121,20 @@ export class SidebarComponent implements OnInit {
       maxHeight: '80vh',
       panelClass: 'search-dialog-container'
     });
+  }
+
+  toggleTheme(): void {
+    this.isDarkMode = !this.isDarkMode;
+    localStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light');
+    this.applyTheme();
+  }
+
+  private applyTheme(): void {
+    const body = this.document.body;
+    if (this.isDarkMode) {
+      body.classList.add('dark-theme');
+    } else {
+      body.classList.remove('dark-theme');
+    }
   }
 }

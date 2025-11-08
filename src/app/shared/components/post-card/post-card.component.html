@@ -1,4 +1,4 @@
-<div class="post-card">
+<div class="post-card card">
   <!-- Header -->
   <div class="post-header">
     <div class="user-info" [routerLink]="['/profile', post.username]">
@@ -6,11 +6,15 @@
       <div>
         <div class="username">
           {{ post.username }}
-          <svg *ngIf="post.premiumUser" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="14px" height="14px"><polygon fill="#42a5f5" points="29.62,3 33.053,8.308 39.367,8.624 39.686,14.937 44.997,18.367 42.116,23.995 45,29.62 39.692,33.053 39.376,39.367 33.063,39.686 29.633,44.997 24.005,42.116 18.38,45 14.947,39.692 8.633,39.376 8.314,33.063 3.003,29.633 5.884,24.005 3,18.38 8.308,14.947 8.624,8.633 14.937,8.314 18.367,3.003 23.995,5.884"/><polygon fill="#fff" points="21.396,31.255 14.899,24.76 17.021,22.639 21.428,27.046 30.996,17.772 33.084,19.926"/></svg>
+          <svg *ngIf="post.premiumUser" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="14" height="14">
+            <polygon fill="#42a5f5" points="29.62,3 33.053,8.308 39.367,8.624 39.686,14.937 44.997,18.367 42.116,23.995 45,29.62 39.692,33.053 39.376,39.367 33.063,39.686 29.633,44.997 24.005,42.116 18.38,45 14.947,39.692 8.633,39.376 8.314,33.063 3.003,29.633 5.884,24.005 3,18.38 8.308,14.947 8.624,8.633 14.937,8.314 18.367,3.003 23.995,5.884"/>
+            <polygon fill="#fff" points="21.396,31.255 14.899,24.76 17.021,22.639 21.428,27.046 30.996,17.772 33.084,19.926"/>
+          </svg>
         </div>
-        <div class="location">{{ 'Unknown location' }}</div>
+        <div class="location">{{ post.createdAt | date}}</div>
       </div>
     </div>
+
     <button title="options" class="options-btn" (click)="showOptionsMenu = !showOptionsMenu; $event.stopPropagation()">
       <i class="fas fa-ellipsis-h"></i>
     </button>
@@ -18,21 +22,22 @@
 
   <!-- Options Menu -->
   <div *ngIf="showOptionsMenu" class="options-menu-overlay" (click)="showOptionsMenu = false; $event.stopPropagation()">
-    <div class="options-menu" (click)="$event.stopPropagation()">
-      <ng-container *ngIf="post?.username === currentUser?.username">
+    <div class="options-menu card" (click)="$event.stopPropagation()">
+      <ng-container *ngIf="post?.username === currentUser?.username; else othersOptions">
         <button class="option-item destructive" (click)="deletePost()">Delete post</button>
         <button class="option-item" (click)="archivePost()" *ngIf="!post?.archived">Archive post</button>
         <button class="option-item" (click)="unarchivePost()" *ngIf="post?.archived">Unarchive post</button>
         <button class="option-item" (click)="showOptionsMenu = false">Cancel</button>
       </ng-container>
-      <ng-container *ngIf="post?.username !== currentUser?.username">
+
+      <ng-template #othersOptions>
         <button class="option-item" (click)="viewProfile()">View profile</button>
         <button class="option-item" (click)="toggleFollow()">
           {{ post?.following ? 'Unfollow' : 'Follow' }}
         </button>
         <button class="option-item" (click)="copyPostUrl()">Copy post URL</button>
         <button class="option-item" (click)="showOptionsMenu = false">Cancel</button>
-      </ng-container>
+      </ng-template>
     </div>
   </div>
 

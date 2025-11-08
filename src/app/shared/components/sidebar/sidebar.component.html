@@ -6,85 +6,78 @@
   <!-- Header -->
   <div class="sidebar-header">
     <a routerLink="/home" class="sidebar-logo">
-      <img src="assets/instagram-logo.svg" alt="Instagram">
+      <img src="assets/instagram-logo.svg" alt="Instagram" />
     </a>
   </div>
 
   <!-- Menu -->
-  <div class="sidebar-menu">
-    <a routerLink="/home" class="sidebar-item" routerLinkActive="active">
-      <i class="fas fa-home"></i>
-      <span>Home</span>
+  <nav class="sidebar-menu">
+    <a routerLink="/home" routerLinkActive="active" class="sidebar-item">
+      <i class="fas fa-home"></i><span>Home</span>
     </a>
 
     <a (click)="openSearchDialog()" class="sidebar-item">
-      <i class="fas fa-search"></i>
-      <span>Search</span>
+      <i class="fas fa-search"></i><span>Search</span>
     </a>
 
-    <a routerLink="/explore" class="sidebar-item" routerLinkActive="active">
-      <i class="far fa-compass"></i>
-      <span>Explore</span>
+    <a routerLink="/explore" routerLinkActive="active" class="sidebar-item">
+      <i class="far fa-compass"></i><span>Explore</span>
     </a>
 
-    <a routerLink="/reels" class="sidebar-item" routerLinkActive="active">
-      <i class="fas fa-video"></i>
-      <span>Reels</span>
+    <a routerLink="/reels" routerLinkActive="active" class="sidebar-item">
+      <i class="fas fa-video"></i><span>Reels</span>
     </a>
 
-    <a routerLink="/stream-call-list" class="sidebar-item" routerLinkActive="active">
-      <i class="fas fa-phone"></i>
-      <span>Call</span>
+    <a routerLink="/stream-call-list" routerLinkActive="active" class="sidebar-item">
+      <i class="fas fa-phone"></i><span>Call</span>
     </a>
 
-    <a routerLink="/conversations" class="sidebar-item" routerLinkActive="active">
-      <i class="fab fa-facebook-messenger"></i>
-      <span>Messages</span>
+    <a routerLink="/conversations" routerLinkActive="active" class="sidebar-item">
+      <i class="fab fa-facebook-messenger"></i><span>Messages</span>
     </a>
 
-    <a routerLink="/notifications" class="sidebar-item" routerLinkActive="active">
-      <i class="far fa-heart"></i>
-      <span>Notifications</span>
+    <a routerLink="/notifications" routerLinkActive="active" class="sidebar-item">
+      <i class="far fa-heart"></i><span>Notifications</span>
     </a>
 
     <a (click)="openCreatePostModal()" class="sidebar-item">
-      <i class="far fa-plus-square"></i>
-      <span>Create</span>
+      <i class="far fa-plus-square"></i><span>Create</span>
     </a>
 
-    <a routerLink="/profile" class="sidebar-item" routerLinkActive="active">
-      <i class="far fa-user-circle"></i>
-      <span>Profile</span>
+    <a routerLink="/profile" routerLinkActive="active" class="sidebar-item">
+      <i class="far fa-user-circle"></i><span>Profile</span>
     </a>
 
-    <a (click)="openSubscriptionDialog()" class="sidebar-item premium" *ngIf="!currentUser?.premiumUser">
-      <i class="fas fa-gem"></i>
-      <span>Subscription</span>
+    <a *ngIf="!currentUser?.premiumUser" (click)="openSubscriptionDialog()" class="sidebar-item premium">
+      <i class="fas fa-gem"></i><span>Subscription</span>
     </a>
+  </nav>
+
+  <!-- 🌗 Theme Toggle -->
+  <div class="theme-toggle" (click)="toggleTheme()">
+    <div class="toggle-track">
+      <div class="toggle-thumb" [class.dark]="isDarkMode"></div>
+    </div>
+    <span>{{ isDarkMode ? 'Dark' : 'Light' }} Mode</span>
   </div>
 
   <!-- Footer -->
-  <div class="sidebar-footer">
+  <footer class="sidebar-footer">
     <div class="more-options-container">
       <a (click)="toggleMoreOptions()" class="sidebar-item">
-        <i class="fas fa-bars"></i>
-        <span>More</span>
+        <i class="fas fa-bars"></i><span>More</span>
       </a>
 
       <div class="more-options-menu" *ngIf="showMoreOptions">
         <a (click)="openSettingsDialog()" class="sidebar-item">
-          <i class="fas fa-cog"></i>
-          <span>Settings</span>
+          <i class="fas fa-cog"></i><span>Settings</span>
         </a>
         <a (click)="logout()" class="sidebar-item danger">
-          <i class="fas fa-sign-out-alt"></i>
-          <span>Logout</span>
+          <i class="fas fa-sign-out-alt"></i><span>Logout</span>
         </a>
       </div>
     </div>
-  </div>
+  </footer>
 </div>
 
-<!-- Modals -->
-<app-create-post-modal *ngIf="showCreatePostModal" (closeModal)="closeCreatePostModal()"></app-create-post-modal>
-<app-create-reel-modal *ngIf="showCreateReelModal" (closeModal)="closeCreateReelModal()"></app-create-reel-modal>
+

@@ -1,112 +1,65 @@
-<!-- root: add 'white-theme' class here to switch to white background -->
-<div class="reels-root white-theme" *ngIf="!loading && !error" aria-live="polite">
+<div class="reels-root white-theme" *ngIf="!loading && !error">
   <div class="reel-container">
-    <div *ngFor="let reel of reels; let i = index" class="reel" role="article" aria-label="Reel">
-      <!-- centered 9:16 pill -->
+    <div *ngFor="let reel of reels; let i = index" class="reel">
       <div class="reel-inner">
-        <!-- top progress -->
-        <div class="top-progress" aria-hidden="true">
-          <div class="progress-bar" style="width: 0%"></div>
-        </div>
 
-        <!-- video area -->
-        <div class="video-wrapper" (click)="togglePlayPause(i)" role="button" tabindex="0" aria-pressed="false">
+        <div class="video-wrapper" (click)="togglePlayPause(i)">
           <video
             #videoEl
             class="reel-video"
             [src]="reel.mediaVideoUrl"
-            loop
-            muted
-            playsinline
-            preload="metadata"
-            (dblclick)="$event.stopPropagation(); onVideoDoubleTap(i)"
-            title="Reel video"
-          ></video>
+            loop muted playsinline preload="metadata"
+            (dblclick)="$event.stopPropagation(); onVideoDoubleTap(i)">
+          </video>
 
-          <!-- center heart pop -->
-          <div class="heart-pop" *ngIf="heartVisible[i]" aria-hidden="true">❤</div>
+          <div class="heart-pop" *ngIf="heartVisible[i]"></div>
+          <div class="floating-hearts"></div>
 
-          <!-- mute/unmute icon (top-left of pill) -->
-          <button class="mute-btn" title="Toggle sound" (click)="$event.stopPropagation(); togglePlayPause(i)">
-            <!-- simple speaker icon -->
-            <svg viewBox="0 0 24 24" class="mute-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <button title="mute" class="mute-btn" (click)="$event.stopPropagation(); togglePlayPause(i)">
+            <svg viewBox="0 0 24 24" class="mute-icon" xmlns="http://www.w3.org/2000/svg">
               <path d="M5 9v6h4l5 4V5L9 9H5z" fill="currentColor"></path>
             </svg>
           </button>
         </div>
 
-        <!-- gradient overlay inside pill -->
-        <div class="overlay" aria-hidden="true"></div>
+        <div class="overlay"></div>
 
-        <!-- left-bottom meta -->
         <div class="reel-info">
           <div class="user">
-            <img
-              alt="profileImage"
-              [src]="reel.reelUser?.profileImage || profilePlaceholder()"
-              class="profile-img"
-            />
+            <img alt="reel" [src]="reel.reelUser?.profileImage || profilePlaceholder()" class="profile-img" />
             <div class="meta">
-              <div class="username">@{{ reel.reelUser?.username }}
-          <svg *ngIf="reel.reelUser?.premiumUser" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="14px" height="14px"><polygon fill="#42a5f5" points="29.62,3 33.053,8.308 39.367,8.624 39.686,14.937 44.997,18.367 42.116,23.995 45,29.62 39.692,33.053 39.376,39.367 33.063,39.686 29.633,44.997 24.005,42.116 18.38,45 14.947,39.692 8.633,39.376 8.314,33.063 3.003,29.633 5.884,24.005 3,18.38 8.308,14.947 8.624,8.633 14.937,8.314 18.367,3.003 23.995,5.884"/><polygon fill="#fff" points="21.396,31.255 14.899,24.76 17.021,22.639 21.428,27.046 30.996,17.772 33.084,19.926"/></svg>
-              </div>
+              <div class="username">@{{ reel.reelUser?.username }}</div>
               <div class="music">🎵 {{ reel.caption || 'Original audio' }}</div>
             </div>
           </div>
-
           <p class="caption" *ngIf="reel.caption">{{ reel.caption }}</p>
         </div>
 
-        <!-- right-side action column -->
-        <div class="actions" role="group" aria-label="reel actions">
-          <!-- Like -->
-          <button
-            class="icon-btn like-btn"
-            title="Like"
-            (click)="likeReel(reel, i)"
-            [attr.aria-pressed]="reel.likedByMe ? 'true' : 'false'"
-          >
-            <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" [attr.fill]="reel.likedByMe ? 'currentColor' : 'none'">
+        <div class="actions">
+          <button class="icon-btn like-btn" (click)="likeReel(reel, i)">
+            <svg class="icon" viewBox="0 0 24 24" [attr.fill]="reel.likedByMe ? 'currentColor' : 'none'">
               <path stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"
                     d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
             </svg>
             <span class="count">{{ reel.likeCount || 0 }}</span>
           </button>
 
-          <!-- Comment -->
-          <button class="icon-btn" title="Comments" (click)="commentReel(reel)">
-            <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"
-                    d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-            </svg>
+          <button class="icon-btn" (click)="commentReel(reel)">
+            💬
             <span class="count">{{ reel.commentCount || 0 }}</span>
           </button>
 
-          <!-- Reshare -->
-          <button class="icon-btn" title="Reshare" (click)="reshareReel(reel)">
-            <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"
-                    d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.516 3.832a3 3 0 00.617-2.485l-1.27-2.785"/>
-            </svg>
+          <button class="icon-btn" (click)="reshareReel(reel)">
+            🔁
             <span class="count">{{ reel.reshareCount || 0 }}</span>
           </button>
 
-          <!-- Share -->
-          <button class="icon-btn" title="Share" (click)="shareReel(reel)">
-            <svg class="icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"
-                    d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7M12 3v13M7 8l5-5 5 5"/>
-            </svg>
-          </button>
+          <button class="icon-btn" (click)="shareReel(reel)">📤</button>
         </div>
       </div>
-      <!-- /.reel-inner -->
     </div>
-    <!-- /.reel -->
   </div>
-  <!-- /.reel-container -->
 </div>
 
-<!-- loading & error -->
 <div *ngIf="loading" class="loading-screen">Loading Reels...</div>
 <div *ngIf="error" class="error-screen">{{ error }}</div>

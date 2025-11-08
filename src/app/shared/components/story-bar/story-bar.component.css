@@ -1,61 +1,69 @@
+/* 🌈 StoryBar Container */
 .story-bar-container {
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-  padding: 16px;
+  background: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  padding: 14px 18px;
   overflow-x: auto;
   scrollbar-width: none;
+  transition: background 0.3s, box-shadow 0.3s;
 }
-
 .story-bar-container::-webkit-scrollbar {
   display: none;
 }
 
+/* Flex scroll area */
 .story-bar {
   display: flex;
   gap: 20px;
+  align-items: center;
 }
 
+/* Story Card */
 .story {
   text-align: center;
   position: relative;
   cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+.story:hover {
+  transform: translateY(-3px);
 }
 
+/* Avatar Ring */
 .story-avatar {
-  width: 70px;
-  height: 70px;
+  width: 68px;
+  height: 68px;
   border-radius: 50%;
-  background: conic-gradient(#f58529, #dd2a7b, #8134af, #515bd4);
   padding: 3px;
-  transition: transform 0.3s ease;
+  background: conic-gradient(
+    from 0deg,
+    #f58529,
+    #dd2a7b,
+    #8134af,
+    #515bd4
+  );
+  position: relative;
+  transition: transform 0.3s ease, background 0.3s;
+  box-shadow: 0 0 10px rgba(0,0,0,0.15);
 }
 
 .story-avatar img {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border: 3px solid white;
+  border: 3px solid var(--card-bg);
   object-fit: cover;
 }
 
-.story:hover .story-avatar {
-  transform: scale(1.05);
-}
-
-.story-username {
-  font-size: 12px;
-  color: #444;
-  margin-top: 6px;
-  font-weight: 500;
-}
-
+/* My Story Add Button */
 .add-icon {
   position: absolute;
-  bottom: 2px;
-  right: 2px;
-  background-color: #0095f6;
-  color: white;
+  bottom: 0;
+  right: 0;
+  background-color: var(--primary-color);
+  color: #fff;
   border-radius: 50%;
   width: 22px;
   height: 22px;
@@ -63,9 +71,59 @@
   align-items: center;
   justify-content: center;
   font-size: 18px;
-  border: 2px solid white;
+  border: 2px solid var(--card-bg);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  transition: transform 0.2s ease;
+}
+.add-icon:hover {
+  transform: scale(1.1);
 }
 
+/* Viewed Story */
 .story-avatar.viewed-story {
-  background: #ccc;
+  background: linear-gradient(
+    145deg,
+    var(--border-color),
+    rgba(200,200,200,0.5)
+  );
+  opacity: 0.7;
+  box-shadow: none;
+}
+
+/* Username label */
+.story-username {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-top: 6px;
+  max-width: 72px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: color 0.3s;
+}
+
+/* Hover pop */
+.story:hover .story-avatar {
+  transform: scale(1.05);
+}
+
+/* Dark mode special tweak */
+.dark-theme .story-bar-container {
+  background: rgba(30, 41, 59, 0.75);
+  box-shadow: 0 8px 24px rgba(2,6,23,0.6);
+}
+.dark-theme .story-avatar img {
+  border-color: rgba(30,41,59,0.9);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .story-avatar {
+    width: 60px;
+    height: 60px;
+  }
+  .story-username {
+    font-size: 11px;
+  }
 }

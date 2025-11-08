@@ -42,8 +42,10 @@
         alt="User"
       />
 
-      <div class="message-bubble">
-        <div class="sender-name" *ngIf="msg.senderId !== currentUser?.id">
+<div class="message-bubble" [attr.data-message-id]="msg.id"
+     (mouseenter)="onMessageHover(msg, $event)"
+     (mouseleave)="onMessageLeave()">        
+  <div class="sender-name" *ngIf="msg.senderId !== currentUser?.id">
           {{ msg.senderFirstName }} {{ msg.senderLastName }}
         </div>
 
@@ -135,10 +137,16 @@
       (blur)="onBlur()"
       (keyup.enter)="sendMessage()"
     />
-    <button (click)="sendMessage()">➤</button>
+    <button (click)="generateAiReply()" [disabled]="isGeneratingReply" class="ai-reply-button">
+      <span *ngIf="!isGeneratingReply">🤖 AI Reply</span>
+      <span *ngIf="isGeneratingReply">Generating...</span>
+    </button>
+    <button class="send-btn" (click)="sendMessage()">➤</button>
   </div>
 </div>
- <div *ngIf="isBlockedByViewer" class="blocked-profile-message">
+ <div *ngIf="!isBlockedByViewer" class="blocked-profile-message">
     <p>Unable to open this chat.</p>
     <p>You are blocked by this user.</p>
   </div>
+
+<canvas id="confetti-canvas"></canvas>

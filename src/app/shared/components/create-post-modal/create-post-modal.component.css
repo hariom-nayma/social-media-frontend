@@ -1,157 +1,321 @@
+/* 🌌 Modal Container */
 .modal {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: auto;
-  z-index: 9999;
-  padding: 20px;
+  overflow-y: auto;
+  padding: 24px;
+  z-index: 999999999; /* ✅ Above everything */
   animation: fadeIn 0.3s ease-out;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
+/* 🩶 Background Overlay */
 .modal-background {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(10, 10, 10, 0.86);
-  z-index: 999;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 49999;
+  transition: opacity 0.3s ease;
 }
 
+/* ✨ Card Layout */
+.modal-card {
+  position: relative;
+  z-index: 50001;
+  background: var(--card-bg);
+  border-radius: 18px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+  width: 95%;
+  max-width: 580px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 60px);
+  animation: slideUp 0.35s ease-out;
+  color: var(--text-primary);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* 🎬 Animations */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
-
-.modal-card {
-  width: 90%;
-  max-width: 600px;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
-  margin: auto;
-  max-height: calc(100vh - 40px);
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  z-index: 1001;
-  animation: slideIn 0.3s ease-out;
-}
-
-@keyframes slideIn {
-  from { transform: translateY(-50px); opacity: 0; }
+@keyframes slideUp {
+  from { transform: translateY(50px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
 
+/* 💠 Header */
 .modal-card-head {
-  background-color: #ffffff; /* Lighter header background */
-  border-bottom: 1px solid #eee;
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border-color);
   padding: 1rem 1.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.modal-card-title-container {
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
 .modal-card-title {
-  color: #363636;
-  font-size: 1.6rem; /* Slightly larger title */
-  font-weight: 700; /* Bolder title */
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 .delete {
-  background-color: transparent;
   border: none;
-  cursor: pointer;
+  background: transparent;
   font-size: 1.5rem;
-  color: #666;
-  transition: color 0.2s ease;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: transform 0.15s, color 0.25s;
 }
-
 .delete:hover {
-  color: #333;
+  color: var(--text-primary);
+  transform: scale(1.1);
 }
 
+/* 📝 Body */
 .modal-card-body {
   padding: 1.5rem;
   overflow-y: auto;
-  background-color: #fdfdfd; /* Slightly off-white body background */
+  background: var(--card-bg);
 }
 
 .textarea {
+  width: 100%;
   min-height: 150px;
-  resize: vertical;
-  border-radius: 8px; /* More rounded textarea */
-  border-color: #ddd;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: var(--input-bg);
   padding: 12px;
   font-size: 1rem;
-  transition: border-color 0.2s ease;
+  resize: vertical;
+  color: var(--text-primary);
+  transition: border-color 0.25s, box-shadow 0.25s;
 }
 
 .textarea:focus {
-  border-color: #209cee;
-  box-shadow: 0 0 0 0.125em rgba(32, 158, 238, 0.25);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(0, 149, 246, 0.25);
+}
+
+/* 🧠 AI Caption Section */
+.field.is-grouped {
+  display: flex;
+  gap: 10px;
+  margin: 1rem 0;
+}
+
+.input {
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--input-bg);
+  padding: 10px 12px;
+  width: 100%;
+  color: var(--text-primary);
+}
+
+.input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(0, 149, 246, 0.25);
+}
+
+.button.is-info {
+  background: var(--primary-color);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: background 0.25s, transform 0.15s;
+}
+
+.button.is-info:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+/* 📤 File Upload */
+.file {
+  margin-top: 10px;
 }
 
 .file-cta {
-  background-color: #209cee; /* Primary blue for file upload */
-  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-color);
+  color: white;
   border-radius: 8px;
-  padding: 0.75em 1.2em;
+  padding: 0.8em 1.4em;
   cursor: pointer;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  transition: background 0.25s, box-shadow 0.25s;
 }
-
 .file-cta:hover {
-  background-color: #1a8edb;
-  box-shadow: 0 4px 8px rgba(32, 158, 238, 0.2);
+  background: var(--primary-hover);
+  box-shadow: 0 4px 8px rgba(0, 149, 246, 0.2);
 }
-
 .file-icon {
-  margin-right: 0.5em;
+  margin-right: 8px;
 }
 
+/* ⚠️ Error Message */
+.help.is-danger {
+  color: #ff4d6d;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+/* ✅ Footer */
 .modal-card-foot {
-  background-color: #ffffff; /* Lighter footer background */
-  border-top: 1px solid #eee;
+  background: var(--card-bg);
+  border-top: 1px solid var(--border-color);
   padding: 1rem 1.5rem;
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-}
-
-.button.is-success {
-  background-color: #209cee;
-  border-color: transparent;
-  color: #fff;
-  font-weight: 600;
-  padding: 0.75em 1.5em;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.button.is-success:hover {
-  background-color: #1a8edb;
-  box-shadow: 0 4px 8px rgba(32, 158, 238, 0.2);
+  position: sticky;
+  bottom: 0;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .button {
   border-radius: 8px;
-  font-weight: 500;
-  padding: 0.75em 1.5em;
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  font-weight: 600;
+  padding: 10px 16px;
+  transition: transform 0.15s, background 0.25s;
+  cursor: pointer;
 }
 
-.button:hover {
-  background-color: #f0f0f0;
-  border-color: #ccc;
+.button.is-success {
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+}
+.button.is-success:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
 }
 
-.help.is-danger {
-  color: #ff3860;
-  font-size: 0.875rem;
-  margin-top: 0.5rem;
+.button:not(.is-success) {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+.button:not(.is-success):hover {
+  color: var(--text-primary);
+}
+
+/* 🌗 Dark Mode Support */
+.dark-theme .modal-background {
+  background: rgba(0, 0, 0, 0.75);
+}
+.dark-theme .modal-card {
+  background: rgba(30, 41, 59, 0.9);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.6);
+}
+.dark-theme .textarea,
+.dark-theme .input {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #f3f4f6;
+}
+
+/* 📱 Responsive */
+@media (max-width: 600px) {
+  .modal-card {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    max-height: none;
+  }
+  .modal-card-head, .modal-card-foot {
+    padding: 0.8rem 1rem;
+  }
+  .textarea {
+    min-height: 120px;
+  }
+}
+
+/* 🌈 AI Caption Loading Shimmer */
+.textarea-container {
+  position: relative;
+}
+.textarea-container.ai-loading .textarea {
+  color: transparent !important;
+  pointer-events: none;
+}
+.shimmer {
+  position: absolute;
+  inset: 0;
+  border-radius: 10px;
+  background: linear-gradient(110deg, #f0f0f0 8%, #e0e0e0 18%, #f0f0f0 33%);
+  background-size: 200% 100%;
+  animation: shimmerMove 1.2s infinite linear;
+  opacity: 0.6;
+}
+@keyframes shimmerMove {
+  from { background-position: -200% 0; }
+  to { background-position: 200% 0; }
+}
+
+/* 📸 File Preview */
+.preview-box {
+  margin-top: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  max-height: 250px;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--input-bg);
+}
+.preview-box img, .preview-box video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 🚀 Upload Button Animation */
+.button.is-success.loading {
+  position: relative;
+  pointer-events: none;
+}
+.button.is-success.loading .loader {
+  width: 22px;
+  height: 22px;
+  border: 3px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+  display: inline-block;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ✨ File Button */
+.file-cta i {
+  margin-right: 8px;
+  transition: transform 0.2s ease;
+}
+.file-cta:hover i {
+  transform: scale(1.2);
 }

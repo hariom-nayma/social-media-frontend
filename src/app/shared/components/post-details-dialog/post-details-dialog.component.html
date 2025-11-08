@@ -1,23 +1,17 @@
 <div class="dialog-overlay" (click)="closeDialog()">
-  <div class="dialog-content" (click)="$event.stopPropagation()">
+  <div class="dialog-content card" (click)="$event.stopPropagation()">
     <!-- LEFT: IMAGE -->
     <div class="post-section">
-      <img
-        *ngIf="post?.mediaUrl"
-        [src]="post?.mediaUrl"
-        alt="Post"
-        class="post-image"
-      />
+      <img *ngIf="post?.mediaUrl" [src]="post?.mediaUrl" alt="Post" class="post-image" />
     </div>
 
     <!-- RIGHT: COMMENTS -->
     <div class="comments-section">
+      <!-- Header -->
       <div class="post-header">
         <div class="user-info">
           <img
-            [src]="
-              post?.profileImage || 'https://i.pravatar.cc/150?u=' + post?.userId
-            "
+            [src]="post?.profileImage || 'https://i.pravatar.cc/150?u=' + post?.userId"
             class="user-avatar"
             alt="user"
           />
@@ -26,11 +20,12 @@
             <p class="username">@{{ post?.username }}</p>
           </div>
         </div>
+
         <div class="header-actions">
-          <button title="more options" class="icon-btn" (click)="showOptionsMenu = !showOptionsMenu">
+          <button class="icon-btn" (click)="showOptionsMenu = !showOptionsMenu" title="Options">
             <lucide-icon name="more-horizontal"></lucide-icon>
           </button>
-          <button title="close" class="close-btn" (click)="closeDialog()">
+          <button class="close-btn" (click)="closeDialog()" title="Close">
             <lucide-icon name="x"></lucide-icon>
           </button>
         </div>
@@ -38,51 +33,51 @@
 
       <!-- Options Menu -->
       <div *ngIf="showOptionsMenu" class="options-menu-overlay" (click)="showOptionsMenu = false">
-        <div class="options-menu" (click)="$event.stopPropagation()">
-          <ng-container *ngIf="post?.userId === currentUser?.id">
+        <div class="options-menu card" (click)="$event.stopPropagation()">
+          <ng-container *ngIf="post?.userId === currentUser?.id; else others">
             <button class="option-item destructive" (click)="deletePost()">Delete post</button>
             <button class="option-item" (click)="archivePost()" *ngIf="!post?.archived">Archive post</button>
             <button class="option-item" (click)="unarchivePost()" *ngIf="post?.archived">Unarchive post</button>
             <button class="option-item" (click)="showOptionsMenu = false">Cancel</button>
           </ng-container>
-          <ng-container *ngIf="post?.userId !== currentUser?.id">
+          <ng-template #others>
             <button class="option-item" (click)="viewProfile()">View profile</button>
             <button class="option-item" (click)="toggleFollow()">
               {{ post?.following ? 'Unfollow' : 'Follow' }}
             </button>
             <button class="option-item" (click)="copyPostUrl()">Copy post URL</button>
             <button class="option-item" (click)="showOptionsMenu = false">Cancel</button>
-          </ng-container>
+          </ng-template>
         </div>
       </div>
 
       <p class="post-content">{{ post?.content }}</p>
 
+      <!-- Like + Actions -->
       <div class="post-actions">
         <div class="action-buttons">
-          <button title="like" class="icon-btn" (click)="likePost()">
-            <lucide-icon name="heart"
+          <button class="icon-btn" (click)="likePost()" title="Like">
+            <lucide-icon
+              name="heart"
               [style.fill]="post1?.likedByCurrentUser ? '#ed4956' : 'none'"
-              [style.color]="post1?.likedByCurrentUser ? '#ed4956' : 'currentColor'"
-            ></lucide-icon>
+              [style.color]="post1?.likedByCurrentUser ? '#ed4956' : 'currentColor'">
+            </lucide-icon>
           </button>
-          <lucide-icon name="message-circle"></lucide-icon>
+          <button class="icon-btn" title="Comment">
+            <lucide-icon name="message-circle"></lucide-icon>
+          </button>
         </div>
         <span class="likes">{{ post1?.likeCount }} likes</span>
       </div>
 
+      <!-- Comments -->
       <div class="comments-list">
-        <ng-container
-          *ngTemplateOutlet="commentTemplate; context: { comments: comments }"
-        ></ng-container>
+        <ng-container *ngTemplateOutlet="commentTemplate; context: { comments: comments }"></ng-container>
 
         <ng-template #commentTemplate let-comments="comments">
           <div *ngFor="let comment of comments" class="comment-item">
             <img
-              [src]="
-                comment.userProfileImage ||
-                'https://i.pravatar.cc/150?u=' + comment.userId
-              "
+              [src]="comment.userProfileImage || 'https://i.pravatar.cc/150?u=' + comment.userId"
               class="comment-avatar"
               alt="profile"
             />
@@ -91,58 +86,36 @@
               <p class="comment-text">{{ comment.text }}</p>
 
               <div class="comment-actions">
-                <button title="like" (click)="toggleCommentLike(comment)" class="icon-btn">
-                  <lucide-icon name="heart"
+                <button (click)="toggleCommentLike(comment)" class="icon-btn" title="Like">
+                  <lucide-icon
+                    name="heart"
                     [style.fill]="comment.isLiked ? '#ed4956' : 'none'"
-                    [style.color]="comment.isLiked ? '#ed4956' : 'currentColor'"
-                  ></lucide-icon>
+                    [style.color]="comment.isLiked ? '#ed4956' : 'currentColor'">
+                  </lucide-icon>
                 </button>
-                <span class="likes-count"
-                  >{{ comment.likesCount || 0 }}</span
-               >
-                <button
-                  class="reply-btn"
-                  (click)="generateAutoReply(comment)"
-                  [disabled]="comment.isGeneratingReply"
-                >
-                  <span *ngIf="!comment.isGeneratingReply">AI Reply</span>
-                  <span *ngIf="comment.isGeneratingReply">Generating...</span>
+                <span class="likes-count">{{ comment.likesCount || 0 }}</span>
+                <button class="reply-btn" (click)="generateAutoReply(comment)" [disabled]="comment.isGeneratingReply">
+                  {{ comment.isGeneratingReply ? 'Generating...' : 'AI Reply' }}
                 </button>
-                <button
-                  *ngIf="!comment.parentCommentId"
-                  class="reply-btn"
-                  (click)="openReplyForm(comment)"
-                >
+                <button *ngIf="!comment.parentCommentId" class="reply-btn" (click)="openReplyForm(comment)">
                   Reply
                 </button>
               </div>
 
-              <div *ngIf="comment.generatedReplies && comment.generatedReplies.length > 0" class="ai-replies">
-                <p><strong>AI Generated Replies:</strong></p>
-                <ul>
-                  <li *ngFor="let reply of comment.generatedReplies">{{ reply }}</li>
-                </ul>
+              <!-- AI Replies -->
+              <div *ngIf="comment.generatedReplies?.length" class="ai-replies">
+                <strong>AI Generated Replies:</strong>
+                <ul><li *ngFor="let reply of comment.generatedReplies">{{ reply }}</li></ul>
               </div>
 
+              <!-- Replies -->
               <div *ngIf="comment.replies?.size" class="replies">
-                <button
-                  class="toggle-replies-btn"
-                  (click)="toggleRepliesVisibility(comment)"
-                >
-                  {{
-                    comment.showReplies
-                      ? 'Hide replies'
-                      : 'View replies (' + comment.replies.size + ')'
-                  }}
+                <button class="toggle-replies-btn" (click)="toggleRepliesVisibility(comment)">
+                  {{ comment.showReplies ? 'Hide replies' : 'View replies (' + comment.replies.size + ')' }}
                 </button>
 
                 <div *ngIf="comment.showReplies" class="reply-list">
-                  <ng-container
-                    *ngTemplateOutlet="
-                      commentTemplate;
-                      context: { comments: comment.replies }
-                    "
-                  ></ng-container>
+                  <ng-container *ngTemplateOutlet="commentTemplate; context: { comments: comment.replies }"></ng-container>
                 </div>
               </div>
             </div>
@@ -150,24 +123,16 @@
         </ng-template>
       </div>
 
-      <form
-        [formGroup]="commentForm"
-        (ngSubmit)="addComment()"
-        class="comment-form"
-      >
+      <!-- Add Comment -->
+      <form [formGroup]="commentForm" (ngSubmit)="addComment()" class="comment-form">
         <div *ngIf="replyingToUsername" class="replying-banner">
           Replying to <strong>@{{ replyingToUsername }}</strong>
           <button type="button" (click)="cancelReply()">×</button>
         </div>
 
-        <input
-          type="text"
-          placeholder="Add a comment..."
-          formControlName="text"
-        />
+        <input type="text" placeholder="Add a comment..." formControlName="text" />
         <button type="button" (click)="generateAutoComment()" [disabled]="isGeneratingComment">
-          <span *ngIf="!isGeneratingComment">AI Comment</span>
-          <span *ngIf="isGeneratingComment">Generating...</span>
+          {{ isGeneratingComment ? 'Generating...' : 'AI Comment' }}
         </button>
         <button type="submit" [disabled]="commentForm.invalid">Post</button>
       </form>

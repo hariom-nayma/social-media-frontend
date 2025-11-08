@@ -1,8 +1,8 @@
-<div class="story-bar-container">
+<div class="story-bar-container card">
   <div class="story-bar">
-    <!-- Add Story (Current User) -->
+    <!-- ➕ Your Story -->
     <div class="story" (click)="handleMyStoryClick()">
-      <div class="story-avatar">
+      <div class="story-avatar your-story">
         <img [src]="currentUser?.profileImageUrl || 'https://i.pravatar.cc/150?u=' + currentUser?.username" alt="Your Story">
         <div class="add-icon" (click)="openCreateStoryDialog($event)">
           <mat-icon>add</mat-icon>
@@ -11,10 +11,18 @@
       <div class="story-username">Your Story</div>
     </div>
 
-    <!-- Other Users' Stories -->
-    <div class="story" *ngFor="let user of groupedStories" (click)="viewUserStories(user.username)">
-      <div class="story-avatar" [class.viewed-story]="user.viewedByMe">
-        <img [src]="user.profileImageUrl || 'https://i.pravatar.cc/150?u=' + user.username" alt="{{user.username}}">
+    <!-- 👥 Other Users' Stories -->
+    <div
+      class="story"
+      *ngFor="let user of groupedStories"
+      (click)="viewUserStories(user.username)">
+      <div
+        class="story-avatar"
+        [class.viewed-story]="user.viewedByMe"
+        [attr.aria-label]="user.username + ' story'">
+        <img
+          [src]="user.profileImageUrl || 'https://i.pravatar.cc/150?u=' + user.username"
+          alt="{{user.username}}" />
       </div>
       <div class="story-username">{{ user.username }}</div>
     </div>

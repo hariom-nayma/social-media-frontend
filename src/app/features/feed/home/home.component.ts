@@ -12,13 +12,12 @@ import { FollowRequestDTO } from '../../../core/models/follow-request.model';
 import { PendingRequestsComponent } from '../pending-requests/pending-requests.component';
 import { PostDetailsDialogComponent } from '../../../shared/components/post-details-dialog/post-details-dialog.component';
 
-
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [CommonModule, StoryBarComponent, PostCardComponent, PendingRequestsComponent, PostDetailsDialogComponent],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.css'
+  styleUrls: ['./home.component.css']  // <-- fixed property name
 })
 export class HomeComponent implements OnInit {
   posts: PostDTO[] = [];

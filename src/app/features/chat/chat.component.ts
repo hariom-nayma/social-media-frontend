@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, ViewChild, ElementRef, AfterViewChecked, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, ViewChild, ElementRef, AfterViewChecked, Input, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -19,6 +19,8 @@ import { CallService } from '../../core/services/call.service';
 import { CallComponent } from '../call/call.component';
 import { PostService } from '../../core/services/post.service';
 import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog';
+import { AiService } from '../../core/services/ai.service'; // Import AiService
+import { ToastService } from '../../core/services/toast.service'; // Import ToastService
 
 @Component({
   selector: 'app-chat',
@@ -27,7 +29,7 @@ import { ConfirmationDialogComponent } from '../../shared/components/confirmatio
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.css']
 })
-export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
+export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, AfterViewInit { // Added AfterViewInit
   @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
 
   @Input() conversationId: string | null = null;
@@ -41,11 +43,10 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked {
   private router = inject(Router);
   private callService = inject(CallService);
   private route = inject(ActivatedRoute);
-isDarkMode = false;
+  private aiService = inject(AiService); // Inject AiService
+  private toastService = inject(ToastService); // Inject ToastService
 
-toggleTheme(): void {
-  this.isDarkMode = !this.isDarkMode;
-}
+  isDarkMode = false;
 
   messages: EnrichedMessage[] = [];
   newMessageContent = '';
@@ -60,6 +61,7 @@ toggleTheme(): void {
   // UI state
   isDark = false;
   showInputEmojiPicker = false;
+  isGeneratingReply = false; // New property for AI reply loading state
 
   currentPage = 0;
   pageSize = 20;
@@ -68,6 +70,15 @@ toggleTheme(): void {
   private shouldScrollToBottom = true;
 
   private subscriptions: Subscription = new Subscription();
+
+  private sendSound = new Audio('assets/sounds/send.mp3');
+
+  // Canvas confetti properties
+  private canvas!: HTMLCanvasElement;
+  private ctx!: CanvasRenderingContext2D;
+  private confettis: any[] = [];
+  private animationFrameId: number = 0;
+
 
   ngOnInit(): void {
     console.log('ChatComponent: ngOnInit started.');
@@ -122,6 +133,20 @@ toggleTheme(): void {
   ));
   }
 
+  ngAfterViewInit(): void { // Added ngAfterViewInit
+    console.error('ngAfterViewInit triggered - checking if this runs!'); // Critical debugging line
+    this.canvas = document.getElementById('confetti-canvas') as HTMLCanvasElement;
+    if (this.canvas) {
+      this.ctx = this.canvas.getContext('2d')!;
+      this.canvas.width = window.innerWidth;
+      this.canvas.height = window.innerHeight;
+      window.addEventListener('resize', this.onResize);
+      this.animateConfetti();
+    } else {
+      console.error('Confetti canvas element not found!');
+    }
+  }
+
   ngAfterViewChecked(): void {
     if (this.shouldScrollToBottom) {
       this.scrollToBottom();
@@ -131,11 +156,45 @@ toggleTheme(): void {
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
     this.chatService.disconnect();
+    window.removeEventListener('resize', this.onResize); // Cleanup resize listener
+    cancelAnimationFrame(this.animationFrameId); // Cancel animation frame
   }
 
+  toggleTheme(): void {
+    this.isDarkMode = !this.isDarkMode;
+    localStorage.setItem('chatTheme', this.isDarkMode ? 'dark' : 'light');
+  }
+
+  private onResize = () => { // Added onResize method
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+  };
+
+  private animateConfetti = () => { // Added animateConfetti method
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.confettis.forEach((c, i) => {
+      c.x += c.dx;
+      c.y += c.dy;
+      c.dy += 0.2; // gravity
+      c.angle += c.rotationSpeed;
+      c.alpha -= 0.01;
+
+      this.ctx.save();
+      this.ctx.translate(c.x, c.y);
+      this.ctx.rotate((c.angle * Math.PI) / 180);
+      this.ctx.fillStyle = c.color;
+      this.ctx.globalAlpha = c.alpha;
+      this.ctx.fillRect(-c.width / 2, -c.height / 2, c.width, c.height);
+      this.ctx.restore();
+
+      if (c.alpha <= 0) this.confettis.splice(i, 1);
+    });
+    this.animationFrameId = requestAnimationFrame(this.animateConfetti);
+  };
+
   // toggleTheme(): void {
-  //   this.isDark = !this.isDark;
-  //   localStorage.setItem('chatTheme', this.isDark ? 'dark' : 'light');
+  //   this.isDarkMode = !this.isDarkMode;
+  //   localStorage.setItem('chatTheme', this.isDarkMode ? 'dark' : 'light');
   // }
 
   private subscribeToChatEvents(): void {
@@ -230,21 +289,89 @@ toggleTheme(): void {
   }
 
   sendMessage(): void {
-    if (this.newMessageContent.trim() && this.currentUser && this.recipientUser) {
-      const chatMessage: ChatMessageDto = {
-        conversationId: this.conversationId || '',
-        senderId: this.currentUser.id,
-        recipientId: this.recipientUser.id,
-        content: this.newMessageContent.trim(),
-        timestamp: new Date(),
-        messageType: MessageType.TEXT
-      };
-      this.chatService.sendMessage(chatMessage);
-      this.newMessageContent = '';
-      this.showInputEmojiPicker = false;
-      this.sendTypingStatus(false);
-      this.shouldScrollToBottom = true;
+    if (!this.newMessageContent.trim()) return;
+
+    // 🌊 Trigger send ripple animation
+    this.triggerSendRipple();
+
+    // Play send sound
+    this.sendSound.currentTime = 0;
+    this.sendSound.play().catch(() => {});
+
+    const msg: ChatMessageDto = {
+      conversationId: this.conversationId || '',
+      senderId: this.currentUser!.id,
+      recipientId: this.recipientUser!.id,
+      content: this.newMessageContent.trim(),
+      timestamp: new Date(),
+      messageType: MessageType.TEXT
+    };
+    this.chatService.sendMessage(msg);
+
+    this.newMessageContent = '';
+    this.showInputEmojiPicker = false;
+    this.sendTypingStatus(false);
+    this.shouldScrollToBottom = true;
+  }
+
+  generateAiReply(): void {
+    if (!this.currentUser || !this.recipientUser) {
+      this.toastService.show('Cannot generate AI reply without current user or recipient.', 'error');
+      return;
     }
+
+    this.isGeneratingReply = true;
+    this.createAiTypingBubble();
+
+    let textToReplyTo = 'say hi first time message in 3 to 4 words';
+
+    const latestSenderMessage = this.messages
+      .filter(msg => msg.senderId === this.recipientUser!.id && msg.messageType === MessageType.TEXT)
+      .pop(); // Get the last message from the recipient
+
+    if (latestSenderMessage) {
+      textToReplyTo = latestSenderMessage.content;
+    }
+
+    this.aiService.autoReply(textToReplyTo).subscribe({ // Changed to ai.service.reply
+      next: (response) => {
+        this.newMessageContent = response.replies.toString(); // Changed to response.replies.toString()
+        this.isGeneratingReply = false;
+        this.removeAiTypingBubble();
+      },
+      error: (err) => {
+        this.toastService.show(
+          err.error?.message || 'Failed to generate AI reply.',
+          'error'
+        );
+        this.isGeneratingReply = false;
+        this.removeAiTypingBubble();
+      },
+    });
+  }
+
+  // 🌊 Ripple on send button
+  private triggerSendRipple() {
+    const btn = document.querySelector('.chat-input button.send-btn') as HTMLElement;
+    if (!btn) return;
+    const ripple = document.createElement('span');
+    ripple.classList.add('ripple');
+    btn.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
+  }
+
+  // 🤖 AI Typing Bubble
+  private createAiTypingBubble() {
+    const aiBubble = document.createElement('div');
+    aiBubble.classList.add('ai-typing-bubble');
+    aiBubble.innerHTML = `<span></span><span></span><span></span>`;
+    const msgContainer = document.querySelector('.messages');
+    if (msgContainer) msgContainer.appendChild(aiBubble);
+  }
+
+  private removeAiTypingBubble() {
+    const bubble = document.querySelector('.ai-typing-bubble');
+    if (bubble) bubble.remove();
   }
 
   sendTypingStatus(typing: boolean): void {
@@ -279,15 +406,50 @@ toggleTheme(): void {
   }
 
   reactToMessage(messageId: string, emoji: string): void {
-    // use your existing API hook
     this.chatService.sendMessageReaction(messageId, emoji).subscribe(() => {
       const message = this.messages.find(m => m.id === messageId);
       if (message) {
         (message.reactions ||= []).push({ messageId, reaction: emoji, id: '', userId: this.currentUser!.id });
         (message as any).showEmojiPicker = false;
+
+        // ✨ trigger floating emoji explosion
+        const messageEl = document.querySelector(`[data-message-id="${messageId}"]`);
+        if (messageEl) this.spawnEmojiExplosion(messageEl as HTMLElement, emoji);
       }
+
+      // 💥 play reaction sound
+      const popSound = new Audio('assets/sounds/reaction.mp3');
+      popSound.volume = 0.4;
+      popSound.play().catch(() => {});
     });
   }
+
+  private spawnEmojiExplosion(container: HTMLElement, emoji: string) {
+    const emojiCount = Math.floor(Math.random() * 4) + 4; // 4–8 emojis per explosion
+    for (let i = 0; i < emojiCount; i++) {
+      const e = document.createElement('span');
+      e.classList.add('floating-emoji');
+      e.textContent = emoji;
+
+      // randomize flight path
+      const driftX = (Math.random() - 0.5) * 120; // left/right drift
+      const driftY = Math.random() * -180 - 80; // upward height
+      const rotate = (Math.random() - 0.5) * 120;
+      const duration = 1.5 + Math.random() * 0.5;
+
+      console.log(`Emoji explosion: driftX=${driftX}, driftY=${driftY}, rotate=${rotate}, duration=${duration}`); // Removed for debugging animation issue
+
+      e.style.setProperty('--x', `${driftX}px`);
+      e.style.setProperty('--y', `${driftY}px`);
+      e.style.setProperty('--r', `${rotate}deg`);
+      e.style.setProperty('--d', `${duration}s`);
+      e.style.left = `${50 + (Math.random() - 0.5) * 20}%`; // Re-added for animation
+
+      container.appendChild(e);
+      setTimeout(() => e.remove(), duration * 1000);
+    }
+  }
+
 
   addEmojiToInput(emoji: string): void {
     this.newMessageContent = (this.newMessageContent || '') + emoji;
@@ -366,5 +528,32 @@ toggleTheme(): void {
     } else {
       return of(message);
     }
+  }
+
+  onMessageHover(message: EnrichedMessage, event: MouseEvent): void {
+    const hasPartyPopperReaction = message.reactions?.some(r => r.reaction === '🎉');
+    if (hasPartyPopperReaction) {
+      const { x, y, width, height } = (event.currentTarget as HTMLElement).getBoundingClientRect();
+      for (let i = 0; i < 40; i++) {
+        this.confettis.push({
+          x: x + width / 2,
+          y: y + height / 2,
+          dx: (Math.random() - 0.5) * 6,
+          dy: Math.random() * -4 - 2,
+          width: 4,
+          height: 10,
+          angle: Math.random() * 360,
+          rotationSpeed: (Math.random() - 0.5) * 10,
+          color: `hsl(${Math.random() * 360}, 80%, 60%)`,
+          alpha: 1
+        });
+      }
+    }
+  }
+
+  onMessageLeave(): void {
+    // Optionally clear confettis immediately or let them fade out
+    // For now, let them fade out naturally as per the animateConfetti logic
+    // If immediate clear is needed: this.confettis = [];
   }
 }

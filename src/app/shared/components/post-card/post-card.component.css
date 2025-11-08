@@ -1,13 +1,14 @@
 .post-card {
-  background-color: #fff;
-  border: 1px solid #dbdbdb;
-  border-radius: 8px;
-  margin-bottom: 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  margin: 0 auto 20px;
   max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
+  transition: background 0.3s, box-shadow 0.3s;
 }
 
+/* Header */
 .post-header {
   display: flex;
   justify-content: space-between;
@@ -18,15 +19,17 @@
 .user-info {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   cursor: pointer;
+  color: var(--text-primary);
 }
 
 .avatar {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   object-fit: cover;
+  border: 2px solid var(--border-color);
 }
 
 .username {
@@ -34,119 +37,126 @@
   font-size: 14px;
   display: flex;
   align-items: center;
+  gap: 4px;
 }
 
 .location {
   font-size: 12px;
-  color: #8e8e8e;
+  color: var(--text-secondary);
 }
 
 .options-btn {
-  background: none;
+  background: transparent;
   border: none;
+  font-size: 18px;
   cursor: pointer;
-  font-size: 16px;
-  color: #262626;
+  color: var(--text-secondary);
+  transition: color 0.2s;
+}
+.options-btn:hover {
+  color: var(--text-primary);
 }
 
+/* Image Container */
 .post-image-container {
   position: relative;
+  overflow: hidden;
+  border-radius: 12px;
 }
-
 .post-image {
   width: 100%;
   height: auto;
+  display: block;
   object-fit: cover;
+  transition: transform 0.3s ease;
+}
+.post-image-container:hover .post-image {
+  transform: scale(1.02);
 }
 
+/* Like Animation */
 .like-animation {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) scale(0);
-  font-size: 80px;
-  color: #fff;
+  font-size: 90px;
+  color: #ed4956;
   opacity: 0;
-  animation: like-animation 0.8s ease-out;
+  animation: likePop 0.8s ease-out;
+}
+@keyframes likePop {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+  40% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
 }
 
-@keyframes like-animation {
-  0% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0;
-  }
-  50% {
-    transform: translate(-50%, -50%) scale(1.2);
-    opacity: 0.9;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 0;
-  }
-}
-
+/* Actions */
 .post-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 16px;
+  padding: 10px 16px;
 }
 
 .left-actions {
   display: flex;
-  gap: 16px;
+  gap: 18px;
 }
 
 .post-actions button {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 24px;
-  color: #262626;
+  font-size: 22px;
+  color: var(--text-primary);
+  transition: transform 0.2s, color 0.3s;
+}
+.post-actions button:hover {
+  transform: scale(1.1);
+  color: var(--primary-color);
 }
 
-.post-actions .liked {
-  color: #ed4956;
+.liked {
+  color: #ed4956 !important;
+}
+.saved {
+  color: var(--primary-color);
 }
 
-.save-btn .saved {
-  color: #262626;
-}
-
+/* Info */
 .post-info {
-  padding: 0 16px 12px;
+  padding: 0 16px 14px;
+  color: var(--text-primary);
 }
 
 .post-likes {
   font-weight: 600;
   font-size: 14px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .post-caption {
   font-size: 14px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
-.post-comments {
-  font-size: 14px;
-  color: #8e8e8e;
+.post-comments,
+.post-time {
+  font-size: 12px;
+  color: var(--text-secondary);
   margin-bottom: 4px;
 }
 
 .post-time {
-  font-size: 10px;
-  color: #8e8e8e;
   text-transform: uppercase;
 }
 
+/* Options Menu */
 .options-menu-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.4);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -154,41 +164,48 @@
 }
 
 .options-menu {
-  background: #fff;
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
-  min-width: 250px;
-  animation: popIn 0.2s ease-in-out;
+  min-width: 260px;
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  animation: popIn 0.25s ease;
 }
 
-.options-menu .option-item {
+.option-item {
   display: block;
   width: 100%;
   padding: 12px 16px;
+  background: transparent;
   border: none;
-  background: none;
   text-align: center;
-  font-size: 0.95rem;
+  font-size: 15px;
   cursor: pointer;
-  border-bottom: 1px solid #efefef;
+  color: var(--text-primary);
+  transition: background 0.2s;
+  border-bottom: 1px solid var(--border-color);
 }
-
-.options-menu .option-item:last-child {
+.option-item:last-child {
   border-bottom: none;
 }
-
-.options-menu .option-item.destructive {
+.option-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+.option-item.destructive {
   color: #ed4956;
-  font-weight: bold;
+  font-weight: 600;
 }
 
 @keyframes popIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* 🌙 Dark mode tweaks */
+.dark-theme .post-card {
+  background: rgba(30, 41, 59, 0.75);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.dark-theme .option-item:hover {
+  background: rgba(255, 255, 255, 0.1);
 }

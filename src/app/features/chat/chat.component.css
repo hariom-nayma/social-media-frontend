@@ -94,7 +94,7 @@
   flex-direction: column;
   gap: 12px;
   padding: 15px;
-  overflow-y: auto;
+  overflow-y: auto; 
   background: var(--bg);
 }
 
@@ -331,4 +331,111 @@
 
 .user-preview p {
   margin: 0;
+}
+
+/* 💥 Floating Emoji Explosion */
+.floating-emoji {
+  position: absolute;
+  font-size: 30px; /* Increased size for debugging */
+  pointer-events: none;
+  animation: float-emoji var(--d) cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transform: translate(0, 0) rotate(0);
+  opacity: 1 !important; /* Ensure full opacity for debugging */
+  z-index: 999;
+  will-change: transform, opacity;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  border: 1px solid red; /* Debugging border */
+  background-color: rgba(0, 255, 0, 0.5); /* Debugging background */
+}
+
+@keyframes float-emoji {
+  0% {
+    transform: translate(0, 0) rotate(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  70% {
+    transform: translate(var(--x), var(--y)) rotate(var(--r));
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--x), calc(var(--y) - 20px)) rotate(var(--r));
+    opacity: 0;
+  }
+}
+
+/* 🌗 Theme adjustments */
+body.dark-mode .floating-emoji {
+  text-shadow: 0 3px 10px rgba(255, 255, 255, 0.1);
+}
+
+/* 🌊 SEND RIPPLE ANIMATION */
+.chat-input button.send-btn {
+  position: relative;
+  overflow: hidden;
+}
+.ripple {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 50%;
+  transform: scale(0);
+  animation: ripple-wave 0.6s ease-out forwards;
+  left: 50%;
+  top: 50%;
+  pointer-events: none;
+}
+ @keyframes ripple-wave {
+  to {
+    transform: scale(8);
+    opacity: 0;
+  }
+}
+
+
+
+/* 🤖 AI TYPING BUBBLE */
+.ai-typing-bubble {
+  align-self: flex-start;
+  display: inline-flex;
+  background: linear-gradient(90deg, #007bff, #00b4db, #ff4081);
+  background-size: 300% 300%;
+  animation: gradientShift 2s infinite;
+  border-radius: 20px;
+  padding: 10px 16px;
+  gap: 5px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  margin: 8px 0;
+  position: relative;
+}
+.ai-typing-bubble span {
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  animation: aiTypingBlink 1.2s infinite ease-in-out;
+}
+.ai-typing-bubble span:nth-child(2) { animation-delay: 0.2s; }
+.ai-typing-bubble span:nth-child(3) { animation-delay: 0.4s; }
+
+ @keyframes aiTypingBlink {
+  0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+  40% { opacity: 1; transform: scale(1); }
+}
+
+ @keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+#confetti-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999; /* Increased z-index for visibility */
 }

@@ -1,2 +1,6 @@
 <app-toast></app-toast>
 <router-outlet></router-outlet>
+
+<!-- Modals managed by ModalService -->
+<app-create-post-modal *ngIf="showCreatePostModal" (closeModal)="closeCreatePostModal()"></app-create-post-modal>
+<app-create-reel-modal *ngIf="showCreateReelModal" (closeModalEvent)="closeCreateReelModal()"></app-create-reel-modal>

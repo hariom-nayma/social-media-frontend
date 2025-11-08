@@ -1,68 +1,76 @@
-<div class="home-container">
+<div class="home-container app-shell">
   <!-- Left Feed Section -->
-  <div class="feed-section">
+  <main class="feed-section">
     <app-story-bar></app-story-bar>
 
-    <div class="feed">
+    <div class="feed" role="list">
       <app-post-card
+        role="listitem"
         *ngFor="let post of posts"
         [post]="post"
         (postDeleted)="onPostDeleted($event)"
-        (click)="openPostDetailsDialog(post.id)">
-      </app-post-card>
+        (click)="openPostDetailsDialog(post.id)"
+        class="post-card-entry"
+      ></app-post-card>
+
+      <div *ngIf="posts.length === 0" class="empty-state">
+        No posts yet — follow creators to fill your feed.
+      </div>
     </div>
-  </div>
+  </main>
 
   <!-- Post Details Modal -->
-  <app-post-details-dialog 
+  <app-post-details-dialog
     *ngIf="showPostDetailsDialog"
     [postId]="selectedPostId!"
-    (close)="closePostDetailsDialog()">
-  </app-post-details-dialog>
+    (close)="closePostDetailsDialog()"
+  ></app-post-details-dialog>
 
   <!-- Right Sidebar -->
-  <aside class="right-sidebar">
+  <aside class="right-sidebar" aria-labelledby="suggestions-heading">
     <div class="profile-section">
-      <img [src]="currentUser?.profileImageUrl" alt="User" class="profile-pic" />
+      <img alt="profile" [src]="currentUser?.profileImageUrl || 'https://i.pravatar.cc/150?u=' + currentUser?.username"
+           [alt]="currentUser?.username + ' avatar'" class="profile-pic" />
       <div class="profile-info">
         <div class="username">{{ currentUser?.username }}</div>
         <div class="fullname">{{ currentUser?.firstName }} {{ currentUser?.lastName }}</div>
       </div>
-      <button class="switch-btn">Switch</button>
+      <button class="switch-btn" aria-label="Switch account">Switch</button>
     </div>
 
-    <div class="suggestions">
+    <section class="suggestions" aria-labelledby="suggestions-heading">
       <div class="suggestions-header">
-        <div>Suggestions for you</div>
-        <a href="#">See All</a>
+        <div id="suggestions-heading">Suggestions for you</div>
+        <a class="see-all" href="#">See All</a>
       </div>
 
-      <div *ngFor="let suggestion of suggestions" class="suggestion">
-        <div class="suggestion-left" (click)="goToProfile(suggestion.username)">
-          <img
-            [src]="suggestion.profileUrl || 'https://i.pravatar.cc/150?u=' + suggestion.username"
-            alt="User"
-            class="suggestion-img"
-          />
+      <div *ngFor="let suggestion of suggestions" class="suggestion" [attr.aria-label]="suggestion.username + ' suggestion'">
+        <button class="suggestion-left" (click)="goToProfile(suggestion.username)" aria-label="Open profile of {{suggestion.username}}">
+          <img alt="profile" [src]="suggestion.profileUrl || ('https://i.pravatar.cc/150?u=' + suggestion.username)"
+               [alt]="suggestion.username + ' avatar'" class="suggestion-img" />
           <div class="suggestion-info">
             <div class="username">
               {{ suggestion.username }}
-              <svg *ngIf="suggestion.premiumUser" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="12px" height="12px"><polygon fill="#42a5f5" points="29.62,3 33.053,8.308 39.367,8.624 39.686,14.937 44.997,18.367 42.116,23.995 45,29.62 39.692,33.053 39.376,39.367 33.063,39.686 29.633,44.997 24.005,42.116 18.38,45 14.947,39.692 8.633,39.376 8.314,33.063 3.003,29.633 5.884,24.005 3,18.38 8.308,14.947 8.624,8.633 14.937,8.314 18.367,3.003 23.995,5.884"/><polygon fill="#fff" points="21.396,31.255 14.899,24.76 17.021,22.639 21.428,27.046 30.996,17.772 33.084,19.926"/></svg>
+              <svg *ngIf="suggestion.premiumUser" class="premium-badge" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="14" height="14" aria-hidden="true">
+                <polygon fill="#42a5f5" points="..."/>
+                <polygon fill="#fff" points="..."/>
+              </svg>
             </div>
             <div class="mutual" *ngIf="suggestion.mutualCount > 0">
               {{ suggestion.mutualCount }} mutuals
             </div>
           </div>
-        </div>
-        <button class="follow-btn" (click)="toggleFollow(suggestion)">
-          {{
-            suggestion.private
-              ? (suggestion.isRequested ? 'Requested' : 'Request')
-              : (suggestion.isFollowing ? 'Unfollow' : 'Follow')
-          }}
+        </button>
+
+        <button
+          class="follow-btn"
+          [class.requested]="suggestion.isRequested"
+          [disabled]="suggestion.isRequested && suggestion.private"
+          (click)="toggleFollow(suggestion)">
+          {{ suggestion.private ? (suggestion.isRequested ? 'Requested' : 'Request') : (suggestion.isFollowing ? 'Following' : 'Follow') }}
         </button>
       </div>
-    </div>
+    </section>
 
     <app-pending-requests
       *ngIf="currentUser?.private && pendingRequests.length > 0"
