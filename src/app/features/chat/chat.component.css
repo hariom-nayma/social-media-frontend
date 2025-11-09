@@ -194,6 +194,8 @@
   font-size: 0.9rem;
 }
 
+
+
 /* Emoji picker */
 .emoji-picker {
   position: absolute;
@@ -336,16 +338,14 @@
 /* 💥 Floating Emoji Explosion */
 .floating-emoji {
   position: absolute;
-  font-size: 30px; /* Increased size for debugging */
+  font-size: 22px;
   pointer-events: none;
   animation: float-emoji var(--d) cubic-bezier(0.22, 1, 0.36, 1) forwards;
   transform: translate(0, 0) rotate(0);
-  opacity: 1 !important; /* Ensure full opacity for debugging */
+  opacity: 0;
   z-index: 999;
   will-change: transform, opacity;
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  border: 1px solid red; /* Debugging border */
-  background-color: rgba(0, 255, 0, 0.5); /* Debugging background */
 }
 
 @keyframes float-emoji {
@@ -371,11 +371,17 @@ body.dark-mode .floating-emoji {
   text-shadow: 0 3px 10px rgba(255, 255, 255, 0.1);
 }
 
+.send-btn {
+  
+}
+
 /* 🌊 SEND RIPPLE ANIMATION */
 .chat-input button.send-btn {
   position: relative;
   overflow: hidden;
+  color: #000;
 }
+
 .ripple {
   position: absolute;
   width: 20px;
@@ -438,4 +444,66 @@ body.dark-mode .floating-emoji {
   left: 0;
   pointer-events: none;
   z-index: 9999; /* Increased z-index for visibility */
+}
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
 }

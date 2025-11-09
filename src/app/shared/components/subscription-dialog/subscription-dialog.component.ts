@@ -40,13 +40,10 @@ export class SubscriptionDialogComponent {
     });
   }
 
-redirectToCheckout(sessionUrl: string): void {
-  this.dialogRef.close();
-  window.location.href = sessionUrl; // ✅ open hosted checkout page
-}
-
-
-
+  redirectToCheckout(sessionUrl: string): void {
+    this.dialogRef.close();
+    window.location.href = sessionUrl;
+  }
 
   closeDialog(): void {
     this.dialogRef.close();

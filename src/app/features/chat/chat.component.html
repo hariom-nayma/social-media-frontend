@@ -137,14 +137,18 @@
       (blur)="onBlur()"
       (keyup.enter)="sendMessage()"
     />
-    <button (click)="generateAiReply()" [disabled]="isGeneratingReply" class="ai-reply-button">
+    <label *ngIf="premiumUser"  class="switch">
+      <input title="pvt" type="checkbox" [checked]="isAiFeatureEnabled" (change)="onAiToggleChange($event)">
+      <span class="slider round"></span>
+    </label>
+    <button *ngIf="premiumUser && isAiFeatureEnabled" (click)="generateAiReply()" [disabled]="!isAiFeatureEnabled || isGeneratingReply" class="ai-reply-button">
       <span *ngIf="!isGeneratingReply">🤖 AI Reply</span>
       <span *ngIf="isGeneratingReply">Generating...</span>
     </button>
     <button class="send-btn" (click)="sendMessage()">➤</button>
   </div>
 </div>
- <div *ngIf="!isBlockedByViewer" class="blocked-profile-message">
+ <div *ngIf="isBlockedByViewer" class="blocked-profile-message">
     <p>Unable to open this chat.</p>
     <p>You are blocked by this user.</p>
   </div>

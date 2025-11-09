@@ -18,7 +18,7 @@ import { ReelDetailsDialogComponent } from '../../shared/components/reel-details
 import { CallService } from '../../core/services/call.service';
 import { CallComponent } from '../call/call.component';
 import { PostService } from '../../core/services/post.service';
-import { ConfirmationDialogComponent } from '../../shared/components/confirmation-dialog/confirmation-dialog';
+import { GenericConfirmationDialogComponent } from '../../shared/components/generic-confirmation-dialog/generic-confirmation-dialog.component';
 import { AiService } from '../../core/services/ai.service'; // Import AiService
 import { ToastService } from '../../core/services/toast.service'; // Import ToastService
 
@@ -55,6 +55,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
   isRecipientTyping = false;
   isRecipientOnline = false;
   isBlockedByViewer = false; 
+  premiumUser = false;
   availableEmojis: string[] = ['👍', '❤️', '😂', '😢', '😡', '🔥', '👏', '🎉'];
   MessageType = MessageType;
 
@@ -62,6 +63,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
   isDark = false;
   showInputEmojiPicker = false;
   isGeneratingReply = false; // New property for AI reply loading state
+  isAiFeatureEnabled = false;
 
   currentPage = 0;
   pageSize = 20;
@@ -92,6 +94,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
     ]).pipe(
       switchMap(([currentUserResponse, params]) => {
         this.currentUser = currentUserResponse.data!;
+        this.premiumUser = currentUserResponse.data?.premiumUser!;
 
         // Prioritize @Input values, then fall back to route params
         const currentConversationId = this.conversationId || params.get('conversationId');
@@ -134,17 +137,12 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
   }
 
   ngAfterViewInit(): void { // Added ngAfterViewInit
-    console.error('ngAfterViewInit triggered - checking if this runs!'); // Critical debugging line
     this.canvas = document.getElementById('confetti-canvas') as HTMLCanvasElement;
-    if (this.canvas) {
-      this.ctx = this.canvas.getContext('2d')!;
-      this.canvas.width = window.innerWidth;
-      this.canvas.height = window.innerHeight;
-      window.addEventListener('resize', this.onResize);
-      this.animateConfetti();
-    } else {
-      console.error('Confetti canvas element not found!');
-    }
+    this.ctx = this.canvas.getContext('2d')!;
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+    window.addEventListener('resize', this.onResize);
+    this.animateConfetti();
   }
 
   ngAfterViewChecked(): void {
@@ -314,7 +312,33 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
     this.shouldScrollToBottom = true;
   }
 
+  onAiToggleChange(event: any): void {
+    const isChecked = event.target.checked;
+    if (isChecked) {
+      const dialogRef = this.dialog.open(GenericConfirmationDialogComponent, {
+        data: {
+          title: 'Enable AI Features',
+          message: 'Turning on this button means you allow our AI model to process your data including last few messages. Please consider not to enable with chat contains sensitive data.',
+          confirmText: 'I Agree',
+          cancelText: 'Disagree'
+        }
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.isAiFeatureEnabled = true;
+        } else {
+          this.isAiFeatureEnabled = false;
+          event.target.checked = false;
+        }
+      });
+    } else {
+      this.isAiFeatureEnabled = false;
+    }
+  }
+
   generateAiReply(): void {
+    if (!this.isAiFeatureEnabled) return;
     if (!this.currentUser || !this.recipientUser) {
       this.toastService.show('Cannot generate AI reply without current user or recipient.', 'error');
       return;
@@ -406,6 +430,11 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewChecked, After
   }
 
   reactToMessage(messageId: string, emoji: string): void {
+    if (emoji === '🎉' && (!this.currentUser || !this.currentUser.premiumUser)) {
+      this.toastService.show('Only premium users can react with the 🎉 emoji.', 'info');
+      return;
+    }
+
     this.chatService.sendMessageReaction(messageId, emoji).subscribe(() => {
       const message = this.messages.find(m => m.id === messageId);
       if (message) {

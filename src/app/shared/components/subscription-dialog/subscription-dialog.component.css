@@ -1,33 +1,180 @@
 .subscription-dialog {
-  padding: 20px;
+  position: relative;
+  padding: 20px 20px; /* Reduced vertical padding */
   text-align: center;
+  border-radius: 20px;
+width: 500px; 
+height: 650px;
+ margin: auto;
+  animation: fadeIn 0.4s ease-in-out;
+  background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(250,250,250,0.98));
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
 }
 
 .dialog-title {
-  margin-bottom: 20px;
+  font-size: 1.8rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #007bff, #00b4db, #ff4081);
+  -webkit-background-clip: text;
+  color: transparent;
+  margin-bottom: 6px;
 }
 
-.plans {
+.subtitle {
+  color: #777;
+  margin-bottom: 25px;
+  font-size: 0.95rem;
+}
+
+/* 🌈 Plans row layout */
+.plans-row {
   display: flex;
-  justify-content: space-around;
-  margin-bottom: 20px;
+  justify-content: center;
+  align-items: stretch;
+  gap: 30px; /* Increased gap */
+  /* flex-wrap: nowrap; */
 }
 
+/* 🧱 Individual Plan Card */
 .plan {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 20px;
-  width: 45%;
+  flex: 1 1 0; /* Allow cards to grow and shrink, but with a basis of 0 */
+  /* min-width: 300px; /* Set a minimum width for the cards */
+  /* max-width: 450px; Increased max-width for cards */ 
+  width: 300px;
+  height: 480px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 25px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.plan:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.15);
 }
 
+/* Header and Price */
+.plan-header h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
 .price {
-  font-size: 1.2em;
+  font-size: 1.8rem;
   font-weight: bold;
-  margin-bottom: 15px;
+  margin: 6px 0 16px;
+}
+.price span.duration {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 400;
+}
+.discount {
+  background: #eaf9ea;
+  color: #28a745;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  padding: 3px 8px;
+  margin-bottom: 10px;
+  display: inline-block;
 }
 
+/* Features */
+.features {
+  text-align: left;
+  margin-bottom: 20px;
+  list-style: none;
+  padding: 0;
+}
+.features li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  font-weight: 500;
+  color: #333;
+}
+.features mat-icon {
+  font-size: 20px;
+}
+
+/* Premium Plan */
+.premium {
+  background: linear-gradient(145deg, #007bff, #00b4db, #ff4081);
+  color: white;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+}
+.premium .features li {
+  color: #fff;
+}
+.premium .price span.duration {
+  color: rgba(255,255,255,0.8);
+}
+.premium button {
+  background: #fff;
+  color: #007bff;
+  font-weight: 600;
+}
+.premium button:hover {
+  background: #f0f0f0;
+}
+
+/* Ribbon */
+.ribbon {
+  position: absolute;
+  top: 15px;
+  right: -40px;
+  background: #ff4081;
+  color: white;
+  padding: 6px 50px;
+  font-weight: bold;
+  transform: rotate(45deg);
+  font-size: 0.8rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Buttons */
+button[mat-raised-button] {
+  align-self: center;
+  width: 80%;
+  font-weight: 600;
+  margin-top: auto;
+}
+
+/* Close Button */
 .close-button {
   position: absolute;
   top: 10px;
   right: 10px;
+}
+
+/* Responsive for very small screens */
+@media (max-width: 768px) { /* Adjusted breakpoint for column layout */
+  .plans-row {
+    flex-direction: column;
+    align-items: center;
+  }
+  .plan {
+    max-width: 90%; /* Allow cards to take more width on small screens */
+    min-width: unset; /* Remove min-width for column layout */
+    flex: 1 0 auto; /* Reset flex for column layout */
+  }
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Dark Mode */
+body.dark-mode .subscription-dialog {
+  background: rgba(25, 25, 25, 0.95);
+  color: #eee;
+  box-shadow: 0 10px 30px rgba(255,255,255,0.08);
 }

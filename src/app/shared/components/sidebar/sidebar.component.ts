@@ -110,8 +110,9 @@ export class SidebarComponent implements OnInit {
 
   openSubscriptionDialog() {
     this.dialog.open(SubscriptionDialogComponent, {
-      width: '500px',
-      panelClass: 'golden-subscription-dialog-panel'
+      width: '1200px',
+      maxHeight: '100vh',
+      panelClass: 'app-subscription-dialog'
     });
   }
 
