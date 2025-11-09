@@ -54,10 +54,8 @@
   </nav>
 
   <!-- 🌗 Theme Toggle -->
-  <div class="theme-toggle" (click)="toggleTheme()">
-    <div class="toggle-track">
-      <div class="toggle-thumb" [class.dark]="isDarkMode"></div>
-    </div>
+  <div class="theme-toggle-container">
+    <app-theme-toggle></app-theme-toggle>
   </div>
 
   <!-- Footer -->

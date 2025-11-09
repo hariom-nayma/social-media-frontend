@@ -13,6 +13,7 @@ import { UserDTO } from '../../../core/models/user.model';
 import { SearchDialogComponent } from '../search-dialog/search-dialog.component';
 import { ConfirmationDialogComponent } from '../../../../app/shared/components/confirmation-dialog/confirmation-dialog';
 import { ModalService } from '../../../core/services/modal.service'; // Import ModalService
+import { ThemeToggleComponent } from '../theme-toggle/theme-toggle';
 
 @Component({
   selector: 'app-sidebar',
@@ -26,7 +27,8 @@ import { ModalService } from '../../../core/services/modal.service'; // Import M
     CreateReelModalComponent,
     SubscriptionDialogComponent,
     SearchDialogComponent,
-    ConfirmationDialogComponent
+    ConfirmationDialogComponent,
+    ThemeToggleComponent
   ],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css']
@@ -35,7 +37,6 @@ export class SidebarComponent implements OnInit {
   showMoreOptions = false;
   currentUser: UserDTO | null = null;
   isExpanded = false;
-  isDarkMode = false;
 
   authService = inject(AuthService);
   router = inject(Router);
@@ -49,10 +50,6 @@ export class SidebarComponent implements OnInit {
     this.userService.currentUser$.subscribe(user => {
       this.currentUser = user;
     });
-
-    const savedTheme = localStorage.getItem('theme');
-    this.isDarkMode = savedTheme === 'dark';
-    this.applyTheme();
   }
 
   onMouseEnter() {
@@ -122,20 +119,5 @@ export class SidebarComponent implements OnInit {
       maxHeight: '80vh',
       panelClass: 'search-dialog-container'
     });
-  }
-
-  toggleTheme(): void {
-    this.isDarkMode = !this.isDarkMode;
-    localStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light');
-    this.applyTheme();
-  }
-
-  private applyTheme(): void {
-    const body = this.document.body;
-    if (this.isDarkMode) {
-      body.classList.add('dark-theme');
-    } else {
-      body.classList.remove('dark-theme');
-    }
   }
 }

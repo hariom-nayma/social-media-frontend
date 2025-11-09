@@ -1,0 +1,170 @@
+.wrapper {
+}
+
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 60px; /* Reduced from 100px */
+  padding: 2px; /* Reduced from 4px */
+  border-radius: 20px; /* Reduced from 40px */
+}
+
+.toggle:before,
+.toggle:after {
+  content: '';
+  display: table;
+}
+
+.toggle:after {
+  clear: both;
+}
+
+.toggle-bg {
+  position: absolute;
+  top: -2px; /* Adjusted from -4px */
+  left: -2px; /* Adjusted from -4px */
+  width: 100%;
+  height: 100%;
+  background-color: #C0E6F6;
+  border-radius: 20px; /* Reduced from 40px */
+  border: 2px solid #81C0D5; /* Reduced from 4px */
+  transition: all .1s cubic-bezier(0.250, 0.460, 0.450, 0.940);
+}
+
+.toggle-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 1px solid red;
+  border-radius: 20px; /* Reduced from 40px */
+  z-index: 2;
+  opacity: 0;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 24px; /* Reduced from 40px */
+  height: 24px; /* Reduced from 40px */
+  margin-left: 36px; /* Adjusted from 50px */
+  background-color: #F5EB42;
+  border: 2px solid #E4C74D; /* Reduced from 4px */
+  border-radius: 50%;
+  transition: all .1s cubic-bezier(0.250, 0.460, 0.450, 0.940);
+}
+
+.toggle-switch-figure {
+  position: absolute;
+  bottom: -8px; /* Adjusted from -14px */
+  left: -30px; /* Adjusted from -50px */
+  display: block;
+  width: 48px; /* Reduced from 80px */
+  height: 18px; /* Reduced from 30px */
+  border: 4px solid #D4D4D2; /* Reduced from 8px */
+  border-radius: 12px; /* Reduced from 20px */
+  background-color: #fff;
+  transform: scale(0.4);
+  transition: all .12s cubic-bezier(0.250, 0.460, 0.450, 0.940);
+}
+
+.toggle-switch-figure:after {
+  content: '';
+  display: block;
+  position: relative;
+  top: -39px; /* Adjusted from -65px */
+  right: -25px; /* Adjusted from -42px */
+  width: 9px; /* Reduced from 15px */
+  height: 9px; /* Reduced from 15px */
+  border: 4px solid #D4D4D2; /* Reduced from 8px */
+  border-radius: 100%;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  transform: rotateZ(70deg);
+  background-color: #fff;
+}
+
+.toggle-switch-figure:before {
+  content: '';
+  display: block;
+  position: relative;
+  top: -15px; /* Adjusted from -25px */
+  right: -6px; /* Adjusted from -10px */
+  width: 18px; /* Reduced from 30px */
+  height: 18px; /* Reduced from 30px */
+  border: 4px solid #D4D4D2; /* Reduced from 8px */
+  border-radius: 100%;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  transform: rotateZ(30deg);
+  background-color: #fff;
+}
+
+.toggle-switch-figureAlt {
+  content: '';
+  position: absolute;
+  top: 3px; /* Adjusted from 5px */
+  left: 1px; /* Adjusted from 2px */
+  width: 1px; /* Reduced from 2px */
+  height: 1px; /* Reduced from 2px */
+  background-color: #EFEEDA;
+  border-radius: 100%;
+  border: 2px solid #DEE1C5; /* Reduced from 4px */
+
+  box-shadow:
+    25px -4px 0 -2px #FCFCFC, /* Scaled down */
+    45px -6px 0 -2px #FCFCFC, /* Scaled down */
+    32px 2px 0 -2px #FCFCFC, /* Scaled down */
+    50px 4px 0 -1px #FCFCFC, /* Scaled down */
+    38px 11px 0 -2px #FCFCFC, /* Scaled down */
+    26px 17px 0 -1px #FCFCFC, /* Scaled down */
+    47px 14px 0 -2px #FCFCFC; /* Scaled down */
+
+  transition: all .12s cubic-bezier(0.250, 0.460, 0.450, 0.940);
+  transform: scale(0);
+}
+
+.toggle-switch-figureAlt:before {
+  content: '';
+  position: absolute;
+  top: -4px; /* Adjusted from -6px */
+  left: 11px; /* Adjusted from 18px */
+  width: 4px; /* Reduced from 7px */
+  height: 4px; /* Reduced from 7px */
+  background-color: #EFEEDA;
+  border-radius: 100%;
+  border: 2px solid #DEE1C5; /* Reduced from 4px */
+}
+
+.toggle-switch-figureAlt:after {
+  content: '';
+  position: absolute;
+  top: 11px; /* Adjusted from 19px */
+  left: 9px; /* Adjusted from 15px */
+  width: 1px; /* Reduced from 2px */
+  height: 1px;
+  background-color: #EFEEDA;
+  border-radius: 100%;
+  border: 2px solid #DEE1C5; /* Reduced from 4px */
+}
+
+.toggle-input:checked ~ .toggle-switch {
+  margin-left: 0;
+  border-color: #DEE1C5;
+  background-color: #FFFDF2;
+}
+
+.toggle-input:checked ~ .toggle-bg {
+  background-color: #484848;
+  border-color: #202020;
+}
+
+.toggle-input:checked ~ .toggle-switch .toggle-switch-figure {
+  margin-left: 24px; /* Adjusted from 40px */
+  opacity: 0;
+  transform: scale(0.1);
+}
+
+.toggle-input:checked ~ .toggle-switch .toggle-switch-figureAlt {
+  transform: scale(1);
+}
