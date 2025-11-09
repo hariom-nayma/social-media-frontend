@@ -1,53 +1,63 @@
-<div class="subscription-dialog">
-  <button mat-icon-button class="close-button" (click)="closeDialog()">
-    <mat-icon>close</mat-icon>
-  </button>
-
-  <h2 class="dialog-title">✨ Upgrade to Premium</h2>
-  <p class="subtitle">Enjoy all AI-powered tools and your verified badge!</p>
-
-  <div class="plans-row">
-    <!-- Monthly Plan -->
-    <div class="plan">
-      <div class="plan-header">
-        <h3>Monthly Plan</h3>
-        <div class="price">
-          <span class="amount">$9.99</span><span class="duration">/month</span>
-        </div>
+<div class="overflow-hidden">
+  <main id="app">
+      <div class="card" #card>
+          <span class="glow"></span>
+          <div class="inner">
+              <header>
+                  <svg class="sun" viewBox="0 0 24 24" (click)="setLightTheme()"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></g></svg>
+                  <h2>✨ Upgrade to Premium</h2>
+                  <svg class="moon" viewBox="0 0 24 24" (click)="setDarkTheme()"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
+              </header>
+              
+              <footer class="content">
+                  <div class="plans-row">
+                      <!-- Monthly Plan -->
+                      <div class="plan">
+                        <div class="plan-header">
+                          <h3>Monthly Plan</h3>
+                          <div class="price">
+                            <span class="amount">$9.99</span><span class="duration">/month</span>
+                          </div>
+                        </div>
+                        <ul class="features">
+                          <li><mat-icon color="primary">verified</mat-icon> Verified Badge</li>
+                          <li><mat-icon color="accent">celebration</mat-icon> Exclusive Reactions 🎉 💎 🔥 🚀</li>
+                          <li><mat-icon color="accent">auto_awesome</mat-icon> AI Bio Generator</li>
+                          <li><mat-icon color="accent">text_fields</mat-icon> AI Caption Generator</li>
+                          <li><mat-icon color="accent">smart_toy</mat-icon> AI Auto Reply (Messages & Comments)</li>
+                          <li><mat-icon color="accent">support_agent</mat-icon> Priority Support</li>
+                        </ul>
+                        <button mat-raised-button color="primary" (click)="selectPlan('monthly')">
+                          Subscribe Monthly
+                        </button>
+                      </div>
+                  
+                      <!-- Yearly Plan -->
+                      <div class="plan premium">
+                        <div class="ribbon">Best Value 💎</div>
+                        <div class="plan-header">
+                          <h3>Yearly Plan</h3>
+                          <div class="price">
+                            <span class="amount">$99.99</span>
+                            <span class="duration">/year</span>
+                          </div>
+                          <div class="discount">Save 20% compared to monthly</div>
+                        </div>
+                        <ul class="features">
+                          <li><mat-icon color="primary">verified_user</mat-icon> Verified Badge</li>
+                          <li><mat-icon color="accent">celebration</mat-icon> Exclusive Reactions 🎉 💎 🔥 🚀</li>
+                          <li><mat-icon color="accent">auto_awesome</mat-icon> AI Bio Generator</li>
+                          <li><mat-icon color="accent">text_fields</mat-icon> AI Caption Generator</li>
+                          <li><mat-icon color="accent">smart_toy</mat-icon> AI Auto Reply (Messages & Comments)</li>
+                          <li><mat-icon color="accent">support_agent</mat-icon> Priority Support</li>
+                        </ul>
+                        <button mat-raised-button color="accent" (click)="selectPlan('yearly')">
+                          Subscribe Yearly
+                        </button>
+                      </div>
+                    </div>
+              </footer>
+          </div>
       </div>
-      <ul class="features">
-        <li><mat-icon color="primary">verified</mat-icon> Verified Badge</li>
-        <li><mat-icon color="accent">celebration</mat-icon> Exclusive Reactions 🎉 💎 🔥 🚀</li>
-        <li><mat-icon color="accent">auto_awesome</mat-icon> AI Bio Generator</li>
-        <li><mat-icon color="accent">text_fields</mat-icon> AI Caption Generator</li>
-        <li><mat-icon color="accent">smart_toy</mat-icon> AI Auto Reply (Messages & Comments)</li>
-            </ul>
-      <button mat-raised-button color="primary" (click)="selectPlan('monthly')">
-        Subscribe Monthly
-      </button>
-    </div>
-
-    <!-- Yearly Plan -->
-    <div class="plan premium">
-      <div class="ribbon">Best Value 💎</div>
-      <div class="plan-header">
-        <h3>Yearly Plan</h3>
-        <div class="price">
-          <span class="amount">$99.99</span>
-          <span class="duration">/year</span>
-        </div>
-        <div class="discount">Save 20% compared to monthly</div>
-      </div>
-      <ul class="features">
-        <li><mat-icon color="primary">verified_user</mat-icon> Verified Badge</li>
-        <li><mat-icon color="accent">celebration</mat-icon> Exclusive Reactions 🎉 💎 🔥 🚀</li>
-        <li><mat-icon color="accent">auto_awesome</mat-icon> AI Bio Generator</li>
-        <li><mat-icon color="accent">text_fields</mat-icon> AI Caption Generator</li>
-        <li><mat-icon color="accent">smart_toy</mat-icon> AI Auto Reply (Messages & Comments)</li>
-      </ul>
-      <button mat-raised-button color="accent" (click)="selectPlan('yearly')">
-        Subscribe Yearly
-      </button>
-    </div>
-  </div>
+  </main>
 </div>
