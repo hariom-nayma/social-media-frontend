@@ -1,22 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+/* ========== Dialog Layout ========== */
+:host {
+  display: block;
+  font-family: 'Inter', sans-serif;
+  background: var(--card-bg);
+  color: var(--text-primary);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
 .dialog-title {
   text-align: center;
   font-weight: 600;
   font-size: 22px;
-  margin-bottom: 10px;
-  color: #333;
+  margin: 10px 0 5px;
+  color: var(--text-primary);
 }
 
 .dialog-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 15px 10px;
+  padding: 25px 20px;
+  background: var(--card-bg);
+  border-radius: 12px;
+  transition: all 0.3s ease;
 }
 
-/* Profile Picture Section */
+/* ========== Profile Picture Section ========== */
 .profile-picture-container {
   text-align: center;
-  margin-bottom: 25px;
+  margin-bottom: 30px;
+  position: relative;
 }
 
 .profile-picture-wrapper {
@@ -25,51 +42,120 @@
 }
 
 .profile-picture {
-  width: 120px;
-  height: 120px;
+  width: 130px;
+  height: 130px;
   border-radius: 50%;
   object-fit: cover;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  transition: transform 0.3s ease;
+  border: 3px solid var(--border-color);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .profile-picture:hover {
-  transform: scale(1.05);
+  transform: scale(1.06);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
 }
 
+/* Edit Icon Overlay */
 .edit-icon {
   position: absolute;
-  bottom: 0;
-  right: 0;
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  bottom: 4px;
+  right: 4px;
+  background: var(--primary-color);
+  color: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 149, 246, 0.4);
+  transition: transform 0.25s ease;
 }
 
+.edit-icon:hover {
+  transform: scale(1.15);
+  background: var(--primary-hover);
+}
+
+/* Upload Button */
 .upload-btn {
-  margin-top: 10px;
+  margin-top: 12px;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   font-weight: 500;
   border-radius: 8px;
+  padding: 8px 16px;
+  background: var(--primary-color);
+  color: #fff;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
-/* Form Fields */
+.upload-btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.upload-btn[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ========== Form Fields ========== */
 .form-field {
   width: 100%;
   margin-bottom: 15px;
 }
 
-textarea {
-  resize: none;
+.mat-form-field {
+  width: 100%;
 }
 
-/* Dialog Actions */
+.mat-form-field-appearance-outline .mat-form-field-outline {
+  color: var(--border-color);
+}
+
+.mat-input-element,
+textarea {
+  color: var(--text-primary);
+}
+
+textarea {
+  resize: none;
+  border-radius: 8px;
+}
+
+/* ========== AI Bio Section ========== */
+.ai-bio-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 6px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
+  color: #fff;
+  font-weight: 500;
+  text-transform: none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.ai-bio-button:hover:not([disabled]) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 149, 246, 0.35);
+}
+
+.ai-bio-button[disabled] {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* ========== Dialog Actions ========== */
 .dialog-actions {
-  padding: 10px 20px;
-  border-top: 1px solid #eaeaea;
-  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border-top: 1px solid var(--border-color);
+  background: var(--card-bg);
+  border-radius: 0 0 16px 16px;
 }
 
 button[mat-flat-button],
@@ -85,21 +171,41 @@ button[mat-flat-button]:hover {
 }
 
 button[mat-stroked-button]:hover {
-  background-color: #f9f9f9;
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
-/* Responsive */
-@media (max-width: 480px) {
-  .profile-picture {
-    width: 90px;
-    height: 90px;
-  }
+/* ========== Animations ========== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
 
+:host ::ng-deep .mat-mdc-dialog-surface {
+  border-radius: 16px !important;
+  background: var(--card-bg) !important;
+  color: var(--text-primary);
+  animation: fadeIn 0.3s ease;
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 480px) {
   .dialog-title {
     font-size: 18px;
   }
 
+  .profile-picture {
+    width: 95px;
+    height: 95px;
+  }
+
   .upload-btn {
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+
+  .ai-bio-button {
     font-size: 13px;
   }
 }

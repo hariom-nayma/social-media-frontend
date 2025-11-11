@@ -1,17 +1,41 @@
-<h2 mat-dialog-title>Create New Story</h2>
+<div class="modal-wrapper">
+  <div class="modal-box">
+    <h2 class="title">📖 Create New Story</h2>
 
-<mat-dialog-content class="mat-typography">
-  <form (ngSubmit)="createStory()">
-    <mat-form-field appearance="fill">
-      <mat-label>Caption</mat-label>
-      <textarea matInput [(ngModel)]="caption" name="caption" rows="3"></textarea>
-    </mat-form-field>
+    <form (ngSubmit)="createStory()" class="upload-form">
 
-    <input type="file" (change)="onFileSelected($event)" accept="image/*,video/*">
+      <!-- ✏️ Caption -->
+      <mat-form-field appearance="outline" class="input-full">
+        <mat-label>Write a caption...</mat-label>
+        <textarea title="caption" matInput [(ngModel)]="caption" name="caption" rows="3" required></textarea>
+      </mat-form-field>
 
-    <div mat-dialog-actions align="end">
-      <button mat-button (click)="close()">Cancel</button>
-      <button mat-raised-button color="primary" type="submit" [disabled]="!selectedFile && !contentUrl">Create Story</button>
-    </div>
-  </form>
-</mat-dialog-content>
+      <!-- 📂 File Input -->
+      <div class="file-section">
+        <input type="file" id="storyFile" (change)="onFileSelected($event)" accept="image/*,video/*" hidden />
+        <label for="storyFile" class="upload-btn">
+          <i class="fas fa-upload"></i>
+          <span *ngIf="!selectedFile">Choose Image or Video</span>
+          <span *ngIf="selectedFile">{{ selectedFile.name }}</span>
+        </label>
+      </div>
+
+      <!-- 🖼️/🎞️ File Preview -->
+      <div *ngIf="filePreviewUrl" class="file-preview">
+        <img *ngIf="selectedFile && selectedFile.type.startsWith('image/')" [src]="filePreviewUrl" alt="Story Preview">
+        <video *ngIf="selectedFile && selectedFile.type.startsWith('video/')" [src]="filePreviewUrl" controls muted playsinline></video>
+      </div>
+
+      <!-- 🚀 Upload -->
+      <button mat-raised-button color="primary" type="submit"
+              class="upload-btn-main"
+              [class.loading]="isUploading"
+              [disabled]="!selectedFile || !caption || isUploading">
+        <span *ngIf="!isUploading">Upload Story</span>
+        <span *ngIf="isUploading" class="loader"></span>
+      </button>
+
+      <button mat-button color="warn" type="button" (click)="close()">Cancel</button>
+    </form>
+  </div>
+</div>

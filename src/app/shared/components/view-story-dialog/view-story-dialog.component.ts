@@ -6,11 +6,12 @@ import { StoryService } from '../../../core/services/story.service';
 import { UserService } from '../../../core/services/user.service';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { ShakaPlayerComponent } from '../shaka-player/shaka-player';
 
 @Component({
   selector: 'app-view-story-dialog',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule, ShakaPlayerComponent],
   templateUrl: './view-story-dialog.component.html',
   styleUrls: ['./view-story-dialog.component.css']
 })
@@ -23,7 +24,8 @@ export class ViewStoryDialogComponent implements OnInit, OnDestroy {
   stories: StoryDTO[];
   currentIndex = 0;
   currentStoryProgress = 0;
-  interval: any;
+  videoDuration: number = 0;
+  videoCurrentTime: number = 0;
   private viewedStories = new Set<number>(); // To track viewed stories
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: { stories: StoryDTO[] }) {
@@ -36,12 +38,15 @@ export class ViewStoryDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    clearInterval(this.interval);
+    // clearInterval(this.interval); // Removed
   }
 
   startStoryPlayback(): void {
     this.markStoryAsViewed();
-    this.startProgress();
+    this.videoDuration = 0; // Reset for new story
+    this.videoCurrentTime = 0; // Reset for new story
+    this.currentStoryProgress = 0; // Reset progress bar
+    // The progress will now be driven by ShakaPlayer events
   }
 
   markStoryAsViewed(): void {
@@ -52,17 +57,28 @@ export class ViewStoryDialogComponent implements OnInit, OnDestroy {
     }
   }
 
-  startProgress() {
-    this.currentStoryProgress = 0;
-    clearInterval(this.interval); // Clear any existing interval
-    this.interval = setInterval(() => {
-      if (this.currentStoryProgress >= 100) {
-        clearInterval(this.interval);
-        this.nextStory();
-      } else {
-        this.currentStoryProgress += 1;
-      }
-    }, 100); // story auto advances every ~10 seconds
+  startProgress(): void {
+    // This method will now be driven by videoTimeUpdate events
+    if (this.videoDuration > 0) {
+      this.currentStoryProgress = (this.videoCurrentTime / this.videoDuration) * 100;
+    } else {
+      this.currentStoryProgress = 0;
+    }
+  }
+
+  onVideoDuration(duration: number): void {
+    this.videoDuration = duration;
+    this.videoCurrentTime = 0; // Reset current time when new video loads
+    this.startProgress(); // Update progress bar immediately
+  }
+
+  onVideoTimeUpdate(currentTime: number): void {
+    this.videoCurrentTime = currentTime;
+    this.startProgress();
+  }
+
+  onVideoEnded(): void {
+    this.nextStory();
   }
 
   nextStory() {
@@ -86,7 +102,8 @@ export class ViewStoryDialogComponent implements OnInit, OnDestroy {
   }
 
   resetProgress(): void {
-    clearInterval(this.interval);
+    this.videoDuration = 0;
+    this.videoCurrentTime = 0;
     this.currentStoryProgress = 0;
   }
 
@@ -95,7 +112,7 @@ export class ViewStoryDialogComponent implements OnInit, OnDestroy {
   }
 
   isVideo(url?: string): boolean {
-    return !!url && /\.(mp4|webm|ogg)$/i.test(url);
+    return !!url && /\.(mp4|webm|ogg|m3u8)$/i.test(url);
   }
 
   likeStory(): void {
@@ -107,7 +124,6 @@ export class ViewStoryDialogComponent implements OnInit, OnDestroy {
   }
 
   close(): void {
-    clearInterval(this.interval);
     this.dialogRef.close();
   }
 }

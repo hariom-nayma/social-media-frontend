@@ -29,7 +29,14 @@
 
   <div class="story-content">
     <img *ngIf="isImage(currentStory?.contentUrl)" [src]="currentStory?.contentUrl" alt="Story Image">
-    <video *ngIf="isVideo(currentStory?.contentUrl)" [src]="currentStory?.contentUrl" autoplay muted></video>
+    <app-shaka-player
+      *ngIf="isVideo(currentStory?.contentUrl)"
+      [manifestUrl]="currentStory!.contentUrl"
+      [loopVideo]="false"
+      (videoDuration)="onVideoDuration($event)"
+      (videoTimeUpdate)="onVideoTimeUpdate($event)"
+      (videoEnded)="onVideoEnded()"
+    ></app-shaka-player>
 
     <button
       mat-icon-button

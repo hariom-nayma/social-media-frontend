@@ -14,8 +14,8 @@ export class StoryService {
 
   constructor(private http: HttpClient) { }
 
-  createStory(formData: FormData): Observable<ApiResponse<StoryDTO>> {
-    return this.http.post<ApiResponse<StoryDTO>>(this.apiUrl, formData);
+  createStory(storyData: { caption: string, videoUrl: string, publicId: string }): Observable<ApiResponse<StoryDTO>> {
+    return this.http.post<ApiResponse<StoryDTO>>(`${this.apiUrl}/save`, storyData);
   }
 
   getStoriesForFeed(): Observable<ApiResponse<StoryDTO[]>> {
@@ -38,5 +38,9 @@ export class StoryService {
   }
   getMyStories(): Observable<ApiResponse<StoryDTO[]>> {
     return this.http.get<ApiResponse<StoryDTO[]>>(`${this.apiUrl}/myStories`);
+  }
+
+  deleteStory(storyId: number): Observable<ApiResponse<void>> {
+    return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/${storyId}`);
   }
 }

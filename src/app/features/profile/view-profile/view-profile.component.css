@@ -1,19 +1,26 @@
-/* ---------- General Layout ---------- */
+/* ────────────────────────────────
+   🌗 PROFILE PAGE — Theme Aware (fixed)
+──────────────────────────────── */
+
 .profile-container {
   max-width: 935px;
   margin: 0 auto;
   padding: 40px 20px;
   font-family: 'Inter', sans-serif;
-  color: #262626;
+  color: var(--text-primary);
+  background: var(--bg-color);
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
-/* ---------- Profile Header ---------- */
+/* ========================
+   HEADER SECTION
+======================== */
 .profile-header {
   display: flex;
   align-items: center;
   gap: 40px;
   padding-bottom: 30px;
-  border-bottom: 1px solid #dbdbdb;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .profile-avatar img {
@@ -21,8 +28,12 @@
   height: 150px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid #fff;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  border: 3px solid var(--card-bg);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+}
+.profile-avatar img:hover {
+  transform: scale(1.05);
 }
 
 .profile-info {
@@ -42,10 +53,26 @@
   font-weight: 600;
   display: flex;
   align-items: center;
+  gap: 6px;
+  color: var(--text-primary);
 }
 
-/* ---------- Buttons ---------- */
-/* Buttons */
+.profile-username svg {
+  width: 20px;
+  height: 20px;
+  filter: drop-shadow(0 0 4px var(--primary-color));
+}
+
+/* ========================
+   ACTION BUTTONS
+======================== */
+.actions {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .btn {
   padding: 8px 16px;
   border-radius: 8px;
@@ -53,200 +80,261 @@
   font-size: 14px;
   cursor: pointer;
   border: none;
+  transition: all 0.25s ease;
 }
 
 .btn.primary {
-  background: #0095F6;
+  background: var(--primary-color);
   color: white;
 }
-.btn.primary:hover { background:#007bce; }
+.btn.primary:hover {
+  background: var(--primary-hover);
+  box-shadow: 0 4px 10px rgba(0, 149, 246, 0.4);
+}
 
 .btn.secondary {
-  background: #EFEFEF;
+  background: var(--card-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
 }
-.btn.secondary:hover { background:#e3e3e3; }
+.btn.secondary:hover {
+  background: var(--bg-color);
+}
 
-.btn.edit { background:#f3f3f3; }
+.btn.edit {
+  background: var(--card-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
 
 .icon-btn {
-  background:none;
-  border:none;
-  font-size:20px;
-  cursor:pointer;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 20px;
+  cursor: pointer;
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+.icon-btn:hover {
+  color: var(--text-primary);
+  transform: rotate(90deg);
 }
 
-/* Dropdown */
+/* ========================
+   DROPDOWN MENU
+======================== */
 .dropdown {
-  position:absolute;
-  background:white;
-  padding:10px 0;
-  border-radius:10px;
-  box-shadow:0 4px 18px rgba(0,0,0,.1);
-  right:10px;
-  top:50px;
-  z-index:999;
+  position: absolute;
+  right: 0;
+  top: 40px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  z-index: 999;
+  animation: dropdownFade 0.2s ease;
 }
+
+@keyframes dropdownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .dropdown-item {
-  padding:12px 18px;
-  cursor:pointer;
+  padding: 12px 18px;
+  cursor: pointer;
+  color: var(--text-primary);
+  transition: background 0.2s ease, color 0.2s ease;
 }
 .dropdown-item:hover {
-  background:#f8f8f8;
+  background: rgba(0, 149, 246, 0.08);
 }
-.dropdown-item.danger { color:#e63946; }
+.dropdown-item.danger {
+  color: #e63946;
+}
 
-/* ---------- Stats Section ---------- */
+/* ========================
+   STATS SECTION
+======================== */
 .profile-stats {
   display: flex;
   gap: 30px;
   margin: 15px 0;
   font-size: 15px;
+  color: var(--text-secondary);
 }
 
 .profile-stats div {
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: color 0.25s ease;
 }
 .profile-stats div:hover {
-  color: #0095f6;
+  color: var(--primary-color);
 }
 
-/* ---------- Bio ---------- */
+/* ========================
+   BIO
+======================== */
 .profile-name {
   font-weight: 600;
   font-size: 16px;
+  color: var(--text-primary);
 }
 .profile-bio {
-  color: #555;
+  color: var(--text-secondary);
   font-size: 14px;
   margin-top: 4px;
+  line-height: 1.5;
 }
 
-/* ---------- Tabs ---------- */
+/* ========================
+   TABS (FIXED)
+======================== */
 .profile-tabs {
   display: flex;
   justify-content: center;
-  border-top: 1px solid #dbdbdb;
-  border-bottom: 1px solid #dbdbdb;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
   margin-top: 30px;
+  background: var(--card-bg);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .tab-button {
-  background: none;
-  border: none;
-  padding: 15px 25px;
+  flex: 1;
+  padding: 15px 0;
   font-size: 14px;
   font-weight: 600;
-  color: #8e8e8e;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
   cursor: pointer;
-  transition: color 0.3s;
+  transition: color 0.3s, background 0.3s;
   position: relative;
 }
 
+/* ❌ Removed bottom blue line */
 .tab-button.active {
-  color: #262626;
-}
-.tab-button.active::after {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background-color: #262626;
+  color: var(--primary-color);
+  background: rgba(0, 149, 246, 0.08);
 }
 
-/* ---------- Posts Grid (3 per row) ---------- */
+/* ========================
+   POSTS GRID
+======================== */
 .profile-posts-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 8px;
   margin-top: 30px;
 }
 
 .post-thumbnail {
   position: relative;
   overflow: hidden;
+  border-radius: 8px;
   background: #000;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.post-thumbnail:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
 }
 
 .post-img-wrapper {
   position: relative;
   width: 100%;
-  height: 0;
-  padding-bottom: 100%; /* 1:1 Aspect Ratio */
+  aspect-ratio: 1/1;
 }
 
 .post-img {
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s ease;
 }
-
 .post-thumbnail:hover .post-img {
   transform: scale(1.05);
 }
 
-.play-button-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: rgba(0, 0, 0, 0.3); /* Semi-transparent overlay */
-  opacity: 1; /* Visible by default */
-  transition: opacity 0.3s ease;
-}
-
-.post-thumbnail:hover .play-button-overlay {
-  opacity: 0; /* Hide on hover */
-}
-
-.play-icon {
-  /* font-size: 48px; Adjusted play icon size */
-  color: #fff;
-  opacity: 0.9;
-  font-family: 'Material Icons'; /* Explicitly set font family */
-}
-
+/* Overlay for icons */
 .post-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6); /* Darker overlay for better contrast */
+  background: rgba(0, 0, 0, 0.55);
   color: #fff;
-  opacity: 0; /* Hidden by default */
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px;
-  font-weight: 600;
-  font-size: 15px;
-  transition: opacity 0.3s ease;
+  gap: 18px;
+  opacity: 0;
+  transition: opacity 0.25s ease;
 }
-
 .post-thumbnail:hover .post-overlay {
-  opacity: 1; /* Show on hover */
+  opacity: 1;
 }
 
 .post-overlay-item {
   display: flex;
   align-items: center;
   gap: 6px;
+  font-size: 14px;
 }
 
-/* ---------- Empty Posts ---------- */
-.no-posts {
+/* ========================
+   FIXED REELS PLAY ICON
+======================== */
+.play-button-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 5;
+  opacity: 1;
+}
+
+.play-icon {
+  font-size: 56px;
+  color: #fff;
+  opacity: 0.9;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.post-thumbnail:hover .play-icon {
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+/* ========================
+   EMPTY / PRIVATE STATES
+======================== */
+.no-posts,
+.private-account {
   text-align: center;
-  color: #999;
-  font-size: 15px;
+  color: var(--text-secondary);
   padding: 60px 0;
+  font-size: 15px;
 }
 
-/* ---------- Responsive ---------- */
+.private-account svg {
+  filter: drop-shadow(0 0 6px var(--primary-color));
+}
+
+/* ========================
+   RESPONSIVE
+======================== */
 @media (max-width: 768px) {
   .profile-header {
     flex-direction: column;
@@ -266,30 +354,16 @@
 
   .profile-posts-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 3px;
   }
 }
 
-/* ---------- Blocked Profile Message ---------- */
 .blocked-profile-message {
   text-align: center;
   padding: 50px 20px;
-  font-size: 18px;
-  color: #888;
-  background-color: #f8f8f8;
-  border-radius: 10px;
+  border-radius: 12px;
+  background: var(--card-bg);
+  box-shadow: var(--shadow);
+  color: var(--text-secondary);
+  font-size: 16px;
   margin-top: 50px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
-
-.blocked-profile-message p {
-  margin: 10px 0;
-}
-
-@media (max-width: 480px) {
-  .profile-posts-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
-  }
-}
-

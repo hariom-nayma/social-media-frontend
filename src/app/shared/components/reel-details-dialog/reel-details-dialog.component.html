@@ -2,7 +2,7 @@
   <div class="dialog-content" (click)="$event.stopPropagation()">
     <!-- LEFT: VIDEO PLAYER -->
     <div class="reel-section">
-      <app-shaka-player *ngIf="reel?.mediaVideoUrl" [manifestUrl]="reel?.mediaVideoUrl!"></app-shaka-player>
+      <app-shaka-player *ngIf="reel?.mediaVideoUrl" [manifestUrl]="reel?.mediaVideoUrl!" [loopVideo]="true"></app-shaka-player>
     </div>
 
     <!-- RIGHT: REEL INFO + COMMENTS -->

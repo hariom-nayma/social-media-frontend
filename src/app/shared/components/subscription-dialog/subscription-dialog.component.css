@@ -257,7 +257,7 @@ h2 {
     }
 }
 .moon {
-    opacty: 1;
+    opacity: 1;
 }
 
 .sun, .moon {

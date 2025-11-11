@@ -32,7 +32,25 @@ export class CloudinaryService {
     formData.append('timestamp', String(signature.timestamp));
     formData.append('signature', signature.signature);
     formData.append('folder', 'videos/');
-    formData.append('eager', 'sp_auto,q_auto:eco,f_auto');
+    formData.append('eager', 'sp_auto');
+
+    const req = new HttpRequest('POST', url, formData, {
+      reportProgress: true
+    });
+
+    return this.http.request(req);
+  }
+
+  uploadImage(file: File, signature: CloudinarySignature): Observable<any> {
+    const url = `https://api.cloudinary.com/v1_1/${signature.cloudName}/image/upload`;
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('api_key', signature.apiKey);
+    formData.append('timestamp', String(signature.timestamp));
+    formData.append('signature', signature.signature);
+    formData.append('folder', 'videos/'); 
+    formData.append('eager', 'sp_auto');
+
 
     const req = new HttpRequest('POST', url, formData, {
       reportProgress: true

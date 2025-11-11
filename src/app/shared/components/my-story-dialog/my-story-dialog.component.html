@@ -30,9 +30,24 @@
       <span class="username">{{ currentStory?.username }}</span>
     </div>
 
-    <button mat-icon-button (click)="close()" class="close-btn">
-      <mat-icon>close</mat-icon>
-    </button>
+    <div class="story-options">
+      <button mat-icon-button [matMenuTriggerFor]="storyMenu" aria-label="Story options">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #storyMenu="matMenu">
+        <button mat-menu-item *ngIf="currentStory?.userId === currentUserId" (click)="deleteStory(currentStory!.id)">
+          <mat-icon>delete_forever</mat-icon>
+          <span>Delete Story</span>
+        </button>
+        <button mat-menu-item>
+          <mat-icon>cancel</mat-icon>
+          <span>Cancel</span>
+        </button>
+      </mat-menu>
+      <button mat-icon-button (click)="close()" class="close-btn">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
   </div>
 
   <!-- Story Content -->
@@ -44,14 +59,14 @@
       class="story-media fade-in"
     />
 
-    <video
+    <app-shaka-player
       *ngIf="currentStory?.contentUrl && isVideo(currentStory?.contentUrl)"
-      [src]="currentStory?.contentUrl"
-      autoplay
-      muted
-      controls
-      class="story-media fade-in"
-    ></video>
+      [manifestUrl]="currentStory!.contentUrl"
+      [loopVideo]="false"
+      (videoDuration)="onVideoDuration($event)"
+      (videoTimeUpdate)="onVideoTimeUpdate($event)"
+      (videoEnded)="onVideoEnded()"
+    ></app-shaka-player>
 
     <button
       mat-icon-button

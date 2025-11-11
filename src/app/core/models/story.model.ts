@@ -1,6 +1,8 @@
 export interface StoryDTO {
   id: number;
   contentUrl: string;
+  thumbnailUrl?: string;
+  publicId?: string;
   caption: string;
   createdAt: Date;
   userId: string;
