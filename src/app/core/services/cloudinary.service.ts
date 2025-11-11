@@ -32,6 +32,7 @@ export class CloudinaryService {
     formData.append('timestamp', String(signature.timestamp));
     formData.append('signature', signature.signature);
     formData.append('folder', 'videos/');
+    formData.append('eager', 'sp_auto,q_auto:eco,f_auto');
 
     const req = new HttpRequest('POST', url, formData, {
       reportProgress: true

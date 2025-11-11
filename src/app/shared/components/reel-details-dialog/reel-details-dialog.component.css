@@ -1,39 +1,35 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css');
 
-/* ===== Base ===== */
-* {
-  font-family: 'Inter', sans-serif;
-  box-sizing: border-box;
-}
-
+/* Base container */
 .dialog-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 1000;
+  justify-content: center;
+  z-index: 2000;
 }
 
 .dialog-content {
   display: flex;
-  background-color: #fff;
-  border-radius: 10px;
-  overflow: hidden;
   width: 900px;
   height: 600px;
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.25);
+  background: var(--card-bg);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
   animation: popIn 0.25s ease-in-out;
 }
 
 @keyframes popIn {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.96);
   }
   to {
     opacity: 1;
@@ -41,30 +37,27 @@
   }
 }
 
-/* ===== LEFT: Reel Video ===== */
+/* ============================
+   LEFT: Video player area
+============================ */
 .reel-section {
   flex: 1.2;
-  background-color: #000;
+  background: #000;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
 }
 
-.reel-video {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-/* ===== RIGHT: Comments Section ===== */
+/* ============================
+   RIGHT: Details / Comments
+============================ */
 .comments-section {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background-color: #fff;
-  padding: 15px 18px;
-  position: relative;
-  color: #111;
+  background: var(--card-bg);
+  color: var(--text-primary);
+  padding: 18px;
 }
 
 /* Header */
@@ -72,125 +65,145 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .user-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .user-avatar {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   object-fit: cover;
+  border: 2px solid var(--primary-color);
 }
 
-.user-details .name {
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.name {
   font-weight: 600;
-  margin: 0;
-  color: #000;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .username {
   font-size: 0.85rem;
-  color: #777;
-  margin: 0;
+  color: var(--text-secondary);
 }
 
+.verified-icon {
+  color: var(--primary-color);
+  font-size: 18px;
+}
+
+/* Header actions */
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
-.icon-btn,
-.close-btn {
-  border: none;
-  background: none;
-  cursor: pointer;
-  font-size: 1.1rem;
-  color: #333;
-  transition: color 0.2s ease;
+.header-actions mat-icon {
+  color: var(--text-secondary);
+  transition: transform 0.2s, color 0.25s;
 }
 
-.icon-btn:hover,
-.close-btn:hover {
-  color: #000;
+.header-actions mat-icon:hover {
+  color: var(--text-primary);
+  transform: scale(1.2);
 }
 
-/* ===== Reel Content ===== */
+/* ============================
+   Post Caption & Actions
+============================ */
 .post-content {
+  margin: 8px 0 12px;
   font-size: 0.95rem;
-  color: #222;
-  margin: 12px 0;
-  line-height: 1.4;
+  line-height: 1.5;
+  color: var(--text-primary);
 }
 
 .post-actions {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-bottom: 12px;
+  gap: 4px;
+  margin-bottom: 10px;
 }
 
 .action-buttons {
   display: flex;
   align-items: center;
-  gap: 14px;
-  font-size: 1.4rem;
+  gap: 16px;
 }
 
-.action-buttons mat-icon {
+.icon-btn {
+  border: none;
+  background: transparent;
   cursor: pointer;
-  transition: transform 0.2s ease, color 0.2s ease;
-  color: #333;
+  transition: transform 0.2s ease;
 }
 
-.action-buttons mat-icon:hover {
-  transform: scale(1.1);
-  color: #000;
+.icon-btn mat-icon {
+  font-size: 26px;
+  color: var(--text-secondary);
+  transition: transform 0.2s, color 0.2s;
 }
 
-.mat-icon.warn {
-  color: #ed4956 !important;
-  animation: pop 0.2s ease-in-out;
+.icon-btn:hover mat-icon {
+  color: var(--primary-hover);
+  transform: scale(1.15);
 }
 
-@keyframes pop {
+.icon-btn mat-icon.liked {
+  color: #ed4956;
+  animation: heartPop 0.3s ease;
+}
+
+@keyframes heartPop {
   0% { transform: scale(1); }
   50% { transform: scale(1.3); }
   100% { transform: scale(1); }
 }
 
-.likes,
-.comments-count,
-.reshare-count {
+.action-counts {
+  display: flex;
+  gap: 12px;
   font-size: 0.85rem;
-  color: #555;
-  font-weight: 500;
+  color: var(--text-secondary);
 }
 
-/* ===== Comments ===== */
+/* ============================
+   Comments
+============================ */
 .comments-list {
-  flex-grow: 1;
+  flex: 1;
   overflow-y: auto;
-  padding-right: 6px;
   margin-top: 10px;
+  padding-right: 6px;
   scrollbar-width: thin;
 }
 
 .comment-item {
   display: flex;
+  align-items: flex-start;
   gap: 10px;
   margin-bottom: 12px;
 }
 
 .comment-avatar {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -200,96 +213,97 @@
 }
 
 .comment-username {
-  font-size: 0.9rem;
   font-weight: 600;
-  color: #111;
-  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .comment-text {
   font-size: 0.9rem;
-  color: #222;
-  margin: 2px 0 6px;
+  margin: 2px 0;
+  color: var(--text-secondary);
 }
 
-.comment-actions {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  font-size: 0.8rem;
-  color: #777;
-}
-
-.comment-actions .icon-btn mat-icon {
-  color: #777;
-}
-
-.comment-actions .icon-btn mat-icon.warn {
-  color: #ed4956;
-}
-
-.reply-btn {
+.delete-comment {
   border: none;
   background: transparent;
-  cursor: pointer;
-  color: #0095f6;
-  font-weight: 500;
-  padding: 0;
-}
-
-.replies {
-  margin-left: 40px;
-}
-
-.toggle-replies-btn {
-  background: none;
-  border: none;
-  color: #0095f6;
+  color: var(--primary-color);
   font-size: 0.8rem;
   cursor: pointer;
-  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  transition: color 0.2s;
+}
+.delete-comment:hover {
+  color: var(--primary-hover);
 }
 
-/* ===== Comment Input ===== */
+/* ============================
+   Comment Form
+============================ */
 .comment-form {
   display: flex;
   align-items: center;
-  border-top: 1px solid #eee;
-  padding-top: 10px;
   gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-color);
 }
 
 .comment-form input {
   flex: 1;
   padding: 10px 14px;
-  border: 1px solid #eee;
   border-radius: 20px;
-  background: #fafafa;
-  font-size: 0.9rem;
+  border: 1px solid var(--border-color);
+  background: var(--bg-color);
+  color: var(--text-primary);
   outline: none;
+  transition: 0.25s;
 }
 
 .comment-form input:focus {
-  background: #fff;
-  border-color: #ccc;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 6px rgba(0, 149, 246, 0.3);
 }
 
 .comment-form button {
+  background: var(--primary-color);
   border: none;
-  background: none;
-  color: #0095f6;
+  border-radius: 20px;
+  color: #fff;
+  padding: 8px 16px;
   font-weight: 600;
-  font-size: 0.9rem;
   cursor: pointer;
-  transition: color 0.2s;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.comment-form button:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
 }
 
 .comment-form button:disabled {
-  color: #ccc;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
-/* ===== Responsive ===== */
+/* ============================
+   Empty Comments
+============================ */
+.no-comments {
+  text-align: center;
+  color: var(--text-secondary);
+  font-style: italic;
+  margin-top: 20px;
+  font-size: 0.9rem;
+}
+
+/* ============================
+   Responsive
+============================ */
 @media (max-width: 768px) {
   .dialog-content {
     flex-direction: column;
@@ -303,13 +317,6 @@
   }
 
   .comments-section {
-    flex: 1;
     height: 40%;
-    padding: 12px;
-  }
-
-  .user-avatar {
-    width: 36px;
-    height: 36px;
   }
 }

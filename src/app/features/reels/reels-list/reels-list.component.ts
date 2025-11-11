@@ -14,12 +14,13 @@ import { ReelDTO } from '../../../core/models/reel.model';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { ShareDialogComponent } from '../../../shared/components/share-dialog/share-dialog.component';
+import { ShakaPlayerComponent } from '../../../shared/components/shaka-player/shaka-player';
 import { ReelDetailsDialogComponent } from '../../../shared/components/reel-details-dialog/reel-details-dialog.component';
 
 @Component({
   selector: 'app-reels-feed',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ShakaPlayerComponent],
   templateUrl: './reels-list.component.html',
   styleUrls: ['./reels-list.component.css']
 })
@@ -27,7 +28,7 @@ export class ReelsListComponent implements OnInit, AfterViewInit, OnDestroy {
   reels: ReelDTO[] = [];
   loading = true;
   error: string | null = null;
-  @ViewChildren('videoEl') videoElements!: QueryList<ElementRef<HTMLVideoElement>>;
+  @ViewChildren('videoEl') videoElements!: QueryList<ShakaPlayerComponent>;
   private observer?: IntersectionObserver;
   private currentPlayingIndex: number | null = null;
   private subs: Subscription = new Subscription();
@@ -80,31 +81,36 @@ export class ReelsListComponent implements OnInit, AfterViewInit, OnDestroy {
           const topVideo = topEntry.target as HTMLVideoElement;
           this.playSingle(topVideo);
         } else {
-          this.videoElements.forEach(v => v.nativeElement.pause());
+          this.videoElements.forEach(v => v.videoElement.nativeElement.pause());
           this.currentPlayingIndex = null;
         }
       },
       { threshold: [0.4, 0.6, 0.75, 0.9] }
     );
     this.videoElements.forEach((vid) => {
-      vid.nativeElement.muted = true;
-      this.observer!.observe(vid.nativeElement);
+      vid.videoElement.nativeElement.muted = false;
+      this.observer!.observe(vid.videoElement.nativeElement);
     });
   }
 
   private playSingle(video: HTMLVideoElement) {
     const list = this.videoElements.toArray();
-    const idx = list.findIndex(v => v.nativeElement === video);
-    if (this.currentPlayingIndex !== null && this.currentPlayingIndex !== idx) {
-      const prev = list[this.currentPlayingIndex];
-      prev?.nativeElement.pause();
-    }
-    video.play().catch(() => {});
+    const idx = list.findIndex(v => v.videoElement.nativeElement === video);
+
+    list.forEach((vid, i) => {
+      if (i === idx) {
+        vid.videoElement.nativeElement.play().catch(() => {});
+        vid.videoElement.nativeElement.muted = false;
+      } else {
+        vid.videoElement.nativeElement.pause();
+        vid.videoElement.nativeElement.muted = true;
+      }
+    });
     this.currentPlayingIndex = idx;
   }
 
   togglePlayPause(index: number): void {
-    const vid = this.videoElements.toArray()[index]?.nativeElement;
+    const vid = this.videoElements.toArray()[index]?.videoElement.nativeElement;
     if (!vid) return;
     if (vid.paused) {
       vid.play().catch(() => {});
@@ -113,6 +119,17 @@ export class ReelsListComponent implements OnInit, AfterViewInit, OnDestroy {
       vid.pause();
       this.currentPlayingIndex = null;
     }
+  }
+
+  toggleMute(index: number): void {
+    const vid = this.videoElements.toArray()[index]?.videoElement.nativeElement;
+    if (!vid) return;
+    vid.muted = !vid.muted;
+  }
+
+  isMuted(index: number): boolean {
+    const vid = this.videoElements.toArray()[index]?.videoElement?.nativeElement;
+    return vid ? vid.muted : false;
   }
 
   likeReel(reel: ReelDTO, index?: number): void {
@@ -130,7 +147,7 @@ export class ReelsListComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     if (typeof index === 'number') {
-      const videoEl = this.videoElements.toArray()[index]?.nativeElement;
+      const videoEl = this.videoElements.toArray()[index]?.videoElement.nativeElement;
       const parent = videoEl?.parentElement;
       const btn = parent?.querySelector('.actions button.like-btn');
       if (btn) {
@@ -167,7 +184,7 @@ export class ReelsListComponent implements OnInit, AfterViewInit, OnDestroy {
     const reel = this.reels[index];
     if (!reel.likedByMe) this.likeReel(reel, index);
 
-    const reelContainer = this.videoElements.toArray()[index]?.nativeElement?.closest('.reel-inner');
+    const reelContainer = this.videoElements.toArray()[index]?.videoElement.nativeElement?.closest('.reel-inner');
     if (reelContainer) this.spawnHeartBurst(reelContainer);
   }
 

@@ -1,0 +1,14 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* Ensures content outside the video bounds is clipped */
+}
+
+.shaka-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Ensures the whole video is visible, centered, with letterboxing if aspect ratios differ */
+  background-color: black; /* Background for letterboxing */
+  display: block; /* Remove extra space below video */
+}

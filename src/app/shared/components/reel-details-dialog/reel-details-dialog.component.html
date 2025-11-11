@@ -1,36 +1,44 @@
 <div class="dialog-overlay" (click)="closeDialog()">
   <div class="dialog-content" (click)="$event.stopPropagation()">
-    <!-- LEFT: VIDEO -->
+    <!-- LEFT: VIDEO PLAYER -->
     <div class="reel-section">
-      <video
-        *ngIf="reel?.mediaVideoUrl"
-        [src]="reel?.mediaVideoUrl"
-        controls
-        class="reel-video"
-      ></video>
+      <app-shaka-player *ngIf="reel?.mediaVideoUrl" [manifestUrl]="reel?.mediaVideoUrl!"></app-shaka-player>
     </div>
 
-    <!-- RIGHT: COMMENTS -->
+    <!-- RIGHT: REEL INFO + COMMENTS -->
     <div class="comments-section">
+      <!-- Header -->
       <div class="post-header">
         <div class="user-info">
           <img
-            [src]="
-              reel?.mediaVideoUrl
-            "
+            [src]="reel?.reelUser?.profileImage || 'https://i.pravatar.cc/150?u=' + reel?.reelUser?.id"
             class="user-avatar"
             alt="user"
           />
           <div class="user-details">
-            <p class="name">{{ reel?.reelUser?.firstName }} {{ reel?.reelUser?.lastName }}</p>
+            <p class="name">
+              {{ reel?.reelUser?.firstName }} {{ reel?.reelUser?.lastName }}
+              <mat-icon *ngIf="reel?.reelUser?.premiumUser" class="verified-icon">verified</mat-icon>
+            </p>
             <p class="username">@{{ reel?.reelUser?.username }}</p>
           </div>
         </div>
+
         <div class="header-actions">
-          <!-- <button title="more options" class="icon-btn" (click)="showOptionsMenu = !showOptionsMenu">
-            <lucide-icon name="more-horizontal"></lucide-icon>
-          </button> -->
-          <button title="close" class="close-btn" (click)="closeDialog()">
+          <button mat-icon-button [matMenuTriggerFor]="reelMenu" aria-label="More options">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #reelMenu="matMenu">
+            <button mat-menu-item *ngIf="isOwner" (click)="deleteReel()">
+              <mat-icon>delete_forever</mat-icon>
+              <span>Delete Reel</span>
+            </button>
+            <button mat-menu-item (click)="reshareReel()">
+              <mat-icon>share</mat-icon>
+              <span>Share Reel</span>
+            </button>
+          </mat-menu>
+          <button class="close-btn" title="Close" (click)="closeDialog()">
             <mat-icon>close</mat-icon>
           </button>
         </div>
@@ -38,50 +46,54 @@
 
       <p class="post-content">{{ reel?.caption }}</p>
 
+      <!-- Action Buttons -->
       <div class="post-actions">
         <div class="action-buttons">
-          <button title="like" class="icon-btn" (click)="likeReel()">
-            <mat-icon [color]="reel?.likedByMe ? 'warn' : 'basic'">favorite</mat-icon>
+          <button class="icon-btn like" (click)="likeReel()">
+            <mat-icon [ngClass]="{ liked: reel?.likedByMe }">favorite</mat-icon>
           </button>
-          <button title="comment" class="icon-btn">
-            <mat-icon>comment</mat-icon>
+          <button class="icon-btn comment">
+            <mat-icon>chat_bubble_outline</mat-icon>
           </button>
-          <button title="reshare" class="icon-btn" (click)="reshareReel()">
-            <mat-icon [color]="reel?.resharedByMe ? 'primary' : 'basic'">share</mat-icon>
+          <button class="icon-btn reshare" (click)="reshareReel()">
+            <mat-icon>ios_share</mat-icon>
           </button>
         </div>
-        <span class="likes">{{ reel?.likeCount }} likes</span>
-        <span class="comments-count">{{ reel?.commentCount }} comments</span>
-        <span class="reshare-count">{{ reel?.reshareCount }} reshares</span>
+        <div class="action-counts">
+          <span>{{ reel?.likeCount || 0 }} likes</span>
+          <span>{{ reel?.commentCount || 0 }} comments</span>
+          <span>{{ reel?.reshareCount || 0 }} shares</span>
+        </div>
       </div>
 
+      <!-- Comments -->
       <div class="comments-list">
-        <div *ngIf="comments.length === 0" class="text-gray-500">No comments yet.</div>
-                    <div *ngFor="let comment of comments" class="comment-item">
-                      <img
-                        [src]="
-                          comment.userProfileImage ||
-                          'https://i.pravatar.cc/150?u=' + comment.userId
-                        "
-                        class="comment-avatar"
-                        alt="profile"
-                      />
-                      <div class="comment-body">
-                        <p class="comment-username"><strong>{{ comment.firstName }} {{ comment.lastName }}</strong></p>
-                        <p class="comment-text">{{ comment.text }}</p>
-        
-                        <div class="comment-actions">
-                          <button
-                            *ngIf="comment.userId === currentUserId"
-                            class="reply-btn"
-                            (click)="deleteComment(comment.id)"
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      </div>
-                    </div>      </div>
+        <div *ngIf="comments.length === 0" class="no-comments">No comments yet. Be the first ✨</div>
 
+        <div *ngFor="let comment of comments" class="comment-item">
+          <img
+            [src]="comment.userProfileImage || 'https://i.pravatar.cc/150?u=' + comment.userId"
+            class="comment-avatar"
+            alt="profile"
+          />
+          <div class="comment-body">
+            <p class="comment-username">
+              <strong>{{ comment.firstName }} {{ comment.lastName }}</strong>
+              <mat-icon *ngIf="comment.userProfileImage" class="verified-icon-small">verified</mat-icon>
+            </p>
+            <p class="comment-text">{{ comment.text }}</p>
+            <button
+              *ngIf="comment.userId === currentUserId"
+              class="delete-comment"
+              (click)="deleteComment(comment.id)"
+            >
+              <mat-icon>delete_outline</mat-icon> Delete
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Comment -->
       <div class="comment-form">
         <input
           type="text"
@@ -89,7 +101,7 @@
           [(ngModel)]="newCommentText"
           (keyup.enter)="addComment()"
         />
-        <button type="submit" (click)="addComment()" [disabled]="!newCommentText">Post</button>
+        <button (click)="addComment()" [disabled]="!newCommentText">Post</button>
       </div>
     </div>
   </div>

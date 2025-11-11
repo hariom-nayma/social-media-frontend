@@ -83,6 +83,25 @@ export class CreatePostModalComponent {
   onFileChange(event: any) {
     const file = event.target.files?.[0];
     if (file) {
+      const MAX_SIZE = 20 * 1024 * 1024; // 20 MB
+      const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        this.toastService.show('Only image files (JPEG, PNG, GIF, WEBP) are allowed.', 'error');
+        event.target.value = ''; // Clear the input
+        this.postForm.patchValue({ media: null });
+        this.mediaPreview = null;
+        return;
+      }
+
+      if (file.size > MAX_SIZE) {
+        this.toastService.show('Image file size cannot exceed 20MB.', 'error');
+        event.target.value = ''; // Clear the input
+        this.postForm.patchValue({ media: null });
+        this.mediaPreview = null;
+        return;
+      }
+
       this.postForm.patchValue({ media: file });
       this.postForm.get('media')?.updateValueAndValidity();
 

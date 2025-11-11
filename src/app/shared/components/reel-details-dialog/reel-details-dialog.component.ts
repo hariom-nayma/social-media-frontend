@@ -12,6 +12,8 @@ import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { UserService } from '../../../core/services/user.service';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { ShakaPlayerComponent } from '../shaka-player/shaka-player';
 
 @Component({
   selector: 'app-reel-details-dialog',
@@ -23,7 +25,9 @@ import { MatIconModule } from '@angular/material/icon';
     MatInputModule,
     MatIconModule,
     MatFormFieldModule,
-    FormsModule
+    FormsModule,
+    MatMenuModule,
+    ShakaPlayerComponent
   ],
   templateUrl: './reel-details-dialog.component.html',
   styleUrls: ['./reel-details-dialog.component.css']
@@ -33,6 +37,7 @@ export class ReelDetailsDialogComponent implements OnInit {
   comments: CommentDTO[] = [];
   newCommentText = '';
   currentUserId: string | null = null;
+  isOwner: boolean = false;
 
   private reelService = inject(ReelService);
   private authService = inject(AuthService);
@@ -48,9 +53,9 @@ export class ReelDetailsDialogComponent implements OnInit {
     this.userService.currentUser$.subscribe(user => {
       if (user) {
         this.currentUserId = user.id;
+        this.loadReelDetails(); // Load reel details after current user is known
       }
     });
-    this.loadReelDetails();
     this.loadComments();
   }
 
@@ -60,6 +65,7 @@ export class ReelDetailsDialogComponent implements OnInit {
         console.log('Reel Details API Response:', response);
         if (response.data) {
           this.reel = response.data;
+          this.isOwner = this.reel.reelUser?.id === this.currentUserId;
           console.log('Reel loaded:', this.reel);
         }
       },
@@ -145,6 +151,21 @@ export class ReelDetailsDialogComponent implements OnInit {
     // Implement reshare logic here, similar to likeReel
     console.log('Resharing reel:', this.reel.id);
     this.toastService.show('Reshare functionality not yet implemented.', 'info');
+  }
+
+  deleteReel(): void {
+    if (!this.reel || !this.isOwner) return;
+
+    this.reelService.deleteReel(this.reel.id).subscribe({
+      next: () => {
+        this.toastService.show('Reel deleted successfully.', 'success');
+        this.dialogRef.close();
+      },
+      error: (err) => {
+        console.error('Error deleting reel:', err);
+        this.toastService.show('Failed to delete reel.', 'error');
+      }
+    });
   }
 
   closeDialog(): void {

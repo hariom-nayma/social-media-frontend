@@ -335,9 +335,9 @@ export class CreateReelModalComponent {
         if (event.type === HttpEventType.UploadProgress) {
           this.uploadService.updateProgress({ loaded: event.loaded, total: event.total! });
         } else if (event.type === HttpEventType.Response) {
-          const videoUrl = event.body.secure_url;
-          const thumbnailUrl = this.generateThumbnailUrl(videoUrl);
           const publicId = event.body.public_id;
+          const videoUrl = `https://res.cloudinary.com/${signature.cloudName}/video/upload/sp_auto/${publicId}.m3u8`;
+          const thumbnailUrl = this.generateThumbnailUrl(publicId, signature.cloudName);
           
           this.reelService.saveReel({
             title: this.caption,
@@ -367,8 +367,8 @@ export class CreateReelModalComponent {
     });
   }
 
-  generateThumbnailUrl(videoUrl: string): string {
-    return videoUrl.replace(/\.mp4$/, '.jpg');
+  generateThumbnailUrl(publicId: string, cloudName: string): string {
+    return `https://res.cloudinary.com/${cloudName}/video/upload/${publicId}.jpg`;
   }
 
   closeModal(): void {

@@ -4,20 +4,21 @@
       <div class="reel-inner">
 
         <div class="video-wrapper" (click)="togglePlayPause(i)">
-          <video
+          <app-shaka-player
             #videoEl
-            class="reel-video"
-            [src]="reel.mediaVideoUrl"
-            loop muted playsinline preload="metadata"
+            [manifestUrl]="reel.mediaVideoUrl"
             (dblclick)="$event.stopPropagation(); onVideoDoubleTap(i)">
-          </video>
+          </app-shaka-player>
 
           <div class="heart-pop" *ngIf="heartVisible[i]"></div>
           <div class="floating-hearts"></div>
 
-          <button title="mute" class="mute-btn" (click)="$event.stopPropagation(); togglePlayPause(i)">
-            <svg viewBox="0 0 24 24" class="mute-icon" xmlns="http://www.w3.org/2000/svg">
+          <button title="mute" class="mute-btn" (click)="$event.stopPropagation(); toggleMute(i)">
+            <svg *ngIf="!isMuted(i)" viewBox="0 0 24 24" class="mute-icon" xmlns="http://www.w3.org/2000/svg">
               <path d="M5 9v6h4l5 4V5L9 9H5z" fill="currentColor"></path>
+            </svg>
+            <svg *ngIf="isMuted(i)" viewBox="0 0 24 24" class="mute-icon" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16.5 12A4.5 4.5 0 0014 7.97v2.21l2.45 2.45c.03-.2.05-.4.05-.61zm-2.96 6.03l-1.54-1.54L9 19.97V5l-4.29-4.29L2.29 2.29 21.71 21.71l-1.42 1.42-4.24-4.24-1.55-1.55zM12 4.03L9.97 6.06 12 8.09v-4.06zM5 9v6h4l5 4v-2.03l-1.5-1.5L9.97 12.44 5 9z" fill="currentColor"></path>
             </svg>
           </button>
         </div>
