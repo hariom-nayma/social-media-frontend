@@ -45,27 +45,32 @@ export class StreamCallComponent implements OnInit, OnDestroy {
   async joinCallAndPublish(callId: string) {
     this.call = await this.streamService.startCall(callId);
     
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-    this.localVideo.nativeElement.srcObject = stream;
-    
     if (this.call) {
-      stream.getTracks().forEach(track => {
-        const newStream = new MediaStream([track]);
-        if (track.kind === 'video') {
-            this.call!.publish(newStream, 'video' as any);
-        } else if (track.kind === 'audio') {
-            this.call!.publish(newStream, 'audio' as any);
-        }
-      });
+      // Enable camera
+      await this.call.camera.enable();
+      const videoStream = (this.call.camera as any).stream as MediaStream;
+      if (videoStream && videoStream.getTracks().length > 0) {
+        this.localVideo.nativeElement.srcObject = videoStream;
+        await this.call.publish(videoStream, 'video' as any);
+      }
+  
+      // Enable microphone
+      await this.call.microphone.enable();
+      const audioStream = (this.call.microphone as any).stream as MediaStream;
+      if (audioStream && audioStream.getTracks().length > 0) {
+        await this.call.publish(audioStream, 'audio' as any);
+      }
     }
 
     this.call.on('trackPublished', (event: any) => {
-      const track = event.track;
-      const participant = event.participant as StreamVideoParticipant;
-      if (track.kind === 'video' && participant && (participant.sessionId !== this.call?.state.localParticipant?.sessionId)) {
-        const mediaStream = new MediaStream();
-        mediaStream.addTrack(track.mediaStreamTrack);
-        this.remoteVideo.nativeElement.srcObject = mediaStream;
+      if (event && event.track) {
+        const track = event.track;
+        const participant = event.participant as StreamVideoParticipant;
+        if (track.kind === 'video' && participant && (participant.sessionId !== this.call?.state.localParticipant?.sessionId)) {
+          const mediaStream = new MediaStream();
+          mediaStream.addTrack(track.mediaStreamTrack);
+          this.remoteVideo.nativeElement.srcObject = mediaStream;
+        }
       }
     });
   }

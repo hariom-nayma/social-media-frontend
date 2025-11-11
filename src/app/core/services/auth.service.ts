@@ -32,6 +32,12 @@ export class AuthService {
     );
   }
 
+  oauth2Login(accessToken: string, refreshToken: string): void {
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('refreshToken', refreshToken);
+    this._isLoggedIn.next(true);
+  }
+
   loginWithOtp(credentials: LoginRequest, otp: string): Observable<ApiResponse<AuthResponse>> {
     return this.http.post<ApiResponse<AuthResponse>>(`${this.apiUrl}/login-otp`, credentials, { params: { otp } }).pipe(
       tap(res => {

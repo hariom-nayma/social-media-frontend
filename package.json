@@ -30,6 +30,7 @@
     "lucide-angular": "^0.552.0",
     "ng-lazyload-image": "^9.1.3",
     "rxjs": "~7.8.1",
+    "shaka-player": "^4.16.8",
     "socket.io-client": "^2.4.0",
     "sockjs-client": "^1.6.1",
     "stompjs": "^2.3.3",

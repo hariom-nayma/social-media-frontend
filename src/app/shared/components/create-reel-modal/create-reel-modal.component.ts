@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -9,6 +9,9 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { ReelService } from '../../../core/services/reel.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { AiService } from '../../../core/services/ai.service';
+import { CloudinaryService } from '../../../core/services/cloudinary.service';
+import { UploadService } from '../../../core/services/upload.service';
+import { HttpEventType } from '@angular/common/http';
 
 @Component({
   selector: 'app-create-reel-modal',
@@ -268,11 +271,25 @@ export class CreateReelModalComponent {
   private reelService = inject(ReelService);
   private toastService = inject(ToastService);
   private aiService = inject(AiService);
+  private cloudinaryService = inject(CloudinaryService);
+  private uploadService = inject(UploadService);
+  private dialog = inject(MatDialog);
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files?.length) {
-      this.selectedFile = input.files[0];
+      const file = input.files[0];
+      const MAX_SIZE = 20 * 1024 * 1024; // 20 MB
+
+      if (file.size > MAX_SIZE) {
+        this.toastService.show('Video file size cannot exceed 20MB.', 'error');
+        this.selectedFile = null;
+        this.videoPreviewUrl = null;
+        input.value = ''; // Clear the input so the same file can be selected again
+        return;
+      }
+
+      this.selectedFile = file;
       const reader = new FileReader();
       reader.onload = () => this.videoPreviewUrl = reader.result;
       reader.readAsDataURL(this.selectedFile);
@@ -307,18 +324,51 @@ export class CreateReelModalComponent {
       this.toastService.show('Please select a video and enter a caption.', 'error');
       return;
     }
+
     this.isUploading = true;
-    this.reelService.createReel(this.selectedFile, this.caption, this.isPrivate).subscribe({
-      next: () => {
-        this.toastService.show('Reel created successfully!', 'success');
+    const thumbnailPreview = this.videoPreviewUrl as string;
+    this.uploadService.startUpload(this.selectedFile.name, thumbnailPreview);
+    this.closeModal();
+
+    this.cloudinaryService.getSignature().subscribe(signature => {
+      this.cloudinaryService.uploadVideo(this.selectedFile!, signature).subscribe(event => {
+        if (event.type === HttpEventType.UploadProgress) {
+          this.uploadService.updateProgress({ loaded: event.loaded, total: event.total! });
+        } else if (event.type === HttpEventType.Response) {
+          const videoUrl = event.body.secure_url;
+          const thumbnailUrl = this.generateThumbnailUrl(videoUrl);
+          const publicId = event.body.public_id;
+          
+          this.reelService.saveReel({
+            title: this.caption,
+            description: this.caption,
+            videoUrl,
+            thumbnailUrl,
+            publicId,
+            uploadedBy: '' // This will be set by the backend
+          }).subscribe({
+            next: () => {
+              this.uploadService.completeUpload();
+              this.toastService.show('Reel uploaded successfully!', 'success');
+              this.isUploading = false;
+            },
+            error: err => {
+              this.uploadService.failUpload('Failed to save reel metadata.');
+              this.toastService.show('Failed to save reel.', 'error');
+              this.isUploading = false;
+            }
+          });
+        }
+      }, err => {
+        this.uploadService.failUpload('Upload to Cloudinary failed.');
+        this.toastService.show('Failed to upload video.', 'error');
         this.isUploading = false;
-        this.closeModal();
-      },
-      error: () => {
-        this.toastService.show('Failed to create reel.', 'error');
-        this.isUploading = false;
-      }
+      });
     });
+  }
+
+  generateThumbnailUrl(videoUrl: string): string {
+    return videoUrl.replace(/\.mp4$/, '.jpg');
   }
 
   closeModal(): void {

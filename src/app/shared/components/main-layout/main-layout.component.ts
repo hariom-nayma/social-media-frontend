@@ -5,13 +5,14 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
 import { BottomNavbarComponent } from '../bottom-navbar/bottom-navbar.component';
 import { NotificationService } from '../../../core/services/notification.service';
 import { UserService } from '../../../core/services/user.service';
+import { UploadProgressBarComponent } from '../upload-progress-bar/upload-progress-bar';
 
 @Component({
   selector: 'app-main-layout',
   templateUrl: './main-layout.component.html',
   styleUrls: ['./main-layout.component.css'],
   standalone: true,
-  imports: [CommonModule, RouterModule, RouterOutlet, SidebarComponent, BottomNavbarComponent]
+  imports: [CommonModule, RouterModule, RouterOutlet, SidebarComponent, BottomNavbarComponent, UploadProgressBarComponent]
 })
 export class MainLayoutComponent implements OnInit {
 

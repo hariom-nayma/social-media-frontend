@@ -1,0 +1,17 @@
+<div *ngIf="uploadState?.inProgress" class="upload-container">
+  <div class="thumbnail">
+    <img src="assets/gifs/loading.gif" alt="thumbnail">
+  </div>
+  <div class="upload-info">
+    <div class="file-name">{{ uploadState?.fileName }}</div>
+    <div class="progress-bar-container">
+      <div class="progress-bar" [style.width.%]="uploadState?.progress"></div>
+    </div>
+    <div class="status">
+      <span>{{ uploadState?.progress }}%</span>
+      <span>{{ uploadState?.speed }} KB/s</span>
+    </div>
+  </div>
+  <div *ngIf="uploadState?.isComplete" class="status-icon">✅</div>
+  <div *ngIf="uploadState?.error" class="status-icon">❌</div>
+</div>

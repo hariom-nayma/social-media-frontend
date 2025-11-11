@@ -10,53 +10,53 @@
     </a>
   </div>
 
+ 
   <!-- Menu -->
   <nav class="sidebar-menu">
-    <a routerLink="/home" routerLinkActive="active" class="sidebar-item">
-      <i class="fas fa-home"></i><span>Home</span>
-    </a>
+    <div class="sidebar-menu-items">
+      <a routerLink="/home" routerLinkActive="active" class="sidebar-item">
+        <i class="fas fa-home"></i><span>Home</span>
+      </a>
 
-    <a (click)="openSearchDialog()" class="sidebar-item">
-      <i class="fas fa-search"></i><span>Search</span>
-    </a>
+      <a (click)="openSearchDialog()" class="sidebar-item">
+        <i class="fas fa-search"></i><span>Search</span>
+      </a>
 
-    <a routerLink="/explore" routerLinkActive="active" class="sidebar-item">
-      <i class="far fa-compass"></i><span>Explore</span>
-    </a>
+      <a routerLink="/explore" routerLinkActive="active" class="sidebar-item">
+        <i class="far fa-compass"></i><span>Explore</span>
+      </a>
 
-    <a routerLink="/reels" routerLinkActive="active" class="sidebar-item">
-      <i class="fas fa-video"></i><span>Reels</span>
-    </a>
+      <a routerLink="/reels" routerLinkActive="active" class="sidebar-item">
+        <i class="fas fa-video"></i><span>Reels</span>
+      </a>
 
-    <a routerLink="/stream-call-list" routerLinkActive="active" class="sidebar-item">
-      <i class="fas fa-phone"></i><span>Call</span>
-    </a>
+      <a routerLink="/stream-call-list" routerLinkActive="active" class="sidebar-item">
+        <i class="fas fa-phone"></i><span>Call</span>
+      </a>
 
-    <a routerLink="/conversations" routerLinkActive="active" class="sidebar-item">
-      <i class="fab fa-facebook-messenger"></i><span>Messages</span>
-    </a>
+      <a routerLink="/conversations" routerLinkActive="active" class="sidebar-item">
+        <i class="fab fa-facebook-messenger"></i><span>Messages</span>
+      </a>
 
-    <a routerLink="/notifications" routerLinkActive="active" class="sidebar-item">
-      <i class="far fa-heart"></i><span>Notifications</span>
-    </a>
+      <a routerLink="/notifications" routerLinkActive="active" class="sidebar-item">
+        <i class="far fa-heart"></i><span>Notifications</span>
+      </a>
 
-    <a (click)="openCreatePostModal()" class="sidebar-item">
-      <i class="far fa-plus-square"></i><span>Create</span>
-    </a>
+      <a (click)="openCreatePostModal()" class="sidebar-item yap">
+        <i class="far fa-plus-square"></i><span>Create</span>
+      </a>
 
-    <a routerLink="/profile" routerLinkActive="active" class="sidebar-item">
-      <i class="far fa-user-circle"></i><span>Profile</span>
-    </a>
+      <a routerLink="/profile" routerLinkActive="active" class="sidebar-item">
+        <i class="far fa-user-circle"></i><span>Profile</span>
+      </a>
 
-    <a *ngIf="!currentUser?.premiumUser" (click)="openSubscriptionDialog()" class="sidebar-item premium">
-      <i class="fas fa-gem"></i><span>Subscription</span>
-    </a>
+      <a *ngIf="!currentUser?.premiumUser" (click)="openSubscriptionDialog()" class="sidebar-item premium">
+        <i class="fas fa-gem"></i><span>Subscription</span>
+      </a>
+    </div>
   </nav>
 
-  <!-- 🌗 Theme Toggle -->
-  <div class="theme-toggle-container">
-    <app-theme-toggle></app-theme-toggle>
-  </div>
+
 
   <!-- Footer -->
   <footer class="sidebar-footer">
@@ -66,6 +66,10 @@
       </a>
 
       <div class="more-options-menu" *ngIf="showMoreOptions">
+           <!-- 🌗 Theme Toggle -->
+  <div class="theme-toggle-container">
+    <app-theme-toggle></app-theme-toggle>
+  </div>
         <a (click)="openSettingsDialog()" class="sidebar-item">
           <i class="fas fa-cog"></i><span>Settings</span>
         </a>

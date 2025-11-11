@@ -14,12 +14,8 @@ export class ReelService {
 
   constructor(private http: HttpClient) { }
 
-  createReel(video: File, caption: string, isPrivate: boolean): Observable<ApiResponse<ReelDTO>> {
-    const formData = new FormData();
-    formData.append('video', video);
-    formData.append('caption', caption);
-    formData.append('isPrivate', isPrivate.toString());
-    return this.http.post<ApiResponse<ReelDTO>>(`${this.apiUrl}`, formData);
+  saveReel(reelData: { title: string, description: string, videoUrl: string, thumbnailUrl: string, publicId: string, uploadedBy: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/save`, reelData);
   }
 
   getReelById(reelId: string): Observable<ApiResponse<ReelDTO>> {

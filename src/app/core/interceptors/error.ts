@@ -9,7 +9,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      if (error.status === 403) {
+      if (error.status === 302) {
         dialog.open(SessionExpiredDialogComponent, {
           disableClose: true, // User must click the button to close
           width: '400px'

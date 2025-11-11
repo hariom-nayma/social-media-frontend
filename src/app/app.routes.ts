@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { AUTH_ROUTES } from './features/auth/auth.routes';
+import { Oauth2RedirectComponent } from './features/auth/oauth2-redirect/oauth2-redirect'; // Import the new component
 
 export const routes: Routes = [
     {
@@ -63,12 +64,20 @@ export const routes: Routes = [
             {
                 path: 'payment-cancelled',
                 loadComponent: () => import('./features/payment/payment-cancelled.component').then(m => m.PaymentCancelledComponent)
+            },
+            {
+                path: 'call-screen',
+                loadComponent: () => import('./features/call-screen/call-screen.component').then(m => m.CallScreenComponent)
             }
           ]
     },
     {
         path: 'auth',
         children: AUTH_ROUTES
+    },
+    {
+        path: 'oauth2/redirect', // New route for OAuth2 redirect
+        component: Oauth2RedirectComponent
     },
     {
         path: '**',
